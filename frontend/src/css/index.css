@@ -1,0 +1,40 @@
+@import "./fonts.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    font-family: "cairo";
+    direction: rtl;
+    @apply transition-all ease-in-out;
+}
+
+*::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: theme(colors.primary.700);
+    border-radius: theme(borderRadius.DEFAULT);
+    width: 4px;
+}
+
+*::-webkit-scrollbar-track {
+    background-color: theme(colors.white);
+}
+
+html,
+body {
+    background-color: theme(colors.light-gray);
+    height: 100vh;
+}
+
+.error-message {
+    @apply text-sm ps-4 text-red-600 h-5;
+}
+
+table td {
+    @apply whitespace-nowrap;
+}

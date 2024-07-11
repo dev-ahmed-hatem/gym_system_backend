@@ -1,0 +1,79 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+
+
+# backend
+# Ignore the virtual environment directory
+backend/gym/Include/
+backend/gym/Lib/
+backend/gym/Scripts/
+backend/**/*.sqlite3
+
+# Ignore Django migrations
+backend/**/migrations/
+backend/**/__pycache__/
+
+# Ignore Python compiled files
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.pdb
+
+# Ignore local settings
+backend/local_settings.py
+
+# Ignore static files and media files
+backend/**/static/
+backend/**/media/
+
+# Ignore logs
+backend/*.log
+
+# Ignore environment variables
+backend/.env
+
+# Ignore node modules directory
+frontend/node_modules/
+
+# Ignore build output
+frontend/build/
+frontend/dist/
+
+# Ignore logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Ignore environment variables
+frontend/.env
+
+# Ignore editor and OS-specific files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp

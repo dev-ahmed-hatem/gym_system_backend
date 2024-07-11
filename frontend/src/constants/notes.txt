@@ -1,0 +1,20 @@
+Palette: Modern and Sleek
+
+- Primary Color (Dark Blue: #2C3E50):
+    - Header and Footer: Use for a professional and solid foundation.
+    - Primary Buttons: Apply to main call-to-action buttons.
+
+- Secondary Color (Mint Green: #18BC9C):
+    - Navigation Bar: Use to complement the primary color and add freshness.
+    - Secondary Buttons: Apply to secondary actions or less prominent buttons.
+
+- Accent Color (Red: #E74C3C):
+    - Icons and Badges: Use for notifications, warnings, or important highlights.
+    - Hover Effects: Apply to interactive elements for a dynamic look.
+
+- Background Color (Light Grey: #ECF0F1):
+    - Main Background: Use for the overall background to provide a clean and modern feel.
+    - Text Color (Dark Blue: #2C3E50):
+
+- Body Text: Use for primary content to maintain consistency and readability.
+    - Headings: Apply to headings for a unified design.

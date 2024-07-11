@@ -1,0 +1,12 @@
+.header-menu:hover span {
+    @apply bg-accent;
+}
+
+#user-icon button:focus ~ #user-dropdown,
+#user-icon:hover #user-dropdown {
+    display: block;
+}
+
+#user-icon #user-dropdown {
+    display: none;
+}
