@@ -45,13 +45,6 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-
-class EmployeeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Employee
-        fields = '__all__'
-
-
 class NationalitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Nationality
@@ -86,3 +79,26 @@ class ModeratorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Moderator
         fields = '__all__'
+
+
+class EmployeeReadSerializer(serializers.ModelSerializer):
+    nationality = NationalitySerializer()
+    marital_status = MaritalStatusSerializer()
+    city = CitySerializer()
+    district = CityDistrictSerializer()
+    added_by = UserSerializer()
+    emp_type = EmployeeTypeSerializer()
+    url = HyperlinkedIdentityField(view_name='employee-detail', lookup_field='pk')
+
+    class Meta:
+        model = Employee
+        fields = '__all__'
+
+
+class EmployeeWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = '__all__'
+
+    # def create(self, validated_data):
+        # print(validated_data.get("gander"))

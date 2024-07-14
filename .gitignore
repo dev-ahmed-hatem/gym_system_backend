@@ -30,7 +30,9 @@ vscode/*
 backend/gym/Include/
 backend/gym/Lib/
 backend/gym/Scripts/
-backend/**/*.sqlite3
+
+# local database
+**/*.sqlite3
 
 # Ignore Django migrations
 backend/**/migrations/

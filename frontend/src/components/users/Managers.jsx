@@ -12,6 +12,7 @@ import Notification from "../groups/Notification";
 import { MdEdit, MdDelete } from "react-icons/md";
 import DrawerHeader from "../groups/DrawerHeader";
 import TablePagination from "../groups/TablePagination";
+import endpoints from "../../../config";
 
 const ManagersForm = ({ setToast, postURL, defaultValues, callBack }) => {
     const [post, setPost] = useState(false);
@@ -41,7 +42,7 @@ const ManagersForm = ({ setToast, postURL, defaultValues, callBack }) => {
                 clearErrors("password2");
             }
         }
-    }, [password, password2, setError, clearErrors]);
+    }, [password, password2]);
 
     const onSubmit = (data) => {
         data["is_superuser"] = true;
@@ -182,7 +183,7 @@ const ManagersForm = ({ setToast, postURL, defaultValues, callBack }) => {
                         required: "هذا الحقل مطلوب",
                         pattern: {
                             value: /^[0-9]+$/,
-                            message: "رقم الموبايل لا يحتوى على أرقام",
+                            message: "رقم الموبايل لا يحتوى على حروف",
                         },
                     })}
                     onBlur={() => trigger("phone")}
@@ -205,7 +206,7 @@ const ManagersForm = ({ setToast, postURL, defaultValues, callBack }) => {
                         required: "هذا الحقل مطلوب",
                         pattern: {
                             value: /^[0-9]+$/,
-                            message: "رقم الهوية لا يحتوى على أرقام",
+                            message: "رقم الهوية لا يحتوى على حروف",
                         },
                     })}
                     onBlur={() => trigger("national_id")}
@@ -215,6 +216,15 @@ const ManagersForm = ({ setToast, postURL, defaultValues, callBack }) => {
                         {errors.national_id.message}
                     </p>
                 )}
+            </div>
+            <div className="flex flex-wrap max-h-12 min-w-full justify-center">
+                <Button
+                    type="submit"
+                    color={formFunction == "add" ? "primary" : "accent"}
+                    disabled={post}
+                >
+                    {formFunction == "add" ? "إضافة" : "تعديل"}
+                </Button>
             </div>
         </FormGroup>
     );
@@ -335,7 +345,7 @@ const Managers = () => {
     };
 
     useEffect(() => {
-        const searchURL = `http://127.0.0.1:8000/api/users/users/?is_superuser=true${
+        const searchURL = `${endpoints.manager_list}${
             searchParam ? `&search=${searchParam}` : ""
         }${pageNumber ? `&page=${pageNumber}` : ""}
         `;
@@ -372,7 +382,7 @@ const Managers = () => {
             {/* add form */}
             <ManagersForm
                 setToast={setToast}
-                postURL={"http://127.0.0.1:8000/api/users/users/"}
+                postURL={endpoints.manager_list}
                 callBack={fetchListData}
             />
 
@@ -389,6 +399,7 @@ const Managers = () => {
                         <TableGroup
                             onChange={(event) => {
                                 setSearchParam(event.target.value);
+                                setPageNumber(1);
                             }}
                         >
                             {data.count == 0 ? (

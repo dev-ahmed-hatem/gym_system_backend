@@ -34,7 +34,24 @@ class UserViewSet(ModelViewSet):
 
 class EmployeeViewSet(ModelViewSet):
     queryset = Employee.objects.all()
-    serializer_class = EmployeeSerializer
+
+    def get_queryset(self):
+        queryset = super(EmployeeViewSet, self).get_queryset()
+        search_query = self.request.query_params.get('search', None)
+
+        if search_query:
+            queryset = queryset.filter(
+                Q(name__icontains=search_query) |
+                Q(phone__icontains=search_query) |
+                Q(national_id__icontains=search_query)
+            )
+
+        return queryset
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return EmployeeWriteSerializer
+        return EmployeeReadSerializer
 
 
 class NationalityViewSet(ModelViewSet):

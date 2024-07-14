@@ -23,6 +23,7 @@ import {
     MdReport,
 } from "react-icons/md";
 import Managers from "../components/users/Managers";
+import Employees from "../components/users/Employees";
 
 export const routes = [
     {
@@ -36,13 +37,14 @@ export const routes = [
                 title: "المديرين",
                 url: "/users/managers",
                 icon: <MdSupervisorAccount />,
-                element: <Managers />
+                element: <Managers />,
             },
             {
                 id: 2,
                 title: "الموظفين",
                 url: "/users/staff",
                 icon: <MdPerson />,
+                element: <Employees />,
             },
             {
                 id: 3,
@@ -258,7 +260,4 @@ export const routes = [
     },
 ];
 
-
-const formMapping = {
-
-}
+const formMapping = {};

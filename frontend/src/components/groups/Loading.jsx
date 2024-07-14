@@ -1,15 +1,11 @@
 import React from "react";
-import { Spinner, theme, Flowbite } from "flowbite-react";
+import { Spinner } from "flowbite-react";
 
-theme.spinner.color.primary = "fill-primary";
-
-const Loading = () => {
+const Loading = ({className}) => {
     return (
-        <Flowbite theme={{ theme: theme }}>
-            <div className="spinner text-center my-4">
-                <Spinner size={"xl"} color="primary" />
-            </div>
-        </Flowbite>
+        <div className={`spinner text-center my-4 m-auto ${className}`}>
+            <Spinner size={"xl"} color="primary" />
+        </div>
     );
 };
 

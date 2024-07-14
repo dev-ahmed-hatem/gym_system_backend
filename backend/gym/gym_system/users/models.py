@@ -110,23 +110,23 @@ class Employee(models.Model):
     ]
 
     name = models.CharField(max_length=100)
-    gender = models.CharField(max_length=6, choices=GENDER_CHOICES)
-    nationality = models.ForeignKey(Nationality, on_delete=models.CASCADE)
-    religion = models.CharField(max_length=10, choices=RILIGION_CHOICES)
-    marital_status = models.ForeignKey(MaritalStatus, on_delete=models.SET_NULL, null=True)
+    gander = models.CharField(max_length=6, choices=GENDER_CHOICES, default='male')
+    nationality = models.ForeignKey(Nationality, on_delete=models.CASCADE, default=1)
+    religion = models.CharField(max_length=10, choices=RILIGION_CHOICES, default="muslim")
+    marital_status = models.ForeignKey(MaritalStatus, on_delete=models.SET_NULL, null=True, blank=True)
     birth_date = models.DateField(blank=True, null=True)
     age = models.PositiveIntegerField(blank=True, null=True)
     phone = models.CharField(max_length=15)
     phone2 = models.CharField(max_length=15, blank=True, null=True)
     national_id = models.CharField(max_length=20, unique=True)
-    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, default=None)
     district = models.ForeignKey(CityDistrict, on_delete=models.SET_NULL, null=True)
-    address = models.TextField()
+    address = models.TextField(blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
-    subscription_percent = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    subscription_percent = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     photo = models.ImageField(upload_to='photos/', blank=True, null=True)
-    add_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    emp_type = models.ForeignKey(EmployeeType, on_delete=models.SET_NULL, null=True)
+    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, default=1)
+    emp_type = models.ForeignKey(EmployeeType, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.name

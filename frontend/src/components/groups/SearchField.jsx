@@ -7,8 +7,6 @@ const SearchField = ({
     className,
 }) => {
     const search = (event) => {
-        // console.log(event.target.value);
-        // return;
         const url = `${fetchURL}&search=${event.target.value}`;
         axios
             .get(url)
