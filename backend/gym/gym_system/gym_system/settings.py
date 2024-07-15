@@ -25,7 +25,8 @@ INSTALLED_APPS = [
 
     # Third Parties
     'rest_framework',
-    'corsheaders'
+    'django_filters',
+    'corsheaders',
 
 ]
 
@@ -113,6 +114,10 @@ AUTH_USER_MODEL = 'users.User'
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.custom_pagination.CustomPagination',
     'PAGE_SIZE': 5,
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.OrderingFilter',
+    ]
 }
 
 # corsheaders settings

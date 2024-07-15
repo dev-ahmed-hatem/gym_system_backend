@@ -134,7 +134,7 @@ class Employee(models.Model):
 
 #  Moderators
 class Moderator(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True)
+    employee = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, unique=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
     def save(self, *args, **kwargs):

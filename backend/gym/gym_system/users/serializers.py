@@ -75,12 +75,6 @@ class CityDistrictSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ModeratorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Moderator
-        fields = '__all__'
-
-
 class EmployeeReadSerializer(serializers.ModelSerializer):
     nationality = NationalitySerializer()
     marital_status = MaritalStatusSerializer()
@@ -100,5 +94,37 @@ class EmployeeWriteSerializer(serializers.ModelSerializer):
         model = Employee
         fields = '__all__'
 
-    # def create(self, validated_data):
-        # print(validated_data.get("gander"))
+
+class ModeratorWriteSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Moderator
+        fields = '__all__'
+
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        user_serializer = UserSerializer(data=user_data)
+        user_serializer.is_valid(raise_exception=True)
+        user = user_serializer.save()
+
+        moderator = Moderator.objects.create(user=user, **validated_data)
+        return moderator
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user')
+        user_serializer = UserSerializer(data=user_data)
+        user_serializer.is_valid(raise_exception=True)
+        instance.user = user_serializer.save()
+
+        return instance
+
+
+class ModeratorReadSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    employee = EmployeeReadSerializer()
+    url = HyperlinkedIdentityField(view_name='moderator-detail', lookup_field='pk')
+
+    class Meta:
+        model = Moderator
+        fields = '__all__'

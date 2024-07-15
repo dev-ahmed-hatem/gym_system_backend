@@ -81,4 +81,19 @@ class CityDistrictViewSet(ModelViewSet):
 
 class ModeratorViewSet(ModelViewSet):
     queryset = Moderator.objects.all()
-    serializer_class = ModeratorSerializer
+
+    def get_queryset(self):
+        queryset = super(ModeratorViewSet, self).get_queryset()
+        search_query = self.request.query_params.get('search', None)
+        if search_query:
+            queryset = queryset.filter(Q(employee__name__icontains=search_query) |
+                                       Q(employee__national_id__icontains=search_query) |
+                                       Q(employee__phone__icontains=search_query) |
+                                       Q(user__username__icontains=search_query))
+
+        return queryset
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return ModeratorWriteSerializer
+        return ModeratorReadSerializer

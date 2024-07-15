@@ -24,6 +24,7 @@ import {
 } from "react-icons/md";
 import Managers from "../components/users/Managers";
 import Employees from "../components/users/Employees";
+import Moderators from "../components/users/Moderators";
 
 export const routes = [
     {
@@ -51,6 +52,7 @@ export const routes = [
                 title: "المشرفين",
                 url: "/users/moderators",
                 icon: <MdSupervisorAccount />,
+                element: <Moderators />,
             },
             {
                 id: 4,
