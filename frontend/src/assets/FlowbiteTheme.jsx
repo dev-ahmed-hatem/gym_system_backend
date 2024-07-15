@@ -39,6 +39,10 @@ theme.button.color = {
     accent: "bg-accent hover:bg-accent-500 text-white",
 };
 
+// ToggleSwitch
+theme.toggleSwitch.toggle.base = "relative rounded-full border after:absolute after:rounded-full after:bg-white after:transition-all group-focus:ring-4 group-focus:ring-primary-300"
+theme.toggleSwitch.toggle.checked.color.primary = "border-brimary-400 bg-primary"
+
 // DatePicker
 theme.datepicker = {
     ...theme.datepicker,

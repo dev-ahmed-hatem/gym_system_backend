@@ -1,0 +1,658 @@
+import React, { useState, useEffect } from "react";
+import FormGroup from "../groups/FormGroup";
+import {
+    TextInput,
+    Label,
+    Table,
+    Button,
+    ToggleSwitch,
+    Textarea,
+} from "flowbite-react";
+import Loading from "../groups/Loading";
+import axios from "axios";
+import ViewGroup from "../groups/ViewGroup";
+import TableGroup from "../groups/TableGroup";
+import { useForm } from "react-hook-form";
+import Notification from "../groups/Notification";
+import { MdEdit, MdDelete, MdSubscriptions } from "react-icons/md";
+import DrawerHeader from "../groups/DrawerHeader";
+import TablePagination from "../groups/TablePagination";
+import endpoints from "../../../config";
+import { FaMoneyBill } from "react-icons/fa";
+import { FcInvite } from "react-icons/fc";
+import { TbTimeDuration30 } from "react-icons/tb";
+import { GiDuration } from "react-icons/gi";
+import { PiNumberEightFill } from "react-icons/pi";
+import { FaCircleStop } from "react-icons/fa6";
+
+const SubscriptionsForm = ({ setToast, postURL, defaultValues, callBack }) => {
+    const [post, setPost] = useState(false);
+    const {
+        register,
+        handleSubmit,
+        trigger,
+        formState: { errors },
+        setError,
+        reset,
+    } = useForm({ defaultValues: defaultValues });
+    const formFunction = defaultValues ? "edit" : "add";
+    const requestMethod = formFunction == "add" ? axios.post : axios.put;
+    const [forStudents, setForStudents] = useState(
+        formFunction === "edit" ? defaultValues?.for_students : false
+    );
+    const [isDuration, setIsDuration] = useState(
+        formFunction === "edit" ? defaultValues?.is_duration : true
+    );
+    const [isFreezable, setIsFreezable] = useState(
+        formFunction === "edit" ? defaultValues?.freezable : true
+    );
+
+    // if (formFunction === "edit") {
+    //     if (defaultValues) {
+    //         console.log("here");
+    //         console.log(defaultValues.for_students);
+    //         console.log(defaultValues.is_duration);
+    //         console.log(defaultValues.freezable);
+    //     }
+    // }
+
+    const onSubmit = (data) => {
+        setPost(true);
+
+        if (isFreezable && data.freeze_no == "") {
+            data.freeze_no = 0;
+        }
+        data = {
+            name: data["name"],
+            invitations: Number(data.invitations),
+            price: Number(data.price),
+            description: data.description,
+            for_students: forStudents,
+            validity: Number(data.validity),
+            is_duration: isDuration,
+            duration: data.duration ? Number(data.duration) : null,
+            classes_no: data.classes_no ? Number(data.classes_no) : null,
+            freezable: isFreezable,
+            freeze_no: Number(data.freeze_no),
+        };
+        // console.log(data);
+        // return;
+
+        requestMethod(postURL, data)
+            .then((response) => {
+                setPost(false);
+                setToast(
+                    formFunction == "add"
+                        ? "تم إضافة اشتراك جديد"
+                        : "تم تعديل الاشتراك"
+                );
+                reset();
+                callBack();
+            })
+            .catch((error) => {
+                console.log(error);
+                if (error.response && error.response.data) {
+                    const serverErrors = error.response.data;
+                    for (let field in serverErrors) {
+                        const message =
+                            serverErrors[field][0].search("exists") == -1
+                                ? "قيمة غير صالحة"
+                                : "القيمة موجودة سابقا";
+                        setError(field, {
+                            type: "server",
+                            message: message,
+                        });
+                    }
+                }
+                setPost(false);
+            });
+    };
+    return (
+        <FormGroup
+            onSubmit={handleSubmit(onSubmit)}
+            title={formFunction == "add" ? "إضافة اشتراك" : "تعديل اشتراك"}
+            buttonTitle={formFunction}
+            post={post}
+        >
+            <div className="w-full lg:max-w-md lg:w-[30%]">
+                <div className="mb-2 block">
+                    <Label htmlFor="name" value="اسم الاشتراك :" />
+                </div>
+                <TextInput
+                    id="name"
+                    type="text"
+                    rightIcon={MdSubscriptions}
+                    placeholder="اسم الاشتراك"
+                    color={errors.name ? "failure" : "primary"}
+                    {...register("name", {
+                        required: "هذا الحقل مطلوب",
+                    })}
+                    onBlur={() => trigger("name")}
+                />
+
+                {errors.name && (
+                    <p className="error-message">{errors.name.message}</p>
+                )}
+            </div>
+            <div className="w-full lg:max-w-md lg:w-[30%]">
+                <div className="mb-2 block">
+                    <Label htmlFor="price" value="السعر :" />
+                </div>
+                <TextInput
+                    id="price"
+                    type="number"
+                    rightIcon={FaMoneyBill}
+                    placeholder="السعر"
+                    color={errors.price ? "failure" : "primary"}
+                    {...register("price", {
+                        required: "هذا الحقل مطلوب",
+                    })}
+                    onBlur={() => trigger("price")}
+                />
+                {errors.price && (
+                    <p className="error-message">{errors.price.message}</p>
+                )}
+            </div>
+            <div className="w-full lg:max-w-md lg:w-[30%]">
+                <div className="mb-2 block">
+                    <Label
+                        htmlFor="invitations"
+                        value="عدد الدعوات المتاحة :"
+                    />
+                </div>
+                <TextInput
+                    id="invitations"
+                    type="number"
+                    rightIcon={FcInvite}
+                    placeholder="عدد الدعوات المتاحة"
+                    color={errors.invitations ? "failure" : "primary"}
+                    defaultValue={0}
+                    {...register("invitations", {
+                        required: "هذا الحقل مطلوب",
+                    })}
+                    onBlur={() => trigger("invitations")}
+                />
+                {errors.invitations && (
+                    <p className="error-message">
+                        {errors.invitations.message}
+                    </p>
+                )}
+            </div>
+            <div className="w-full lg:max-w-md lg:w-[30%]">
+                <div className="mb-2 block">
+                    <Label
+                        htmlFor="validity"
+                        value="فترة صلاحية الاشتراك : (يوم)"
+                    />
+                </div>
+                <TextInput
+                    id="validity"
+                    type="number"
+                    rightIcon={GiDuration}
+                    placeholder="فترة صلاحية الاشتراك"
+                    color={errors.validity ? "failure" : "primary"}
+                    defaultValue={30}
+                    {...register("validity", {
+                        required: "هذا الحقل مطلوب",
+                    })}
+                    onBlur={() => trigger("validity")}
+                />
+                {errors.validity && (
+                    <p className="error-message">{errors.validity.message}</p>
+                )}
+            </div>
+            <div className="w-full flex items-center lg:max-w-md lg:w-[30%] min-h-[70px] lg:pt-5">
+                <div className="mb-2 me-10 hidden">
+                    <Label htmlFor="for_students" value="اشتراك محدد بفترة :" />
+                </div>
+                <ToggleSwitch
+                    id="for_students"
+                    checked={isDuration}
+                    onChange={setIsDuration}
+                    label="اشتراك محدد بفترة"
+                    sizing={"lg"}
+                    color={"primary"}
+                />
+            </div>
+            {isDuration && (
+                <div className="w-full lg:max-w-md lg:w-[30%]">
+                    <div className="mb-2 block">
+                        <Label
+                            htmlFor="duration"
+                            value="مدة الاشتراك : (يوم)"
+                        />
+                    </div>
+                    <TextInput
+                        id="duration"
+                        type="number"
+                        defaultValue={30}
+                        rightIcon={TbTimeDuration30}
+                        placeholder="مدة الاشتراك"
+                        color={errors.duration ? "failure" : "primary"}
+                        {...register("duration", {
+                            required: "هذا الحقل مطلوب",
+                        })}
+                        onBlur={() => trigger("duration")}
+                    />
+                    {errors.duration && (
+                        <p className="error-message">
+                            {errors.duration.message}
+                        </p>
+                    )}
+                </div>
+            )}
+            {!isDuration && (
+                <div className="w-full lg:max-w-md lg:w-[30%]">
+                    <div className="mb-2 block">
+                        <Label htmlFor="classes_no" value="عدد الحصص :" />
+                    </div>
+                    <TextInput
+                        id="classes_no"
+                        type="number"
+                        defaultValue={8}
+                        rightIcon={PiNumberEightFill}
+                        placeholder="عدد الحصص"
+                        color={errors.classes_no ? "failure" : "primary"}
+                        {...register("classes_no", {
+                            required: "هذا الحقل مطلوب",
+                        })}
+                        onBlur={() => trigger("classes_no")}
+                    />
+                    {errors.classes_no && (
+                        <p className="error-message">
+                            {errors.classes_no.message}
+                        </p>
+                    )}
+                </div>
+            )}
+            <div className="w-full flex items-center lg:max-w-md lg:w-[30%] min-h-[70px] lg:pt-5">
+                <div className="mb-2 me-10 hidden">
+                    <Label htmlFor="for_students" value="اشتراك طلاب :" />
+                </div>
+                <ToggleSwitch
+                    id="for_students"
+                    checked={forStudents}
+                    onChange={setForStudents}
+                    label="اشتراك طلاب "
+                    sizing={"lg"}
+                    color={"primary"}
+                />
+            </div>
+            <div className="w-full flex items-center lg:max-w-md lg:w-[30%] min-h-[70px] lg:pt-5">
+                <div className="mb-2 me-10 hidden">
+                    <Label
+                        htmlFor="for_students"
+                        value="اشتراك قابل للتعليق :"
+                    />
+                </div>
+                <ToggleSwitch
+                    id="for_students"
+                    checked={isFreezable}
+                    onChange={setIsFreezable}
+                    label="اشتراك قابل للتعليق"
+                    sizing={"lg"}
+                    color={"primary"}
+                />
+            </div>
+            <div className="w-full lg:max-w-md lg:w-[30%]">
+                <div className="mb-2 block">
+                    <Label
+                        className={`${isFreezable ? "" : "text-gray-400"}`}
+                        htmlFor="freeze_no"
+                        value="مدة التعليق : (يوم)"
+                    />
+                </div>
+                <TextInput
+                    id="freeze_no"
+                    type="number"
+                    defaultValue={7}
+                    rightIcon={FaCircleStop}
+                    placeholder="مدة التعليق"
+                    color={errors.freeze_no ? "failure" : "primary"}
+                    {...register("freeze_no", {})}
+                    onBlur={() => trigger("freeze_no")}
+                    disabled={!isFreezable}
+                />
+                {errors.freeze_no && (
+                    <p className="error-message">{errors.freeze_no.message}</p>
+                )}
+            </div>
+            <div className="w-full lg:max-w-md lg:w-[30%]">
+                <div className="mb-2 block">
+                    <Label htmlFor="description" value="إضافة وصف :" />
+                </div>
+                <Textarea
+                    id="description"
+                    placeholder="وصف"
+                    color={"primary"}
+                    {...register("description", {})}
+                    rows={3}
+                />
+
+                {errors.description && (
+                    <p className="error-message">
+                        {errors.description.message}
+                    </p>
+                )}
+            </div>
+
+            <div className="flex flex-wrap max-h-12 min-w-full justify-center">
+                <Button
+                    type="submit"
+                    color={formFunction == "add" ? "primary" : "accent"}
+                    disabled={post}
+                >
+                    {formFunction == "add" ? "إضافة" : "تعديل"}
+                </Button>
+            </div>
+        </FormGroup>
+    );
+};
+
+const ConfirmDelete = ({ user, closeDrawer, setToast, callBack }) => {
+    const [post, setPost] = useState(false);
+
+    const deleteManager = () => {
+        setPost(true);
+        axios
+            .delete(user.url)
+            .then(() => {
+                setToast("تم حذف الاشتراك بنجاح");
+                callBack();
+                closeDrawer();
+            })
+            .catch((error) => {
+                setPost(false);
+            });
+    };
+
+    return (
+        <div
+            className={`wrapper p-4 my-2 bg-white rounded border-t-4 border-primary shadow-lg`}
+        >
+            <p className="text-base">
+                هل أنت متأكد تريد حذف الاشتراك:{" "}
+                <span className="font-bold text-red-600">{user.username}</span>
+            </p>
+            <hr className="h-px my-3 bg-gray-200 border-0"></hr>
+            <div className="flex flex-wrap max-h-12 min-w-full justify-center">
+                <Button
+                    type="button"
+                    color={"blue"}
+                    className="me-4"
+                    disabled={post}
+                    onClick={closeDrawer}
+                >
+                    إلغاء
+                </Button>
+                <Button
+                    type="button"
+                    color={"failure"}
+                    disabled={post}
+                    onClick={deleteManager}
+                >
+                    حذف
+                </Button>
+            </div>
+        </div>
+    );
+};
+
+const Subscriptions = () => {
+    //////////////////////////////// form settings ////////////////////////////////
+
+    //////////////////////////////// drawer settings ////////////////////////////////
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [drawerData, setDrawerData] = useState(null);
+
+    //////////////////////////////// list data ////////////////////////////////
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [fetchEror, setFetchError] = useState(null);
+    const [toast, setToast] = useState(null);
+    const [searchParam, setSearchParam] = useState(null);
+    const [pageNumber, setPageNumber] = useState(1);
+
+    const showDrawer = (drawerFunction, userdata) => {
+        if (drawerFunction == "edit") {
+            setDrawerData({
+                title: "تعديل اشتراك",
+                icon: MdEdit,
+                content: (
+                    <SubscriptionsForm
+                        setToast={setToast}
+                        postURL={userdata.url}
+                        defaultValues={userdata}
+                        callBack={() => {
+                            fetchListData();
+                            closeDrawer();
+                        }}
+                    />
+                ),
+            });
+        } else {
+            setDrawerData({
+                title: "حذف اشتراك",
+                icon: MdDelete,
+                content: (
+                    <ConfirmDelete
+                        user={userdata}
+                        closeDrawer={closeDrawer}
+                        setToast={setToast}
+                        callBack={() => {
+                            fetchListData();
+                        }}
+                    />
+                ),
+            });
+        }
+        setDrawerOpen(true);
+    };
+
+    const closeDrawer = () => {
+        setDrawerData(null);
+        setDrawerOpen(false);
+    };
+
+    const changePage = (page) => {
+        setPageNumber(page);
+    };
+
+    const fetchListData = () => {
+        setSearchParam(null);
+        setPageNumber(null);
+    };
+
+    useEffect(() => {
+        const searchURL = `${endpoints.subscription_list}${
+            searchParam ? `&search=${searchParam}` : ""
+        }${pageNumber ? `&page=${pageNumber}` : ""}
+        `;
+        axios
+            .get(searchURL)
+            .then((response) => {
+                setData(response.data);
+                setLoading(false);
+            })
+            .catch((fetchError) => {
+                setFetchError(fetchError);
+                setLoading(false);
+            });
+    }, [searchParam, pageNumber]);
+
+    return (
+        <>
+            {/*  notification */}
+            {toast && <Notification setToast={setToast} title={toast} />}
+
+            {/* drawer */}
+            {{ drawerOpen } && (
+                <DrawerHeader
+                    title={drawerData?.title}
+                    openState={drawerOpen}
+                    setOpenState={setDrawerOpen}
+                    icon={drawerData?.icon}
+                    handleClose={closeDrawer}
+                >
+                    {drawerData?.content}
+                </DrawerHeader>
+            )}
+
+            {/* add form */}
+            <SubscriptionsForm
+                setToast={setToast}
+                postURL={endpoints.subscription_list}
+                callBack={fetchListData}
+            />
+
+            {/* table data */}
+            <ViewGroup title={"الاشتراكات الحالية"}>
+                {loading ? (
+                    <Loading />
+                ) : fetchEror ? (
+                    <p className="text-lg text-center text-red-600 py-4">
+                        خطأ في تحميل البيانات
+                    </p>
+                ) : (
+                    <>
+                        <TableGroup
+                            onChange={(event) => {
+                                setSearchParam(event.target.value);
+                                setPageNumber(1);
+                            }}
+                        >
+                            {data.count == 0 ? (
+                                <Table.Body>
+                                    <Table.Row className="text-lg text-center text-gray-800 py-3 font-bold bg-red-500">
+                                        <Table.Cell>لا توجد بيانات</Table.Cell>
+                                    </Table.Row>
+                                </Table.Body>
+                            ) : (
+                                <>
+                                    <Table.Head>
+                                        <Table.HeadCell>
+                                            اسم الاشتراك
+                                        </Table.HeadCell>
+                                        <Table.HeadCell>السعر</Table.HeadCell>
+                                        <Table.HeadCell>الفترة</Table.HeadCell>
+                                        <Table.HeadCell>
+                                            الصلاحية
+                                        </Table.HeadCell>
+                                        <Table.HeadCell>
+                                            اشتراك طلاب
+                                        </Table.HeadCell>
+                                        <Table.HeadCell>إجراءات</Table.HeadCell>
+                                    </Table.Head>
+                                    <Table.Body>
+                                        {data.results.map((susbcription) => {
+                                            return (
+                                                <Table.Row
+                                                    key={susbcription.id}
+                                                    className="bg-white font-medium text-gray-900"
+                                                >
+                                                    <Table.Cell>
+                                                        {susbcription.name ? (
+                                                            susbcription.name
+                                                        ) : (
+                                                            <span className="text-red-600">
+                                                                غير مسجل
+                                                            </span>
+                                                        )}
+                                                    </Table.Cell>
+                                                    <Table.Cell>
+                                                        {susbcription.price ? (
+                                                            susbcription.price
+                                                        ) : (
+                                                            <span className="text-red-600">
+                                                                غير مسجل
+                                                            </span>
+                                                        )}
+                                                    </Table.Cell>
+                                                    <Table.Cell>
+                                                        {susbcription.duration ? (
+                                                            <span className="text-sm">
+                                                                {
+                                                                    susbcription.duration
+                                                                }{" "}
+                                                                {susbcription.duration >
+                                                                9
+                                                                    ? "يوم"
+                                                                    : "أيام"}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-red-600">
+                                                                غير مسجل
+                                                            </span>
+                                                        )}
+                                                    </Table.Cell>
+                                                    <Table.Cell>
+                                                        {susbcription.validity ? (
+                                                            <span className="text-sm">
+                                                                {
+                                                                    susbcription.validity
+                                                                }{" "}
+                                                                {susbcription.validity >
+                                                                9
+                                                                    ? "يوم"
+                                                                    : "أيام"}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-red-600">
+                                                                غير مسجل
+                                                            </span>
+                                                        )}
+                                                    </Table.Cell>
+                                                    <Table.Cell>
+                                                        {susbcription.for_students ? (
+                                                            <span>نعم</span>
+                                                        ) : (
+                                                            <span>لا</span>
+                                                        )}
+                                                    </Table.Cell>
+                                                    <Table.Cell>
+                                                        <span className="flex text-xl gap-x-3">
+                                                            <MdEdit
+                                                                className="text-accent cursor-pointer"
+                                                                onClick={() => {
+                                                                    showDrawer(
+                                                                        "edit",
+                                                                        susbcription
+                                                                    );
+                                                                }}
+                                                            />
+                                                            <MdDelete
+                                                                className="text-secondary cursor-pointer"
+                                                                onClick={() => {
+                                                                    showDrawer(
+                                                                        "delete",
+                                                                        susbcription
+                                                                    );
+                                                                }}
+                                                            />
+                                                        </span>
+                                                    </Table.Cell>
+                                                </Table.Row>
+                                            );
+                                        })}
+                                    </Table.Body>
+                                </>
+                            )}
+                        </TableGroup>
+
+                        {data.total_pages > 1 ? (
+                            <TablePagination
+                                totalPages={data.total_pages}
+                                currentPage={data.current_page}
+                                onPageChange={changePage}
+                            />
+                        ) : (
+                            <></>
+                        )}
+                    </>
+                )}
+            </ViewGroup>
+        </>
+    );
+};
+
+export default Subscriptions;

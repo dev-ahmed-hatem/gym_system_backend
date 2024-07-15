@@ -25,6 +25,7 @@ import {
 import Managers from "../components/users/Managers";
 import Employees from "../components/users/Employees";
 import Moderators from "../components/users/Moderators";
+import Subscriptions from "../components/settings/Subscriptions";
 
 export const routes = [
     {
@@ -73,6 +74,7 @@ export const routes = [
                 title: "الاشتراكات",
                 url: "/settings/plans",
                 icon: <MdSubscriptions />,
+                element: <Subscriptions />,
             },
             {
                 id: 2,
@@ -80,12 +82,12 @@ export const routes = [
                 url: "/settings/lockers",
                 icon: <MdLock />,
             },
-            {
-                id: 3,
-                title: "أرقام اللوكر",
-                url: "/settings/lockers-numbers",
-                icon: <MdLockOpen />,
-            },
+            // {
+            //     id: 3,
+            //     title: "أرقام اللوكر",
+            //     url: "/settings/lockers-numbers",
+            //     icon: <MdLockOpen />,
+            // },
             {
                 id: 4,
                 title: "الاشتراكات الإضافية",
