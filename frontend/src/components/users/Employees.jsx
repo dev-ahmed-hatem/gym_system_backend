@@ -766,6 +766,8 @@ const Employess = () => {
                         closeDrawer={closeDrawer}
                         setToast={setToast}
                         callBack={() => {
+                            setSearchParam(null);
+                            setPageNumber(null);
                             fetchListData();
                         }}
                     />
@@ -785,11 +787,6 @@ const Employess = () => {
     };
 
     const fetchListData = () => {
-        setSearchParam(null);
-        setPageNumber(null);
-    };
-
-    useEffect(() => {
         const searchURL = `${endpoints.employee_list}${
             searchParam ? `&search=${searchParam}` : ""
         }${pageNumber ? `&page=${pageNumber}` : ""}
@@ -804,6 +801,10 @@ const Employess = () => {
                 setFetchError(fetchError);
                 setLoading(false);
             });
+    };
+
+    useEffect(() => {
+        fetchListData();
     }, [searchParam, pageNumber]);
 
     return (

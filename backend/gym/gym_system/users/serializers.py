@@ -46,30 +46,42 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class NationalitySerializer(serializers.ModelSerializer):
+    url = HyperlinkedIdentityField(view_name='nationality-detail', lookup_field='pk')
     class Meta:
         model = Nationality
         fields = '__all__'
 
 
 class MaritalStatusSerializer(serializers.ModelSerializer):
+    url = HyperlinkedIdentityField(view_name='marital-status-detail', lookup_field='pk')
     class Meta:
         model = MaritalStatus
         fields = '__all__'
 
 
 class EmployeeTypeSerializer(serializers.ModelSerializer):
+    url = HyperlinkedIdentityField(view_name='employee-type-detail', lookup_field='pk')
     class Meta:
         model = EmployeeType
         fields = '__all__'
 
 
 class CitySerializer(serializers.ModelSerializer):
+    url = HyperlinkedIdentityField(view_name='city-detail', lookup_field='pk')
     class Meta:
         model = City
         fields = '__all__'
 
 
-class CityDistrictSerializer(serializers.ModelSerializer):
+class CityDistrictReadSerializer(serializers.ModelSerializer):
+    url = HyperlinkedIdentityField(view_name='city-district-detail', lookup_field='pk')
+    city = CitySerializer(read_only=True)
+    class Meta:
+        model = CityDistrict
+        fields = '__all__'
+
+
+class CityDistrictWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = CityDistrict
         fields = '__all__'
@@ -79,7 +91,7 @@ class EmployeeReadSerializer(serializers.ModelSerializer):
     nationality = NationalitySerializer()
     marital_status = MaritalStatusSerializer()
     city = CitySerializer()
-    district = CityDistrictSerializer()
+    district = CityDistrictReadSerializer()
     added_by = UserSerializer()
     emp_type = EmployeeTypeSerializer()
     url = HyperlinkedIdentityField(view_name='employee-detail', lookup_field='pk')

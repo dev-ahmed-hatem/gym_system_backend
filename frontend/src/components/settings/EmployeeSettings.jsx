@@ -1,7 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import FormGroup from "../groups/FormGroup";
-import { TextInput, Label, Table, Button } from "flowbite-react";
-import { HiLockClosed, HiUser } from "react-icons/hi";
+import {
+    TextInput,
+    Label,
+    Table,
+    Button,
+    Select as FlowbiteSelect,
+} from "flowbite-react";
+import Select from "react-select";
 import Loading from "../groups/Loading";
 import axios from "axios";
 import ViewGroup from "../groups/ViewGroup";
@@ -12,96 +18,101 @@ import { MdEdit, MdDelete } from "react-icons/md";
 import DrawerHeader from "../groups/DrawerHeader";
 import TablePagination from "../groups/TablePagination";
 import endpoints from "../../../config";
-import Select from "react-select";
 
-const ModeratorsForm = ({ setToast, postURL, defaultValues, callBack }) => {
+const EmployeeSettingsForm = ({
+    setToast,
+    postURL,
+    currentSetting,
+    setCurrentSetting,
+    defaultValues,
+    callBack,
+}) => {
     const [post, setPost] = useState(false);
-    const [employeesList, setEmployeesList] = useState(null);
+    const [citiesList, setCitiesList] = useState(null);
     const {
         register,
         handleSubmit,
         trigger,
-        watch,
         formState: { errors },
         setError,
-        clearErrors,
         reset,
         control,
     } = useForm({ defaultValues: defaultValues });
     const formFunction = defaultValues ? "edit" : "add";
     const requestMethod = formFunction == "add" ? axios.post : axios.put;
-    const password = watch("password");
-    const password2 = watch("password2");
 
-    useEffect(() => {
-        if (password2) {
-            if (password !== password2) {
-                setError("password2", {
-                    type: "manual",
-                    message: "كلمة مرور غير متطابقة",
+    const changeCurrentSetting = (event) => {
+        switch (event.target.value) {
+            case "nationality":
+                setCurrentSetting({
+                    value: "nationality",
+                    name: "الجنسية",
+                    list_url: endpoints.nationality_list,
                 });
-            } else {
-                clearErrors("password2");
-            }
+                break;
+            case "marital-status":
+                setCurrentSetting({
+                    value: "marital-status",
+                    name: "الحالة الاجتماعية",
+                    list_url: endpoints.marital_status_list,
+                });
+                break;
+            case "employee-type":
+                setCurrentSetting({
+                    value: "employee-type",
+                    name: "نوع الموظف",
+                    list_url: endpoints.employee_type_list,
+                });
+                break;
+            case "city":
+                setCurrentSetting({
+                    value: "city",
+                    name: "المدينة",
+                    list_url: endpoints.city_list,
+                });
+                break;
+            case "city-district":
+                setCurrentSetting({
+                    value: "city-district",
+                    name: "الحى",
+                    list_url: endpoints.city_district_list,
+                });
+                fetchCities();
+                break;
         }
-    }, [password, password2]);
+    };
 
     const onSubmit = (data) => {
-        data = {
-            user: {
-                username: data.username,
-                password: data.password,
-                password2: data.password2,
-                is_moderator: true,
-            },
-            employee: data.employee.value,
-        };
-        console.log(data);
-
         setPost(true);
+
+        if (currentSetting.value === "city-district") {
+            data.city = data.city.value;
+        }
+
         requestMethod(postURL, data)
             .then((response) => {
                 setPost(false);
                 setToast(
                     formFunction == "add"
-                        ? "تم إضافة مشرف جديد"
-                        : "تم تعديل المشرف"
+                        ? "تم إضافة بند جديد"
+                        : "تم تعديل البند"
                 );
-                reset();
                 callBack();
+                reset();
+                setCurrentSetting(currentSetting);
             })
             .catch((error) => {
                 console.log(error);
-                // handle possible errors
                 if (error.response && error.response.data) {
                     const serverErrors = error.response.data;
-                    if (serverErrors.user?.username) {
+                    for (let field in serverErrors) {
                         const message =
-                            serverErrors.user.username[0].search("exists") == -1
+                            serverErrors[field][0].search("exists") == -1
                                 ? "قيمة غير صالحة"
-                                : "اسم المستخدم موجود سابقا";
-                        setError("username", {
+                                : "القيمة موجودة سابقا";
+                        setError(field, {
                             type: "server",
                             message: message,
-                        });
-                    }
-                    if (
-                        serverErrors.user?.password ||
-                        serverErrors.user?.password2
-                    ) {
-                        setError("password", {
-                            type: "server",
-                            message: "كلمة مرور غير متطابقة",
-                        });
-                        setError("password2", {
-                            type: "server",
-                            message: "كلمة مرور غير متطابقة",
-                        });
-                    }
-                    if (serverErrors.employee) {
-                        setError("employee", {
-                            type: "server",
-                            message: "هذا الموظف لديه حساب مشرف مسبق",
                         });
                     }
                 }
@@ -109,46 +120,104 @@ const ModeratorsForm = ({ setToast, postURL, defaultValues, callBack }) => {
             });
     };
 
-    const fetchEmployees = (search_word) => {
+    const fetchCities = (search_word) => {
         const options = [];
-        const url = `${endpoints.employee_list}page_size=20&ordering=-id${
+        const url = `${endpoints.city_list}page_size=20&ordering=-id${
             search_word ? `&search=${search_word}` : ""
         }`;
 
         axios
             .get(url)
             .then((response) => {
-                response.data.results.map((employee) => {
-                    options.push({ value: employee.id, label: employee.name });
+                response.data.results.map((city) => {
+                    options.push({ value: city.id, label: city.name });
                 });
-                setEmployeesList(options);
+                setCitiesList(options);
             })
             .catch((error) => {
-                setEmployeesList(null);
+                setCitiesList(null);
             });
     };
-
-    useEffect(() => {
-        fetchEmployees();
-    }, []);
 
     return (
         <FormGroup
             onSubmit={handleSubmit(onSubmit)}
-            title={formFunction == "add" ? "إضافة مشرف" : "تعديل مشرف"}
+            title={
+                formFunction == "add"
+                    ? "إضافة اختيارات بنود الموظفين"
+                    : "تعديل بند"
+            }
             buttonTitle={formFunction}
             post={post}
         >
             {formFunction === "add" && (
                 <div className="w-full lg:max-w-md lg:w-[30%]">
                     <div className="mb-2 block">
-                        <Label htmlFor="name" value="اختر موظف :" />
+                        <Label htmlFor="options" value="اختيارات :" />
+                    </div>
+                    <FlowbiteSelect
+                        id="options"
+                        type="select"
+                        color={"primary"}
+                        onChange={changeCurrentSetting}
+                        value={currentSetting.value}
+                    >
+                        <option value={"nationality"} key={0}>
+                            الجنسية
+                        </option>
+                        <option value={"marital-status"} key={1}>
+                            الحالة الاجتماعية
+                        </option>
+                        <option value={"employee-type"} key={2}>
+                            نوع الموظف
+                        </option>
+                        <option value={"city"} key={3}>
+                            المدينة
+                        </option>
+                        <option value={"city-district"} key={4}>
+                            الحي
+                        </option>
+                    </FlowbiteSelect>
+                    {errors.financial_type && (
+                        <p className="error-message">
+                            {errors.financial_type.message}
+                        </p>
+                    )}
+                </div>
+            )}
+
+            <div className="w-full lg:max-w-md lg:w-[30%]">
+                <div className="mb-2 block">
+                    <Label htmlFor="name" value="الاسم :" />
+                </div>
+                <TextInput
+                    id="name"
+                    type="text"
+                    color={errors.name ? "failure" : "primary"}
+                    {...register("name", {
+                        required: "هذا الحقل مطلوب",
+                    })}
+                    onBlur={() => trigger("name")}
+                />
+
+                {errors.name && (
+                    <p className="error-message">{errors.name.message}</p>
+                )}
+            </div>
+
+            {currentSetting.value === "city-district" && (
+                <div className="w-full lg:max-w-md lg:w-[30%]">
+                    <div className="mb-2 block">
+                        <Label
+                            htmlFor="city"
+                            value="اختر المدينة التابع لها :"
+                        />
                     </div>
 
                     <Controller
-                        name="employee"
+                        name="city"
                         control={control}
-                        rules={{ required: "يجب اختيار موظف" }}
+                        rules={{ required: "يجب اختيار مدينة" }}
                         render={({ field }) => (
                             <>
                                 <Select
@@ -156,45 +225,45 @@ const ModeratorsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                                         "لا يوجد نتائج مطابقة"
                                     }
                                     placeholder="بحث ..."
-                                    options={employeesList || []}
-                                    onInputChange={fetchEmployees}
+                                    options={citiesList || []}
+                                    onInputChange={fetchCities}
                                     value={field.value}
                                     onBlur={() => {
-                                        trigger("employee");
+                                        trigger("city");
                                     }}
                                     {...field}
                                     styles={{
                                         control: (base, state) => ({
                                             ...base,
-                                            borderColor: errors.employee
+                                            borderColor: errors.city
                                                 ? "red"
                                                 : base.borderColor,
-                                            color: errors.employee
+                                            color: errors.city
                                                 ? "red"
                                                 : base.color,
                                             "&:hover": {
-                                                borderColor: errors.employee
+                                                borderColor: errors.city
                                                     ? "red"
                                                     : base["&:hover"]
                                                           .borderColor,
                                             },
                                             boxShadow: state.isFocused
-                                                ? errors.employee
+                                                ? errors.city
                                                     ? "0 0 0 1px red"
                                                     : "0 0 0 1px blue"
                                                 : base.boxShadow,
                                         }),
                                         placeholder: (base, state) => ({
                                             ...base,
-                                            color: errors.employee
+                                            color: errors.city
                                                 ? "red"
                                                 : base.color,
                                         }),
                                     }}
                                 ></Select>
-                                {errors.employee && (
+                                {errors.city && (
                                     <p className="error-message">
-                                        {errors.employee.message}
+                                        {errors.city.message}
                                     </p>
                                 )}
                             </>
@@ -202,72 +271,6 @@ const ModeratorsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                     />
                 </div>
             )}
-            <div className="w-full lg:max-w-md lg:w-[30%]">
-                <div className="mb-2 block">
-                    <Label
-                        htmlFor="username"
-                        value="اسم المستخدم : (يستخدم لتسجيل الدخول)"
-                    />
-                </div>
-                <TextInput
-                    id="username"
-                    type="text"
-                    rightIcon={HiUser}
-                    placeholder="اسم المستخدم"
-                    color={errors.username ? "failure" : "primary"}
-                    {...register("username", {
-                        required: "هذا الحقل مطلوب",
-                        pattern: {
-                            value: /^[\w.@+-]+$/,
-                            message: "اسم المستخدم غير مناسب",
-                        },
-                    })}
-                    onBlur={() => trigger("username")}
-                />
-                {errors.username && (
-                    <p className="error-message">{errors.username.message}</p>
-                )}
-            </div>
-            <div className="w-full lg:max-w-md lg:w-[30%]">
-                <div className="mb-2 block">
-                    <Label htmlFor="pass" value="كلمة المرور :" />
-                </div>
-                <TextInput
-                    id="pass"
-                    type="password"
-                    rightIcon={HiLockClosed}
-                    placeholder="كلمة المرور"
-                    color={errors.password ? "failure" : "primary"}
-                    {...register("password", {
-                        required: "هذا الحقل مطلوب",
-                    })}
-                    onBlur={() => trigger("password")}
-                />
-                {errors.password && (
-                    <p className="error-message">{errors.password.message}</p>
-                )}
-            </div>
-            <div className="w-full lg:max-w-md lg:w-[30%]">
-                <div className="mb-2 block">
-                    <Label htmlFor="pass2" value="تأكيد كلمة المرور :" />
-                </div>
-                <TextInput
-                    id="pass2"
-                    type="password"
-                    rightIcon={HiLockClosed}
-                    placeholder="تأكيد كلمة المرور"
-                    color={errors.password2 ? "failure" : "primary"}
-                    {...register("password2", {
-                        required: "هذا الحقل مطلوب",
-                        validate: (value) =>
-                            value === password || "كلمة مرور غير متطابقة",
-                    })}
-                    onBlur={() => trigger("password2")}
-                />
-                {errors.password2 && (
-                    <p className="error-message">{errors.password2.message}</p>
-                )}
-            </div>
 
             <div className="flex flex-wrap max-h-12 min-w-full justify-center">
                 <Button
@@ -282,15 +285,15 @@ const ModeratorsForm = ({ setToast, postURL, defaultValues, callBack }) => {
     );
 };
 
-const ConfirmDelete = ({ user, closeDrawer, setToast, callBack }) => {
+const ConfirmDelete = ({ item, closeDrawer, setToast, callBack }) => {
     const [post, setPost] = useState(false);
 
-    const deleteManager = () => {
+    const deleteItem = () => {
         setPost(true);
         axios
-            .delete(user.url)
+            .delete(item.url)
             .then(() => {
-                setToast("تم حذف المشرف بنجاح");
+                setToast("تم حذف البند بنجاح");
                 callBack();
                 closeDrawer();
             })
@@ -304,8 +307,8 @@ const ConfirmDelete = ({ user, closeDrawer, setToast, callBack }) => {
             className={`wrapper p-4 my-2 bg-white rounded border-t-4 border-primary shadow-lg`}
         >
             <p className="text-base">
-                هل أنت متأكد تريد حذف المشرف:{" "}
-                <span className="font-bold text-red-600">{user.username}</span>
+                هل أنت متأكد تريد حذف البند:{" "}
+                <span className="font-bold text-red-600">{item.name}</span>
             </p>
             <hr className="h-px my-3 bg-gray-200 border-0"></hr>
             <div className="flex flex-wrap max-h-12 min-w-full justify-center">
@@ -322,7 +325,7 @@ const ConfirmDelete = ({ user, closeDrawer, setToast, callBack }) => {
                     type="button"
                     color={"failure"}
                     disabled={post}
-                    onClick={deleteManager}
+                    onClick={deleteItem}
                 >
                     حذف
                 </Button>
@@ -331,8 +334,12 @@ const ConfirmDelete = ({ user, closeDrawer, setToast, callBack }) => {
     );
 };
 
-const Moderators = () => {
+const EmployeeSettings = () => {
     //////////////////////////////// form settings ////////////////////////////////
+    const [currentSetting, setCurrentSetting] = useState({
+        name: "الجنسية",
+        list_url: endpoints.nationality_list,
+    });
 
     //////////////////////////////// drawer settings ////////////////////////////////
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -346,16 +353,18 @@ const Moderators = () => {
     const [searchParam, setSearchParam] = useState(null);
     const [pageNumber, setPageNumber] = useState(1);
 
-    const showDrawer = (drawerFunction, userdata) => {
+    const showDrawer = (drawerFunction, item) => {
         if (drawerFunction == "edit") {
             setDrawerData({
-                title: "تعديل مشرف",
+                title: "تعديل بند",
                 icon: MdEdit,
                 content: (
-                    <ModeratorsForm
+                    <EmployeeSettingsForm
+                        currentSetting={currentSetting}
+                        setCurrentSetting={setCurrentSetting}
                         setToast={setToast}
-                        postURL={userdata.url}
-                        defaultValues={userdata}
+                        postURL={item.url}
+                        defaultValues={item}
                         callBack={() => {
                             fetchListData();
                             closeDrawer();
@@ -365,11 +374,11 @@ const Moderators = () => {
             });
         } else {
             setDrawerData({
-                title: "حذف مشرف",
+                title: "حذف بند",
                 icon: MdDelete,
                 content: (
                     <ConfirmDelete
-                        user={userdata}
+                        item={item}
                         closeDrawer={closeDrawer}
                         setToast={setToast}
                         callBack={() => {
@@ -394,7 +403,7 @@ const Moderators = () => {
     };
 
     const fetchListData = () => {
-        const searchURL = `${endpoints.moderator_list}${
+        const searchURL = `${currentSetting.list_url}${
             searchParam ? `&search=${searchParam}` : ""
         }${pageNumber ? `&page=${pageNumber}` : ""}
         `;
@@ -412,7 +421,7 @@ const Moderators = () => {
 
     useEffect(() => {
         fetchListData();
-    }, [searchParam, pageNumber]);
+    }, [searchParam, pageNumber, currentSetting]);
 
     return (
         <>
@@ -433,14 +442,16 @@ const Moderators = () => {
             )}
 
             {/* add form */}
-            <ModeratorsForm
+            <EmployeeSettingsForm
+                currentSetting={currentSetting}
+                setCurrentSetting={setCurrentSetting}
                 setToast={setToast}
-                postURL={endpoints.moderator_list}
+                postURL={currentSetting.list_url}
                 callBack={fetchListData}
             />
 
             {/* table data */}
-            <ViewGroup title={"المشرفين الحاليين"}>
+            <ViewGroup title={`اختيارات ${currentSetting.name} الحالية`}>
                 {loading ? (
                     <Loading />
                 ) : fetchEror ? (
@@ -464,71 +475,43 @@ const Moderators = () => {
                             ) : (
                                 <>
                                     <Table.Head>
-                                        <Table.HeadCell>
-                                            اسم المشرف
-                                        </Table.HeadCell>
-                                        <Table.HeadCell>
-                                            اسم المستخدم
-                                        </Table.HeadCell>
-                                        <Table.HeadCell>
-                                            رقم الهوية
-                                        </Table.HeadCell>
-                                        <Table.HeadCell>
-                                            رقم الهاتف
-                                        </Table.HeadCell>
+                                        <Table.HeadCell>الاسم</Table.HeadCell>
+                                        {currentSetting.value ===
+                                            "city-district" && (
+                                            <Table.HeadCell>
+                                                المدينة التابع لها
+                                            </Table.HeadCell>
+                                        )}
                                         <Table.HeadCell>إجراءات</Table.HeadCell>
                                     </Table.Head>
                                     <Table.Body>
-                                        {data.results.map((moderator) => {
+                                        {data.results.map((item) => {
                                             return (
                                                 <Table.Row
-                                                    key={moderator.id}
+                                                    key={item.id}
                                                     className="bg-white font-medium text-gray-900"
                                                 >
                                                     <Table.Cell>
-                                                        {moderator.employee
-                                                            .name ? (
-                                                            moderator.employee
-                                                                .name
+                                                        {item.name ? (
+                                                            item.name
                                                         ) : (
                                                             <span className="text-red-600">
                                                                 غير مسجل
                                                             </span>
                                                         )}
                                                     </Table.Cell>
-                                                    <Table.Cell>
-                                                        {moderator.user
-                                                            .username ? (
-                                                            moderator.user
-                                                                .username
-                                                        ) : (
-                                                            <span className="text-red-600">
-                                                                غير مسجل
-                                                            </span>
-                                                        )}
-                                                    </Table.Cell>
-                                                    <Table.Cell>
-                                                        {moderator.employee
-                                                            .national_id ? (
-                                                            moderator.employee
-                                                                .national_id
-                                                        ) : (
-                                                            <span className="text-red-600">
-                                                                غير مسجل
-                                                            </span>
-                                                        )}
-                                                    </Table.Cell>
-                                                    <Table.Cell>
-                                                        {moderator.employee
-                                                            .phone ? (
-                                                            moderator.employee
-                                                                .phone
-                                                        ) : (
-                                                            <span className="text-red-600">
-                                                                غير مسجل
-                                                            </span>
-                                                        )}
-                                                    </Table.Cell>
+                                                    {currentSetting.value ===
+                                                        "city-district" && (
+                                                        <Table.Cell>
+                                                            {item.city?.name ? (
+                                                                item.city.name
+                                                            ) : (
+                                                                <span className="text-red-600">
+                                                                    غير مسجل
+                                                                </span>
+                                                            )}
+                                                        </Table.Cell>
+                                                    )}
                                                     <Table.Cell>
                                                         <span className="flex text-xl gap-x-3">
                                                             <MdEdit
@@ -536,7 +519,7 @@ const Moderators = () => {
                                                                 onClick={() => {
                                                                     showDrawer(
                                                                         "edit",
-                                                                        moderator
+                                                                        item
                                                                     );
                                                                 }}
                                                             />
@@ -545,7 +528,7 @@ const Moderators = () => {
                                                                 onClick={() => {
                                                                     showDrawer(
                                                                         "delete",
-                                                                        moderator
+                                                                        item
                                                                     );
                                                                 }}
                                                             />
@@ -575,4 +558,4 @@ const Moderators = () => {
     );
 };
 
-export default Moderators;
+export default EmployeeSettings;

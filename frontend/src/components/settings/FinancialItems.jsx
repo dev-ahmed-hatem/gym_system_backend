@@ -220,6 +220,8 @@ const FinancialItems = () => {
                         closeDrawer={closeDrawer}
                         setToast={setToast}
                         callBack={() => {
+                            setSearchParam(null);
+                            setPageNumber(null);
                             fetchListData();
                         }}
                     />
@@ -239,11 +241,6 @@ const FinancialItems = () => {
     };
 
     const fetchListData = () => {
-        setSearchParam(null);
-        setPageNumber(null);
-    };
-
-    useEffect(() => {
         const searchURL = `${endpoints.financial_item_list}${
             searchParam ? `&search=${searchParam}` : ""
         }${pageNumber ? `&page=${pageNumber}` : ""}
@@ -258,6 +255,10 @@ const FinancialItems = () => {
                 setFetchError(fetchError);
                 setLoading(false);
             });
+    };
+
+    useEffect(() => {
+        fetchListData();
     }, [searchParam, pageNumber]);
 
     return (

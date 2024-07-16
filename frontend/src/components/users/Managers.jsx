@@ -321,6 +321,8 @@ const Managers = () => {
                         closeDrawer={closeDrawer}
                         setToast={setToast}
                         callBack={() => {
+                            setSearchParam(null);
+                            setPageNumber(null);
                             fetchListData();
                         }}
                     />
@@ -340,11 +342,6 @@ const Managers = () => {
     };
 
     const fetchListData = () => {
-        setSearchParam(null);
-        setPageNumber(null);
-    };
-
-    useEffect(() => {
         const searchURL = `${endpoints.manager_list}${
             searchParam ? `&search=${searchParam}` : ""
         }${pageNumber ? `&page=${pageNumber}` : ""}
@@ -359,6 +356,10 @@ const Managers = () => {
                 setFetchError(fetchError);
                 setLoading(false);
             });
+    };
+
+    useEffect(() => {
+        fetchListData();
     }, [searchParam, pageNumber]);
 
     return (

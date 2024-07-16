@@ -58,25 +58,69 @@ class NationalityViewSet(ModelViewSet):
     queryset = Nationality.objects.all()
     serializer_class = NationalitySerializer
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.query_params.get('search', None)
+        if search:
+            queryset = queryset.filter(name__icontains=search)
+
+        return queryset
+
 
 class MaritalStatusViewSet(ModelViewSet):
     queryset = MaritalStatus.objects.all()
     serializer_class = MaritalStatusSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.query_params.get('search', None)
+        if search:
+            queryset = queryset.filter(name__icontains=search)
+
+        return queryset
 
 
 class EmployeeTypeViewSet(ModelViewSet):
     queryset = EmployeeType.objects.all()
     serializer_class = EmployeeTypeSerializer
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.query_params.get('search', None)
+        if search:
+            queryset = queryset.filter(name__icontains=search)
+
+        return queryset
+
 
 class CityViewSet(ModelViewSet):
     queryset = City.objects.all()
     serializer_class = CitySerializer
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.query_params.get('search', None)
+        if search:
+            queryset = queryset.filter(name__icontains=search)
+
+        return queryset
+
 
 class CityDistrictViewSet(ModelViewSet):
     queryset = CityDistrict.objects.all()
-    serializer_class = CityDistrictSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.query_params.get('search', None)
+        if search:
+            queryset = queryset.filter(name__icontains=search)
+
+        return queryset
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return CityDistrictWriteSerializer
+        return CityDistrictReadSerializer
 
 
 class ModeratorViewSet(ModelViewSet):

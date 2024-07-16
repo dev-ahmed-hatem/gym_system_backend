@@ -8,7 +8,7 @@ class FinancialItem(models.Model):
     )
 
     name = models.CharField(max_length=100)
-    financial_type = models.CharField(max_length=100, choices=TYPE_CHOICES)
+    financial_type = models.CharField(max_length=10, choices=TYPE_CHOICES)
 
     def __str__(self):
         return self.name

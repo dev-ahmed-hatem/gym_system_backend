@@ -208,10 +208,7 @@ const SubscriptionsForm = ({ setToast, postURL, defaultValues, callBack }) => {
             {isDuration && (
                 <div className="w-full lg:max-w-md lg:w-[30%]">
                     <div className="mb-2 block">
-                        <Label
-                            htmlFor="days"
-                            value="مدة الاشتراك : (يوم)"
-                        />
+                        <Label htmlFor="days" value="مدة الاشتراك : (يوم)" />
                     </div>
                     <TextInput
                         id="days"
@@ -226,9 +223,7 @@ const SubscriptionsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                         onBlur={() => trigger("days")}
                     />
                     {errors.days && (
-                        <p className="error-message">
-                            {errors.days.message}
-                        </p>
+                        <p className="error-message">{errors.days.message}</p>
                     )}
                 </div>
             )}
@@ -271,10 +266,7 @@ const SubscriptionsForm = ({ setToast, postURL, defaultValues, callBack }) => {
             </div>
             <div className="w-full flex items-center lg:max-w-md lg:w-[30%] min-h-[70px] lg:pt-5">
                 <div className="mb-2 me-10 hidden">
-                    <Label
-                        htmlFor="freezable"
-                        value="اشتراك قابل للتعليق :"
-                    />
+                    <Label htmlFor="freezable" value="اشتراك قابل للتعليق :" />
                 </div>
                 <ToggleSwitch
                     id="freezable"
@@ -363,7 +355,9 @@ const ConfirmDelete = ({ subscription, closeDrawer, setToast, callBack }) => {
         >
             <p className="text-base">
                 هل أنت متأكد تريد حذف الاشتراك:{" "}
-                <span className="font-bold text-red-600">{subscription.name}</span>
+                <span className="font-bold text-red-600">
+                    {subscription.name}
+                </span>
             </p>
             <hr className="h-px my-3 bg-gray-200 border-0"></hr>
             <div className="flex flex-wrap max-h-12 min-w-full justify-center">
@@ -431,6 +425,8 @@ const Subscriptions = () => {
                         closeDrawer={closeDrawer}
                         setToast={setToast}
                         callBack={() => {
+                            setSearchParam(null);
+                            setPageNumber(null);
                             fetchListData();
                         }}
                     />
@@ -450,11 +446,6 @@ const Subscriptions = () => {
     };
 
     const fetchListData = () => {
-        setSearchParam(null);
-        setPageNumber(null);
-    };
-
-    useEffect(() => {
         const searchURL = `${endpoints.subscription_list}${
             searchParam ? `&search=${searchParam}` : ""
         }${pageNumber ? `&page=${pageNumber}` : ""}
@@ -469,6 +460,10 @@ const Subscriptions = () => {
                 setFetchError(fetchError);
                 setLoading(false);
             });
+    };
+
+    useEffect(() => {
+        fetchListData();
     }, [searchParam, pageNumber]);
 
     return (

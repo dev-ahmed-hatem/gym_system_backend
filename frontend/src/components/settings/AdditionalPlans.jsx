@@ -22,7 +22,12 @@ import { FaMoneyBill } from "react-icons/fa";
 import { TbTimeDuration30 } from "react-icons/tb";
 import { FaCircleStop } from "react-icons/fa6";
 
-const AdditionalPlansForm = ({ setToast, postURL, defaultValues, callBack }) => {
+const AdditionalPlansForm = ({
+    setToast,
+    postURL,
+    defaultValues,
+    callBack,
+}) => {
     const [post, setPost] = useState(false);
     const {
         register,
@@ -317,6 +322,8 @@ const AdditionalPlans = () => {
                         closeDrawer={closeDrawer}
                         setToast={setToast}
                         callBack={() => {
+                            setSearchParam(null);
+                            setPageNumber(null);
                             fetchListData();
                         }}
                     />
@@ -336,11 +343,6 @@ const AdditionalPlans = () => {
     };
 
     const fetchListData = () => {
-        setSearchParam(null);
-        setPageNumber(null);
-    };
-
-    useEffect(() => {
         const searchURL = `${endpoints.additional_plan_list}${
             searchParam ? `&search=${searchParam}` : ""
         }${pageNumber ? `&page=${pageNumber}` : ""}
@@ -355,6 +357,10 @@ const AdditionalPlans = () => {
                 setFetchError(fetchError);
                 setLoading(false);
             });
+    };
+
+    useEffect(() => {
+        fetchListData();
     }, [searchParam, pageNumber]);
 
     return (

@@ -30,6 +30,7 @@ import Subscriptions from "../components/settings/Subscriptions";
 import Lockers from "../components/settings/Lockers";
 import AdditionalPlans from "../components/settings/AdditionalPlans";
 import FinancialItems from "../components/settings/FinancialItems";
+import EmployeeSettings from "../components/settings/EmployeeSettings";
 
 export const routes = [
     {
@@ -112,6 +113,7 @@ export const routes = [
                 title: "الموظفين",
                 url: "/settings/staff",
                 icon: <MdPerson />,
+                element: <EmployeeSettings />
             },
         ],
     },
