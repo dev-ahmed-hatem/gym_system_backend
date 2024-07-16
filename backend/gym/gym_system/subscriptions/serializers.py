@@ -25,6 +25,7 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
 
 
 class LockerPlanSerializer(serializers.ModelSerializer):
+    url = HyperlinkedIdentityField(view_name='locker-plan-detail', lookup_field='pk')
     class Meta:
         model = LockerPlan
         fields = '__all__'

@@ -17,15 +17,17 @@ import {
     MdSecurity,
     MdSubscriptions,
     MdLock,
-    MdLockOpen,
     MdMoneyOff,
     MdAssignment,
     MdReport,
+    MdAddCircle,
 } from "react-icons/md";
 import Managers from "../components/users/Managers";
 import Employees from "../components/users/Employees";
 import Moderators from "../components/users/Moderators";
 import Subscriptions from "../components/settings/Subscriptions";
+import Lockers from "../components/settings/Lockers";
+import { FaUserTie } from "react-icons/fa6";
 
 export const routes = [
     {
@@ -38,7 +40,7 @@ export const routes = [
                 id: 1,
                 title: "المديرين",
                 url: "/users/managers",
-                icon: <MdSupervisorAccount />,
+                icon: <FaUserTie />,
                 element: <Managers />,
             },
             {
@@ -81,6 +83,7 @@ export const routes = [
                 title: "اللوكر",
                 url: "/settings/lockers",
                 icon: <MdLock />,
+                element: <Lockers />,
             },
             // {
             //     id: 3,
@@ -92,7 +95,7 @@ export const routes = [
                 id: 4,
                 title: "الاشتراكات الإضافية",
                 url: "/settings/additional-plans",
-                icon: <MdSubscriptions />,
+                icon: <MdAddCircle />,
             },
             {
                 id: 5,
@@ -206,7 +209,7 @@ export const routes = [
     },
     {
         id: 6,
-        title: "الشؤون المالية",
+        title: "الشئون المالية",
         url: "/financials",
         icon: <FaMoneyBill />,
         children: [

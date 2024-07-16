@@ -19,13 +19,10 @@ import DrawerHeader from "../groups/DrawerHeader";
 import TablePagination from "../groups/TablePagination";
 import endpoints from "../../../config";
 import { FaMoneyBill } from "react-icons/fa";
-import { FcInvite } from "react-icons/fc";
 import { TbTimeDuration30 } from "react-icons/tb";
-import { GiDuration } from "react-icons/gi";
-import { PiNumberEightFill } from "react-icons/pi";
 import { FaCircleStop } from "react-icons/fa6";
 
-const SubscriptionsForm = ({ setToast, postURL, defaultValues, callBack }) => {
+const LockersForm = ({ setToast, postURL, defaultValues, callBack }) => {
     const [post, setPost] = useState(false);
     const {
         register,
@@ -37,12 +34,6 @@ const SubscriptionsForm = ({ setToast, postURL, defaultValues, callBack }) => {
     } = useForm({ defaultValues: defaultValues });
     const formFunction = defaultValues ? "edit" : "add";
     const requestMethod = formFunction == "add" ? axios.post : axios.put;
-    const [forStudents, setForStudents] = useState(
-        formFunction === "edit" ? defaultValues?.for_students : false
-    );
-    const [isDuration, setIsDuration] = useState(
-        formFunction === "edit" ? defaultValues?.is_duration : true
-    );
     const [isFreezable, setIsFreezable] = useState(
         formFunction === "edit" ? defaultValues?.freezable : true
     );
@@ -55,14 +46,9 @@ const SubscriptionsForm = ({ setToast, postURL, defaultValues, callBack }) => {
         }
         data = {
             name: data["name"],
-            invitations: Number(data.invitations),
             price: Number(data.price),
             description: data.description,
-            for_students: forStudents,
-            validity: Number(data.validity),
-            is_duration: isDuration,
-            duration: data.duration ? Number(data.duration) : null,
-            classes_no: data.classes_no ? Number(data.classes_no) : null,
+            days: data.days ? Number(data.days) : null,
             freezable: isFreezable,
             freeze_no: Number(data.freeze_no),
         };
@@ -74,8 +60,8 @@ const SubscriptionsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                 setPost(false);
                 setToast(
                     formFunction == "add"
-                        ? "تم إضافة اشتراك جديد"
-                        : "تم تعديل الاشتراك"
+                        ? "تم إضافة اشتراك لوكر جديد"
+                        : "تم تعديل اشتراك اللوكر"
                 );
                 reset();
                 callBack();
@@ -101,7 +87,11 @@ const SubscriptionsForm = ({ setToast, postURL, defaultValues, callBack }) => {
     return (
         <FormGroup
             onSubmit={handleSubmit(onSubmit)}
-            title={formFunction == "add" ? "إضافة اشتراك" : "تعديل اشتراك"}
+            title={
+                formFunction == "add"
+                    ? "إضافة اشتراك لوكر"
+                    : "تعديل اشتراك لوكر"
+            }
             buttonTitle={formFunction}
             post={post}
         >
@@ -144,137 +134,31 @@ const SubscriptionsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                     <p className="error-message">{errors.price.message}</p>
                 )}
             </div>
+
             <div className="w-full lg:max-w-md lg:w-[30%]">
                 <div className="mb-2 block">
-                    <Label
-                        htmlFor="invitations"
-                        value="عدد الدعوات المتاحة :"
-                    />
+                    <Label htmlFor="days" value="مدة الاشتراك : (يوم)" />
                 </div>
                 <TextInput
-                    id="invitations"
+                    id="days"
                     type="number"
-                    rightIcon={FcInvite}
-                    placeholder="عدد الدعوات المتاحة"
-                    color={errors.invitations ? "failure" : "primary"}
-                    defaultValue={0}
-                    {...register("invitations", {
-                        required: "هذا الحقل مطلوب",
-                    })}
-                    onBlur={() => trigger("invitations")}
-                />
-                {errors.invitations && (
-                    <p className="error-message">
-                        {errors.invitations.message}
-                    </p>
-                )}
-            </div>
-            <div className="w-full lg:max-w-md lg:w-[30%]">
-                <div className="mb-2 block">
-                    <Label
-                        htmlFor="validity"
-                        value="فترة صلاحية الاشتراك : (يوم)"
-                    />
-                </div>
-                <TextInput
-                    id="validity"
-                    type="number"
-                    rightIcon={GiDuration}
-                    placeholder="فترة صلاحية الاشتراك"
-                    color={errors.validity ? "failure" : "primary"}
                     defaultValue={30}
-                    {...register("validity", {
+                    rightIcon={TbTimeDuration30}
+                    placeholder="مدة الاشتراك"
+                    color={errors.days ? "failure" : "primary"}
+                    {...register("days", {
                         required: "هذا الحقل مطلوب",
                     })}
-                    onBlur={() => trigger("validity")}
+                    onBlur={() => trigger("days")}
                 />
-                {errors.validity && (
-                    <p className="error-message">{errors.validity.message}</p>
+                {errors.days && (
+                    <p className="error-message">{errors.days.message}</p>
                 )}
             </div>
+
             <div className="w-full flex items-center lg:max-w-md lg:w-[30%] min-h-[70px] lg:pt-5">
                 <div className="mb-2 me-10 hidden">
-                    <Label htmlFor="for_students" value="اشتراك محدد بفترة :" />
-                </div>
-                <ToggleSwitch
-                    id="for_students"
-                    checked={isDuration}
-                    onChange={setIsDuration}
-                    label="اشتراك محدد بفترة"
-                    sizing={"lg"}
-                    color={"primary"}
-                />
-            </div>
-            {isDuration && (
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label
-                            htmlFor="duration"
-                            value="مدة الاشتراك : (يوم)"
-                        />
-                    </div>
-                    <TextInput
-                        id="duration"
-                        type="number"
-                        defaultValue={30}
-                        rightIcon={TbTimeDuration30}
-                        placeholder="مدة الاشتراك"
-                        color={errors.duration ? "failure" : "primary"}
-                        {...register("duration", {
-                            required: "هذا الحقل مطلوب",
-                        })}
-                        onBlur={() => trigger("duration")}
-                    />
-                    {errors.duration && (
-                        <p className="error-message">
-                            {errors.duration.message}
-                        </p>
-                    )}
-                </div>
-            )}
-            {!isDuration && (
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label htmlFor="classes_no" value="عدد الحصص :" />
-                    </div>
-                    <TextInput
-                        id="classes_no"
-                        type="number"
-                        defaultValue={8}
-                        rightIcon={PiNumberEightFill}
-                        placeholder="عدد الحصص"
-                        color={errors.classes_no ? "failure" : "primary"}
-                        {...register("classes_no", {
-                            required: "هذا الحقل مطلوب",
-                        })}
-                        onBlur={() => trigger("classes_no")}
-                    />
-                    {errors.classes_no && (
-                        <p className="error-message">
-                            {errors.classes_no.message}
-                        </p>
-                    )}
-                </div>
-            )}
-            <div className="w-full flex items-center lg:max-w-md lg:w-[30%] min-h-[70px] lg:pt-5">
-                <div className="mb-2 me-10 hidden">
-                    <Label htmlFor="for_students" value="اشتراك طلاب :" />
-                </div>
-                <ToggleSwitch
-                    id="for_students"
-                    checked={forStudents}
-                    onChange={setForStudents}
-                    label="اشتراك طلاب "
-                    sizing={"lg"}
-                    color={"primary"}
-                />
-            </div>
-            <div className="w-full flex items-center lg:max-w-md lg:w-[30%] min-h-[70px] lg:pt-5">
-                <div className="mb-2 me-10 hidden">
-                    <Label
-                        htmlFor="freezable"
-                        value="اشتراك قابل للتعليق :"
-                    />
+                    <Label htmlFor="freezable" value="اشتراك قابل للتعليق :" />
                 </div>
                 <ToggleSwitch
                     id="freezable"
@@ -343,7 +227,7 @@ const SubscriptionsForm = ({ setToast, postURL, defaultValues, callBack }) => {
 const ConfirmDelete = ({ subscription, closeDrawer, setToast, callBack }) => {
     const [post, setPost] = useState(false);
 
-    const deleteManager = () => {
+    const deleteSubscription = () => {
         setPost(true);
         axios
             .delete(subscription.url)
@@ -363,7 +247,9 @@ const ConfirmDelete = ({ subscription, closeDrawer, setToast, callBack }) => {
         >
             <p className="text-base">
                 هل أنت متأكد تريد حذف الاشتراك:{" "}
-                <span className="font-bold text-red-600">{subscription.name}</span>
+                <span className="font-bold text-red-600">
+                    {subscription.name}
+                </span>
             </p>
             <hr className="h-px my-3 bg-gray-200 border-0"></hr>
             <div className="flex flex-wrap max-h-12 min-w-full justify-center">
@@ -380,7 +266,7 @@ const ConfirmDelete = ({ subscription, closeDrawer, setToast, callBack }) => {
                     type="button"
                     color={"failure"}
                     disabled={post}
-                    onClick={deleteManager}
+                    onClick={deleteSubscription}
                 >
                     حذف
                 </Button>
@@ -389,7 +275,7 @@ const ConfirmDelete = ({ subscription, closeDrawer, setToast, callBack }) => {
     );
 };
 
-const Subscriptions = () => {
+const Lockers = () => {
     //////////////////////////////// form settings ////////////////////////////////
 
     //////////////////////////////// drawer settings ////////////////////////////////
@@ -410,7 +296,7 @@ const Subscriptions = () => {
                 title: "تعديل اشتراك",
                 icon: MdEdit,
                 content: (
-                    <SubscriptionsForm
+                    <LockersForm
                         setToast={setToast}
                         postURL={subscription.url}
                         defaultValues={subscription}
@@ -455,7 +341,7 @@ const Subscriptions = () => {
     };
 
     useEffect(() => {
-        const searchURL = `${endpoints.subscription_list}${
+        const searchURL = `${endpoints.locker_list}${
             searchParam ? `&search=${searchParam}` : ""
         }${pageNumber ? `&page=${pageNumber}` : ""}
         `;
@@ -490,9 +376,9 @@ const Subscriptions = () => {
             )}
 
             {/* add form */}
-            <SubscriptionsForm
+            <LockersForm
                 setToast={setToast}
-                postURL={endpoints.subscription_list}
+                postURL={endpoints.locker_list}
                 callBack={fetchListData}
             />
 
@@ -526,24 +412,18 @@ const Subscriptions = () => {
                                         </Table.HeadCell>
                                         <Table.HeadCell>السعر</Table.HeadCell>
                                         <Table.HeadCell>الفترة</Table.HeadCell>
-                                        <Table.HeadCell>
-                                            الصلاحية
-                                        </Table.HeadCell>
-                                        <Table.HeadCell>
-                                            اشتراك طلاب
-                                        </Table.HeadCell>
                                         <Table.HeadCell>إجراءات</Table.HeadCell>
                                     </Table.Head>
                                     <Table.Body>
-                                        {data.results.map((susbcription) => {
+                                        {data.results.map((subscription) => {
                                             return (
                                                 <Table.Row
-                                                    key={susbcription.id}
+                                                    key={subscription.id}
                                                     className="bg-white font-medium text-gray-900"
                                                 >
                                                     <Table.Cell>
-                                                        {susbcription.name ? (
-                                                            susbcription.name
+                                                        {subscription.name ? (
+                                                            subscription.name
                                                         ) : (
                                                             <span className="text-red-600">
                                                                 غير مسجل
@@ -551,8 +431,8 @@ const Subscriptions = () => {
                                                         )}
                                                     </Table.Cell>
                                                     <Table.Cell>
-                                                        {susbcription.price ? (
-                                                            susbcription.price
+                                                        {subscription.price ? (
+                                                            subscription.price
                                                         ) : (
                                                             <span className="text-red-600">
                                                                 غير مسجل
@@ -560,12 +440,12 @@ const Subscriptions = () => {
                                                         )}
                                                     </Table.Cell>
                                                     <Table.Cell>
-                                                        {susbcription.duration ? (
+                                                        {subscription.days ? (
                                                             <span className="text-sm">
                                                                 {
-                                                                    susbcription.duration
+                                                                    subscription.days
                                                                 }{" "}
-                                                                {susbcription.duration >
+                                                                {subscription.days >
                                                                 9
                                                                     ? "يوم"
                                                                     : "أيام"}
@@ -574,30 +454,6 @@ const Subscriptions = () => {
                                                             <span className="text-red-600">
                                                                 غير مسجل
                                                             </span>
-                                                        )}
-                                                    </Table.Cell>
-                                                    <Table.Cell>
-                                                        {susbcription.validity ? (
-                                                            <span className="text-sm">
-                                                                {
-                                                                    susbcription.validity
-                                                                }{" "}
-                                                                {susbcription.validity >
-                                                                9
-                                                                    ? "يوم"
-                                                                    : "أيام"}
-                                                            </span>
-                                                        ) : (
-                                                            <span className="text-red-600">
-                                                                غير مسجل
-                                                            </span>
-                                                        )}
-                                                    </Table.Cell>
-                                                    <Table.Cell>
-                                                        {susbcription.for_students ? (
-                                                            <span>نعم</span>
-                                                        ) : (
-                                                            <span>لا</span>
                                                         )}
                                                     </Table.Cell>
                                                     <Table.Cell>
@@ -607,7 +463,7 @@ const Subscriptions = () => {
                                                                 onClick={() => {
                                                                     showDrawer(
                                                                         "edit",
-                                                                        susbcription
+                                                                        subscription
                                                                     );
                                                                 }}
                                                             />
@@ -616,7 +472,7 @@ const Subscriptions = () => {
                                                                 onClick={() => {
                                                                     showDrawer(
                                                                         "delete",
-                                                                        susbcription
+                                                                        subscription
                                                                     );
                                                                 }}
                                                             />
@@ -646,4 +502,4 @@ const Subscriptions = () => {
     );
 };
 
-export default Subscriptions;
+export default Lockers;

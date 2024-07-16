@@ -23,9 +23,9 @@ class LockerPlan(models.Model):
     name = models.CharField(max_length=100)
     price = models.FloatField(default=0)
     days = models.IntegerField(default=30)
-    description = models.TextField(default='')
+    description = models.TextField(default='', blank=True, null=True)
     freezable = models.BooleanField(default=False)
-    freezable_no = models.IntegerField(default=7)
+    freeze_no = models.IntegerField(default=7)
 
     def __str__(self):
         return self.name
