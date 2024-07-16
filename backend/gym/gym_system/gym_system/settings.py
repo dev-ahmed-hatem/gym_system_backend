@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     # Registered Apps
     'users',
     'subscriptions',
+    'financials',
 
     # Third Parties
     'rest_framework',

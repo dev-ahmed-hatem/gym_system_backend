@@ -10,7 +10,7 @@ import {
     FaFileAlt,
     FaRegFileAlt,
     FaBirthdayCake,
-    FaUserTie
+    FaUserTie,
 } from "react-icons/fa";
 import {
     MdSupervisorAccount,
@@ -29,6 +29,7 @@ import Moderators from "../components/users/Moderators";
 import Subscriptions from "../components/settings/Subscriptions";
 import Lockers from "../components/settings/Lockers";
 import AdditionalPlans from "../components/settings/AdditionalPlans";
+import FinancialItems from "../components/settings/FinancialItems";
 
 export const routes = [
     {
@@ -97,13 +98,14 @@ export const routes = [
                 title: "الاشتراكات الإضافية",
                 url: "/settings/additional-plans",
                 icon: <MdAddCircle />,
-                element: <AdditionalPlans />
+                element: <AdditionalPlans />,
             },
             {
                 id: 5,
                 title: "بنود المصروفات",
                 url: "/settings/expenses",
                 icon: <FaMoneyBill />,
+                element: <FinancialItems />,
             },
             {
                 id: 6,
