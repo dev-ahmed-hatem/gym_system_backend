@@ -14,6 +14,7 @@ const endpoints = {
     // subscriptions routing
     subscription_list: `${api_base_url}api/subscriptions/subscription-plan/?`,
     locker_list: `${api_base_url}api/subscriptions/locker-plan/?`,
+    additional_plan_list: `${api_base_url}api/subscriptions/additional-plan/?`,
 };
 
 export default endpoints;

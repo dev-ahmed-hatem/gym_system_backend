@@ -45,6 +45,9 @@ __pycache__/
 *.pyd
 *.pdb
 
+# Ignore trash files
+/trash
+
 # Ignore local settings
 backend/local_settings.py
 
