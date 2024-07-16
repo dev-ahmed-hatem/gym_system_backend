@@ -147,8 +147,8 @@ const EmployeeSettingsForm = ({
                     ? "إضافة اختيارات بنود الموظفين"
                     : "تعديل بند"
             }
-            buttonTitle={formFunction}
             post={post}
+            formFunction={formFunction}
         >
             {formFunction === "add" && (
                 <div className="w-full lg:max-w-md lg:w-[30%]">
@@ -271,16 +271,6 @@ const EmployeeSettingsForm = ({
                     />
                 </div>
             )}
-
-            <div className="flex flex-wrap max-h-12 min-w-full justify-center">
-                <Button
-                    type="submit"
-                    color={formFunction == "add" ? "primary" : "accent"}
-                    disabled={post}
-                >
-                    {formFunction == "add" ? "إضافة" : "تعديل"}
-                </Button>
-            </div>
         </FormGroup>
     );
 };

@@ -52,8 +52,6 @@ const LockersForm = ({ setToast, postURL, defaultValues, callBack }) => {
             freezable: isFreezable,
             freeze_no: Number(data.freeze_no),
         };
-        // console.log(data);
-        // return;
 
         requestMethod(postURL, data)
             .then((response) => {
@@ -92,7 +90,7 @@ const LockersForm = ({ setToast, postURL, defaultValues, callBack }) => {
                     ? "إضافة اشتراك لوكر"
                     : "تعديل اشتراك لوكر"
             }
-            buttonTitle={formFunction}
+            formFunction={formFunction}
             post={post}
         >
             <div className="w-full lg:max-w-md lg:w-[30%]">
@@ -209,16 +207,6 @@ const LockersForm = ({ setToast, postURL, defaultValues, callBack }) => {
                         {errors.description.message}
                     </p>
                 )}
-            </div>
-
-            <div className="flex flex-wrap max-h-12 min-w-full justify-center">
-                <Button
-                    type="submit"
-                    color={formFunction == "add" ? "primary" : "accent"}
-                    disabled={post}
-                >
-                    {formFunction == "add" ? "إضافة" : "تعديل"}
-                </Button>
             </div>
         </FormGroup>
     );

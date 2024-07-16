@@ -136,7 +136,7 @@ const ModeratorsForm = ({ setToast, postURL, defaultValues, callBack }) => {
         <FormGroup
             onSubmit={handleSubmit(onSubmit)}
             title={formFunction == "add" ? "إضافة مشرف" : "تعديل مشرف"}
-            buttonTitle={formFunction}
+            formFunction={formFunction}
             post={post}
         >
             {formFunction === "add" && (

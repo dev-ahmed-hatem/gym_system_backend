@@ -63,7 +63,7 @@ const FinancialItemsForm = ({ setToast, postURL, defaultValues, callBack }) => {
         <FormGroup
             onSubmit={handleSubmit(onSubmit)}
             title={formFunction == "add" ? "إضافة بند جديد" : "تعديل بند"}
-            buttonTitle={formFunction}
+            formFunction={formFunction}
             post={post}
         >
             <div className="w-full lg:max-w-md lg:w-[30%]">
@@ -112,16 +112,6 @@ const FinancialItemsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                         {errors.financial_type.message}
                     </p>
                 )}
-            </div>
-
-            <div className="flex flex-wrap max-h-12 min-w-full justify-center">
-                <Button
-                    type="submit"
-                    color={formFunction == "add" ? "primary" : "accent"}
-                    disabled={post}
-                >
-                    {formFunction == "add" ? "إضافة" : "تعديل"}
-                </Button>
             </div>
         </FormGroup>
     );

@@ -182,7 +182,7 @@ const EmployeesForm = ({ setToast, postURL, defaultValues, callBack }) => {
             <FormGroup
                 onSubmit={handleSubmit(onSubmit)}
                 title={formFunction == "add" ? "إضافة موظف" : "تعديل موظف"}
-                buttonTitle={formFunction}
+                formFunction={formFunction}
                 post={post}
             >
                 {loading ? (
@@ -652,22 +652,6 @@ const EmployeesForm = ({ setToast, postURL, defaultValues, callBack }) => {
                                 )}
                             </div>
                         )}
-
-                        <div className="flex flex-wrap max-h-12 min-w-full justify-center">
-                            <div className="flex flex-wrap max-h-12 min-w-full justify-center">
-                                <Button
-                                    type="submit"
-                                    color={
-                                        formFunction == "add"
-                                            ? "primary"
-                                            : "accent"
-                                    }
-                                    disabled={post}
-                                >
-                                    {formFunction == "add" ? "إضافة" : "تعديل"}
-                                </Button>
-                            </div>
-                        </div>
                     </>
                 )}
             </FormGroup>

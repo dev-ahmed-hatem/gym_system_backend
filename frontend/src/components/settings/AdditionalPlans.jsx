@@ -97,8 +97,8 @@ const AdditionalPlansForm = ({
                     ? "إضافة اشتراك إضافى"
                     : "تعديل اشتراك إضافى"
             }
-            buttonTitle={formFunction}
             post={post}
+            formFunction={formFunction}
         >
             <div className="w-full lg:max-w-md lg:w-[30%]">
                 <div className="mb-2 block">
@@ -214,16 +214,6 @@ const AdditionalPlansForm = ({
                         {errors.description.message}
                     </p>
                 )}
-            </div>
-
-            <div className="flex flex-wrap max-h-12 min-w-full justify-center">
-                <Button
-                    type="submit"
-                    color={formFunction == "add" ? "primary" : "accent"}
-                    disabled={post}
-                >
-                    {formFunction == "add" ? "إضافة" : "تعديل"}
-                </Button>
             </div>
         </FormGroup>
     );

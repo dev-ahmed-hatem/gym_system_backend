@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "flowbite-react";
 
-const FormGroup = ({ title, onSubmit, children }) => {
+const FormGroup = ({ title, onSubmit, formFunction, post, children }) => {
     return (
         <>
             {/* Form Group */}
@@ -15,6 +15,18 @@ const FormGroup = ({ title, onSubmit, children }) => {
                     onSubmit={onSubmit}
                 >
                     {children}
+
+                    <div className="flex flex-wrap max-h-12 min-w-full justify-center">
+                        <Button
+                            type="submit"
+                            color={formFunction == "add" ? "primary" : "accent"}
+                            disabled={post}
+                            className="w-32 h-10 flex justify-center items-center"
+                            size={"xl"}
+                        >
+                            {formFunction == "add" ? "إضافة" : "تعديل"}
+                        </Button>
+                    </div>
                 </form>
             </div>
         </>
