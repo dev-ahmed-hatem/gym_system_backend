@@ -51,7 +51,11 @@ const NestedMenuItem = ({ item, setMenuState }) => {
                 } pb overflow-hidden`}
             >
                 {item.children.map((item) => (
-                    <SingleMenuItem item={item} setMenuState={setMenuState} key={item.id} />
+                    <SingleMenuItem
+                        item={item}
+                        setMenuState={setMenuState}
+                        key={item.id}
+                    />
                 ))}
             </div>
         </div>

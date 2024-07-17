@@ -601,7 +601,8 @@ const EmployeesForm = ({ setToast, postURL, defaultValues, callBack }) => {
                                         {employeeOptions.city_district_list
                                             .filter(
                                                 (district) =>
-                                                    district.city == currentCity
+                                                    district.city.id ==
+                                                    currentCity
                                             )
                                             .map((city_district) => (
                                                 <option

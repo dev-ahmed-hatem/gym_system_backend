@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
-
+from rest_framework.permissions import SAFE_METHODS
 from .models import *
 
 

@@ -268,16 +268,6 @@ const ModeratorsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                     <p className="error-message">{errors.password2.message}</p>
                 )}
             </div>
-
-            <div className="flex flex-wrap max-h-12 min-w-full justify-center">
-                <Button
-                    type="submit"
-                    color={formFunction == "add" ? "primary" : "accent"}
-                    disabled={post}
-                >
-                    {formFunction == "add" ? "إضافة" : "تعديل"}
-                </Button>
-            </div>
         </FormGroup>
     );
 };

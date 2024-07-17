@@ -31,7 +31,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_moderator = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
-    # objects = UserManager()
+    objects = UserManager()
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['id_number']
