@@ -7,6 +7,7 @@ import axios from "axios";
 
 const Permissions = () => {
     const [moderatorsList, setModeratorsList] = useState(null);
+    const [currentModerator, setCurrentModerator] = useState(null);
     const defaultPermissions = [
         { id: 1, value: "إضافة", name: "add" },
         { id: 2, value: "تعديل", name: "change" },
@@ -42,6 +43,9 @@ const Permissions = () => {
 
     return (
         <div>
+            <h1 className="font-bold text-2xl text-gray-600 mt-6 mb-3">
+                المشرف
+            </h1>
             <div
                 className={`wrapper p-4 my-8 bg-white rounded border-t-4 border-primary shadow-lg`}
             >
@@ -57,134 +61,148 @@ const Permissions = () => {
                         placeholder="بحث ..."
                         options={moderatorsList || []}
                         onInputChange={fetchModerators}
-                        onBlur={() => {
-                            // trigger("employee");
+                        onChange={(option) => {
+                            setCurrentModerator(option);
                         }}
                     ></Select>
                 </div>
             </div>
 
-            {routes.map((route) => {
-                if (route.permissions == "unadjustable") {
-                    return;
-                }
-                return (
-                    <div
-                        className={`wrapper p-4 my-8 bg-white rounded border-t-4 border-primary shadow-lg`}
-                        key={route.id}
-                    >
-                        <h1 className="font-bold text-text text-lg">
-                            {route.title}
-                        </h1>
-                        <hr className="h-px my-3 bg-gray-200 border-0"></hr>
-                        <div className="permission-groups flex gap-x-32 gap-y-10 flex-wrap">
-                            {route.permissions instanceof Array ? (
-                                <div key={route.id}>
-                                    {route.permissions.map((permission) => (
-                                        <div
-                                            key={permission.id}
-                                            className="ps-5 lg:ps-7 mb-1 text-base"
-                                        >
-                                            <Checkbox
-                                                id={`${permission.name}-${route.name}`}
-                                                className="me-2"
-                                                color={"yellow"}
-                                            />
-                                            <Label
-                                                htmlFor={`${permission.name}-${route.name}`}
-                                                className="text-base"
-                                            >
-                                                {permission.value}
-                                            </Label>
+            {currentModerator && (
+                <>
+                    <h1 className="font-bold text-2xl text-gray-600 mb-3">
+                        الصلاحيات
+                    </h1>
+
+                    {routes.map((route) => {
+                        if (route.permissions == "unadjustable") {
+                            return;
+                        }
+                        return (
+                            <div
+                                className={`wrapper p-4 my-8 bg-white rounded border-t-4 border-primary shadow-lg`}
+                                key={route.id}
+                            >
+                                <h1 className="font-bold text-text text-lg">
+                                    {route.title}
+                                </h1>
+                                <hr className="h-px my-3 bg-gray-200 border-0"></hr>
+                                <div className="permission-groups flex gap-x-32 gap-y-10 flex-wrap">
+                                    {route.permissions instanceof Array ? (
+                                        <div key={route.id}>
+                                            {route.permissions.map(
+                                                (permission) => (
+                                                    <div
+                                                        key={permission.id}
+                                                        className="ps-5 lg:ps-7 mb-1 text-base"
+                                                    >
+                                                        <Checkbox
+                                                            id={`${permission.name}-${route.name}`}
+                                                            className="me-2"
+                                                            color={"yellow"}
+                                                        />
+                                                        <Label
+                                                            htmlFor={`${permission.name}-${route.name}`}
+                                                            className="text-base"
+                                                        >
+                                                            {permission.value}
+                                                        </Label>
+                                                    </div>
+                                                )
+                                            )}
                                         </div>
-                                    ))}
+                                    ) : (
+                                        <>
+                                            {route.children.map((subRoute) => {
+                                                if (
+                                                    subRoute.permissions ==
+                                                    "unadjustable"
+                                                ) {
+                                                    return;
+                                                }
+                                                return (
+                                                    <div
+                                                        className="checkbox-group"
+                                                        key={subRoute.id}
+                                                    >
+                                                        <div className="font-bold mb-2">
+                                                            {subRoute.title}
+                                                        </div>
+                                                        {subRoute.permissions !=
+                                                        null ? (
+                                                            <>
+                                                                {subRoute.permissions.map(
+                                                                    (
+                                                                        permission
+                                                                    ) => (
+                                                                        <div
+                                                                            key={
+                                                                                permission.id
+                                                                            }
+                                                                            className="ps-5 lg:ps-7 mb-1 text-base"
+                                                                        >
+                                                                            <Checkbox
+                                                                                id={`${permission.name}-${subRoute.name}`}
+                                                                                className="me-2"
+                                                                                color={
+                                                                                    "yellow"
+                                                                                }
+                                                                            />
+                                                                            <Label
+                                                                                htmlFor={`${permission.name}-${subRoute.name}`}
+                                                                                className="text-base"
+                                                                            >
+                                                                                {
+                                                                                    permission.value
+                                                                                }
+                                                                            </Label>
+                                                                        </div>
+                                                                    )
+                                                                )}
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                {defaultPermissions.map(
+                                                                    (
+                                                                        permission
+                                                                    ) => (
+                                                                        <div
+                                                                            key={
+                                                                                permission.id
+                                                                            }
+                                                                            className="ps-5 lg:ps-7 mb-1 text-base"
+                                                                        >
+                                                                            <Checkbox
+                                                                                id={`${permission.name}-${subRoute.name}`}
+                                                                                className="me-2"
+                                                                                color={
+                                                                                    "yellow"
+                                                                                }
+                                                                            />
+                                                                            <Label
+                                                                                htmlFor={`${permission.name}-${subRoute.name}`}
+                                                                                className="text-base"
+                                                                            >
+                                                                                {
+                                                                                    permission.value
+                                                                                }
+                                                                            </Label>
+                                                                        </div>
+                                                                    )
+                                                                )}
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
+                                        </>
+                                    )}
                                 </div>
-                            ) : (
-                                <>
-                                    {route.children.map((subRoute) => {
-                                        if (
-                                            subRoute.permissions ==
-                                            "unadjustable"
-                                        ) {
-                                            return;
-                                        }
-                                        return (
-                                            <div
-                                                className="checkbox-group"
-                                                key={subRoute.id}
-                                            >
-                                                <div className="font-bold mb-2">
-                                                    {subRoute.title}
-                                                </div>
-                                                {subRoute.permissions !=
-                                                null ? (
-                                                    <>
-                                                        {subRoute.permissions.map(
-                                                            (permission) => (
-                                                                <div
-                                                                    key={
-                                                                        permission.id
-                                                                    }
-                                                                    className="ps-5 lg:ps-7 mb-1 text-base"
-                                                                >
-                                                                    <Checkbox
-                                                                        id={`${permission.name}-${subRoute.name}`}
-                                                                        className="me-2"
-                                                                        color={
-                                                                            "yellow"
-                                                                        }
-                                                                    />
-                                                                    <Label
-                                                                        htmlFor={`${permission.name}-${subRoute.name}`}
-                                                                        className="text-base"
-                                                                    >
-                                                                        {
-                                                                            permission.value
-                                                                        }
-                                                                    </Label>
-                                                                </div>
-                                                            )
-                                                        )}
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        {defaultPermissions.map(
-                                                            (permission) => (
-                                                                <div
-                                                                    key={
-                                                                        permission.id
-                                                                    }
-                                                                    className="ps-5 lg:ps-7 mb-1 text-base"
-                                                                >
-                                                                    <Checkbox
-                                                                        id={`${permission.name}-${subRoute.name}`}
-                                                                        className="me-2"
-                                                                        color={
-                                                                            "yellow"
-                                                                        }
-                                                                    />
-                                                                    <Label
-                                                                        htmlFor={`${permission.name}-${subRoute.name}`}
-                                                                        className="text-base"
-                                                                    >
-                                                                        {
-                                                                            permission.value
-                                                                        }
-                                                                    </Label>
-                                                                </div>
-                                                            )
-                                                        )}
-                                                    </>
-                                                )}
-                                            </div>
-                                        );
-                                    })}
-                                </>
-                            )}
-                        </div>
-                    </div>
-                );
-            })}
+                            </div>
+                        );
+                    })}
+                </>
+            )}
         </div>
     );
 };

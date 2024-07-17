@@ -1,0 +1,12 @@
+    def get_permissions(self):
+        if self.action == 'list' or self.action == 'retrieve':
+            permission_classes = [CanView]
+        elif self.action == 'create':
+            permission_classes = [CanAdd]
+        elif self.action in ['update', 'partial_update']:
+            permission_classes = [CanEdit]
+        elif self.action == 'destroy':
+            permission_classes = [CanDelete]
+        else:
+            permission_classes = [permissions.IsAuthenticated]  # Default permission
+        return [permission() for permission in permission_classes]
