@@ -338,7 +338,7 @@ const EmployeeSettings = () => {
     //////////////////////////////// list data ////////////////////////////////
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [fetchEror, setFetchError] = useState(null);
+    const [fetchError, setFetchError] = useState(null);
     const [toast, setToast] = useState(null);
     const [searchParam, setSearchParam] = useState(null);
     const [pageNumber, setPageNumber] = useState(1);
@@ -444,7 +444,7 @@ const EmployeeSettings = () => {
             <ViewGroup title={`اختيارات ${currentSetting.name} الحالية`}>
                 {loading ? (
                     <Loading />
-                ) : fetchEror ? (
+                ) : fetchError ? (
                     <p className="text-lg text-center text-red-600 py-4">
                         خطأ في تحميل البيانات
                     </p>
