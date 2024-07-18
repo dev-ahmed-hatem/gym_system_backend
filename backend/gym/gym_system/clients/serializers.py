@@ -2,17 +2,36 @@ from django.utils import timezone
 from rest_framework import serializers
 from .models import *
 from subscriptions.models import SubscriptionPlan
-from users.serializers import EmployeeReadSerializer
+from subscriptions.serializers import SubscriptionPlanSerializer
+from users.serializers import EmployeeReadSerializer, UserSerializer
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='subscription-detail')
+    plan = SubscriptionPlanSerializer()
+    is_current = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Subscription
+        fields = '__all__'
+
+    def get_is_current(self, obj):
+        if obj.end_date:
+            return obj.is_current
+        else:
+            return None
 
 
 class ClientReadSerializer(serializers.ModelSerializer):
     trainer = EmployeeReadSerializer()
+    added_by = UserSerializer()
+    current_subscription = SubscriptionSerializer()
+    subscription_history = SubscriptionSerializer(many=True)
     url = serializers.HyperlinkedIdentityField(view_name='client-detail')
 
     class Meta:
         model = Client
         fields = '__all__'
-
 
 
 class ClientWriteSerializer(serializers.ModelSerializer):
@@ -52,11 +71,3 @@ class ClientWriteSerializer(serializers.ModelSerializer):
             client.save()
 
         return client
-
-
-class SubscriptionSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='subscription-detail')
-
-    class Meta:
-        model = Subscription
-        fields = '__all__'

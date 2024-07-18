@@ -709,7 +709,7 @@ const ConfirmDelete = ({ user, closeDrawer, setToast, callBack }) => {
     );
 };
 
-const Employess = () => {
+const Employees = () => {
     //////////////////////////////// form settings ////////////////////////////////
 
     //////////////////////////////// drawer settings ////////////////////////////////
@@ -957,4 +957,4 @@ const Employess = () => {
     );
 };
 
-export default Employess;
+export default Employees;

@@ -1,18 +1,22 @@
 from django.db import models
-from django.utils.timezone import datetime, now
+from datetime import date
+from django.utils.timezone import now
 
 
 class Subscription(models.Model):
     plan = models.ForeignKey('subscriptions.SubscriptionPlan', on_delete=models.CASCADE, null=True)
     client = models.ForeignKey('clients.Client', on_delete=models.CASCADE, null=True)
-    start_date = models.DateField(default=now)
+    start_date = models.DateField(default=date.today)
     end_date = models.DateField(blank=True, null=True)
 
     is_active = models.BooleanField(default=True)
 
+    class Meta:
+        ordering = ('-start_date',)
+
     @property
     def is_current(self):
-        return self.end_date >= datetime.now()
+        return self.end_date >= now().date()
 
     def __str__(self):
         return f"{self.client.name} - {self.plan.name}"
@@ -35,6 +39,7 @@ class Client(models.Model):
     address = models.TextField(blank=True, null=True)
     photo = models.ImageField(upload_to='photos/', blank=True, null=True)
     added_by = models.ForeignKey('users.User', on_delete=models.SET_NULL, null=True, blank=True, default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     trainer = models.ForeignKey('users.Employee', on_delete=models.SET_NULL, blank=True, null=True)
     current_subscription = models.OneToOneField(Subscription, on_delete=models.SET_NULL, blank=True, null=True,

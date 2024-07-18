@@ -38,6 +38,7 @@ import EmployeeSettings from "../components/settings/EmployeeSettings";
 import Clients from "../components/clients/Clients";
 import { GiMoneyStack, GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import Blocklist from "../components/clients/Blocklist";
+import Search from "../components/clients/Search";
 
 export const routes = [
     {
@@ -171,6 +172,7 @@ export const routes = [
                 url: "/clients/search",
                 icon: <FaSearch />,
                 permissions: "unadjustable",
+                element: <Search />,
             },
             {
                 id: 4,
