@@ -45,7 +45,7 @@ const ClientsForm = ({ setToast, postURL, defaultValues, callBack }) => {
         control,
     } = useForm({ defaultValues });
     const formFunction = defaultValues ? "edit" : "add";
-    const requestMethod = formFunction == "add" ? axios.post : axios.put;
+    const requestMethod = formFunction == "add" ? axios.post : axios.patch;
 
     const calculateAge = (birth) => {
         const date = new Date(birth);
