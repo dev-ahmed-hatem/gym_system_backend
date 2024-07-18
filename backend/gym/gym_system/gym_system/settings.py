@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'users',
     'subscriptions',
     'financials',
+    'clients',
 
     # Third Parties
     'rest_framework',

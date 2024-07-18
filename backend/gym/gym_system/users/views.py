@@ -38,6 +38,7 @@ class EmployeeViewSet(ModelViewSet):
     def get_queryset(self):
         queryset = super(EmployeeViewSet, self).get_queryset()
         search_query = self.request.query_params.get('search', None)
+        is_trainer_param = self.request.query_params.get('trainer', None)
 
         if search_query:
             queryset = queryset.filter(

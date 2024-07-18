@@ -15,7 +15,12 @@ const endpoints = {
     subscription_list: `${api_base_url}api/subscriptions/subscription-plan/?`,
     locker_list: `${api_base_url}api/subscriptions/locker-plan/?`,
     additional_plan_list: `${api_base_url}api/subscriptions/additional-plan/?`,
+
+    // financials routing
     financial_item_list: `${api_base_url}api/financials/financial-item/?`,
+
+    // clients routing
+    client_list: `${api_base_url}api/clients/client/?`,
 };
 
 export default endpoints;

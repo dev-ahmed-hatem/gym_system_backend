@@ -35,6 +35,7 @@ import Lockers from "../components/settings/Lockers";
 import AdditionalPlans from "../components/settings/AdditionalPlans";
 import FinancialItems from "../components/settings/FinancialItems";
 import EmployeeSettings from "../components/settings/EmployeeSettings";
+import Clients from "../components/clients/Clients";
 
 export const routes = [
     {
@@ -150,6 +151,7 @@ export const routes = [
                 name: "add-client",
                 url: "/clients/add",
                 icon: <FaUserPlus />,
+                element: <Clients />,
             },
             {
                 id: 2,

@@ -828,7 +828,8 @@ const Employess = () => {
                 ) : (
                     <>
                         <TableGroup
-                            onChange={(event) => {
+                                onChange={(event) => {
+                                setPageNumber(1)
                                 setSearchParam(event.target.value);
                             }}
                         >
