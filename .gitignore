@@ -50,6 +50,7 @@ __pycache__/
 
 # Ignore local settings
 backend/local_settings.py
+*.env
 
 # Ignore static files and media files
 backend/**/static/
