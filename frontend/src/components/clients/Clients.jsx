@@ -32,14 +32,6 @@ const ClientsForm = ({ setToast, postURL, defaultValues, callBack }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [trainersList, setTrainersList] = useState(null);
     const [subscriptionsList, setSubscriptionsList] = useState(null);
-    const [defaultSelectValue, setDefaultSelectValue] = useState(
-        defaultValues
-            ? {
-                  value: defaultValues?.trainer?.id,
-                  label: defaultValues?.trainer?.name,
-              }
-            : null
-    );
 
     const {
         register,
@@ -69,10 +61,10 @@ const ClientsForm = ({ setToast, postURL, defaultValues, callBack }) => {
             monthDifference < 0 ||
             (monthDifference === 0 && dayDifference < 0)
         ) {
-            employeeAge--;
+            clientAge--;
         }
 
-        setAge(employeeAge);
+        setAge(clientAge);
     };
 
     const fetchTrainers = (search_word) => {
@@ -86,7 +78,14 @@ const ClientsForm = ({ setToast, postURL, defaultValues, callBack }) => {
             .then((response) => {
                 options.push({ value: 0, label: "بدون مدرب" });
                 response.data.results.map((trainer) => {
-                    options.push({ value: trainer.id, label: trainer.name });
+                    options.push({
+                        value: trainer.id,
+                        label: `${trainer.name} ${
+                            trainer?.emp_type?.name
+                                ? `(${trainer.emp_type.name})`
+                                : ""
+                        }`,
+                    });
                 });
                 setTrainersList(options);
             })
@@ -186,13 +185,6 @@ const ClientsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                 }
             });
     };
-
-    useEffect(() => {
-        console.log({
-            value: defaultValues?.trainer?.id,
-            label: defaultValues?.trainer?.name,
-        });
-    }, [defaultValues]);
 
     return (
         <>

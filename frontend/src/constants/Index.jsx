@@ -36,6 +36,8 @@ import AdditionalPlans from "../components/settings/AdditionalPlans";
 import FinancialItems from "../components/settings/FinancialItems";
 import EmployeeSettings from "../components/settings/EmployeeSettings";
 import Clients from "../components/clients/Clients";
+import { GiMoneyStack, GiPayMoney, GiReceiveMoney } from "react-icons/gi";
+import Blocklist from "../components/clients/Blocklist";
 
 export const routes = [
     {
@@ -160,6 +162,7 @@ export const routes = [
                 url: "/clients/block",
                 icon: <FaUserSlash />,
                 permissions: "unadjustable",
+                element: <Blocklist />,
             },
             {
                 id: 3,
@@ -295,14 +298,21 @@ export const routes = [
                 title: "الإيرادات",
                 name: "incomes",
                 url: "/financials/incomes",
-                icon: <FaMoneyBill />,
+                icon: <GiReceiveMoney />,
             },
             {
                 id: 2,
                 title: "المصروفات",
                 name: "expenses",
                 url: "/financials/expenses",
-                icon: <FaMoneyBill />,
+                icon: <GiPayMoney />,
+            },
+            {
+                id: 3,
+                title: "المرتبات",
+                name: "salaries",
+                url: "/financials/salaries",
+                icon: <GiMoneyStack />,
             },
         ],
     },
