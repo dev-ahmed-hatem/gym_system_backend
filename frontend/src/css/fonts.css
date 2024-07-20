@@ -2,5 +2,5 @@
     font-family: 'cairo';
     font-style: normal;
     font-weight: 100 900; /* Supports weights from 100 to 900 */
-    src: url('/fonts/cairo/Cairo-Variable.ttf') format('ttf');
+    src: url('/fonts/cairo/Cairo-Variable.ttf');
   }
