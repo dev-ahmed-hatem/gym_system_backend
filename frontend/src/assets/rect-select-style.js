@@ -2,16 +2,10 @@ const style = (error) => {
     return {
         control: (base, state) => ({
             ...base,
-            borderColor: error
-                ? "#ff0000"
-                : "#9ca3af",
-            color: error
-                ? "#ff0000"
-                : base.color,
+            borderColor: error ? "#ff0000" : "#9ca3af",
+            color: error ? "#ff0000" : base.color,
             "&:hover": {
-                borderColor: error
-                    ? "#ff0000"
-                    : "#1976d2",
+                borderColor: error ? "#ff0000" : "#1976d2",
             },
             boxShadow: state.isFocused
                 ? error
@@ -21,11 +15,9 @@ const style = (error) => {
         }),
         placeholder: (base, state) => ({
             ...base,
-            color: error
-                ? "#ff0000"
-                : base.color,
+            color: error ? "#ff0000" : base.color,
         }),
-    }
-}
+    };
+};
 
 export default style;
