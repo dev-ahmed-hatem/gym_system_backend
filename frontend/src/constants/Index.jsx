@@ -41,6 +41,7 @@ import Blocklist from "../components/clients/Blocklist";
 import Search from "../components/clients/Search";
 import { BiSolidCategory } from "react-icons/bi";
 import ProductCategories from "../components/settings/ProductCategories";
+import Products from "../components/shop/Products";
 
 export const routes = [
     {
@@ -63,7 +64,7 @@ export const routes = [
                 id: 2,
                 title: "الموظفين",
                 name: "staff",
-                url: "/users/staff",
+                url: "/users/employees",
                 icon: <MdPerson />,
                 element: <Employees />,
             },
@@ -280,6 +281,7 @@ export const routes = [
                 name: "products",
                 url: "/store/products",
                 icon: <RiShoppingBag3Fill />,
+                element: <Products />
             },
             {
                 id: 2,
