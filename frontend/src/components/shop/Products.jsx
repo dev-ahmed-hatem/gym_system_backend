@@ -21,6 +21,7 @@ import {
     MdInventory,
 } from "react-icons/md";
 import DrawerHeader from "../groups/DrawerHeader";
+import CustomFileInput from "../groups/CustomFileInput";
 import TablePagination from "../groups/TablePagination";
 import endpoints from "../../../config";
 import { FaMoneyBill } from "react-icons/fa";
@@ -28,6 +29,7 @@ import { FaMoneyBill } from "react-icons/fa";
 const ProductsForm = ({ setToast, postURL, defaultValues, callBack }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [fetchError, setFetchError] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
     const [post, setPost] = useState(false);
     const {
         register,
@@ -36,6 +38,7 @@ const ProductsForm = ({ setToast, postURL, defaultValues, callBack }) => {
         formState: { errors },
         setError,
         reset,
+        setValue,
     } = useForm({
         defaultValues: defaultValues
             ? { ...defaultValues, category: defaultValues?.category?.id }
@@ -43,7 +46,7 @@ const ProductsForm = ({ setToast, postURL, defaultValues, callBack }) => {
     });
     const formFunction = defaultValues ? "edit" : "add";
     const requestMethod = formFunction == "add" ? axios.post : axios.patch;
-    const [categories, setCategories] = useState(null); 
+    const [categories, setCategories] = useState(null);
 
     const fetchCategories = () => {
         axios
@@ -66,6 +69,12 @@ const ProductsForm = ({ setToast, postURL, defaultValues, callBack }) => {
 
     const onSubmit = (data) => {
         setPost(true);
+
+        // check whether photo is a valid
+        if (!(data["photo"] instanceof File)) {
+            delete data["photo"];
+        }
+        
         data = {
             ...data,
             price: Number(data.price),
@@ -75,7 +84,11 @@ const ProductsForm = ({ setToast, postURL, defaultValues, callBack }) => {
         // console.log(data);
         // return;
 
-        requestMethod(postURL, data)
+        requestMethod(postURL, data, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        })
             .then((response) => {
                 setPost(false);
                 setToast(
@@ -228,6 +241,41 @@ const ProductsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                             </p>
                         )}
                     </div>
+
+                    <div className="w-full lg:max-w-md lg:w-[30%]">
+                        <div className="mb-2 block">
+                            <Label htmlFor="image" value="الصورة :" />
+                        </div>
+                        <CustomFileInput
+                            register={register}
+                            setValue={setValue}
+                            name={"image"}
+                            error={errors.image ? "صورة غير صالحة" : null}
+                            selectedFile={selectedFile}
+                            setSelectedFile={setSelectedFile}
+                            onBlur={() => {
+                                trigger("image");
+                            }}
+                        />
+                    </div>
+
+                    {formFunction === "edit" && (
+                        <div className="w-full lg:max-w-md lg:w-[30%]">
+                            <div className="mb-2 block">
+                                <Label value="الصورة الحالية :" />
+                            </div>
+                            {defaultValues?.image ? (
+                                <img
+                                    src={defaultValues.image}
+                                    width={100}
+                                    height={100}
+                                    alt=""
+                                />
+                            ) : (
+                                <p className="error-message">لا توجد صورة</p>
+                            )}
+                        </div>
+                    )}
                 </>
             )}
         </FormGroup>
