@@ -21,6 +21,9 @@ const endpoints = {
 
     // clients routing
     client_list: `${api_base_url}api/clients/client/?`,
+
+    // shop routing
+    product_category_list: `${api_base_url}api/shop/product-category/?`,
 };
 
 export default endpoints;

@@ -4,12 +4,14 @@ from clients.serializers import ClientReadSerializer
 
 
 class ProductCategorySerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='product-category-detail', lookup_field='pk')
     class Meta:
         model = ProductCategory
         fields = '__all__'
 
 
 class ProductReadSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='product-detail', lookup_field='pk')
     category = ProductCategorySerializer()
 
     class Meta:

@@ -81,9 +81,6 @@ const Search = () => {
                                         <Table.HeadCell>
                                             كود العميل
                                         </Table.HeadCell>
-                                        <Table.HeadCell>
-                                            رقم الهوية
-                                        </Table.HeadCell>
                                         <Table.HeadCell></Table.HeadCell>
                                     </Table.Head>
                                     <Table.Body>
@@ -105,15 +102,6 @@ const Search = () => {
                                                     <Table.Cell>
                                                         {client.id ? (
                                                             client.id
-                                                        ) : (
-                                                            <span className="text-red-600">
-                                                                غير مسجل
-                                                            </span>
-                                                        )}
-                                                    </Table.Cell>
-                                                    <Table.Cell>
-                                                        {client.national_id ? (
-                                                            client.national_id
                                                         ) : (
                                                             <span className="text-red-600">
                                                                 غير مسجل
@@ -203,6 +191,26 @@ const Search = () => {
                                             <img
                                                 src={currentClient.barcode}
                                                 // className="w-72"
+                                            />
+                                        ) : (
+                                            <span className="text-secondary">
+                                                لا توجد صورة حالية
+                                            </span>
+                                        )}
+                                    </span>
+                                </Table.Cell>
+                            </Table.Row>
+                            {/* qrocde */}
+                            <Table.Row>
+                                <Table.Cell>
+                                    <span className="me-3">ال qr : </span>
+                                </Table.Cell>
+                                <Table.Cell>
+                                    <span>
+                                        {currentClient?.qr_code ? (
+                                            <img
+                                                src={currentClient.qr_code}
+                                                className="w-64"
                                             />
                                         ) : (
                                             <span className="text-secondary">
@@ -476,7 +484,7 @@ const Search = () => {
                             {currentClient.subscription_history.map((sub) => (
                                 <div
                                     key={sub.id}
-                                    className="border-2 flex flex-col gap-y-6 border-primary rounded-lg max-w-lg min-w-96 p-4 relative"
+                                    className="border-2 flex flex-col gap-y-6 border-primary rounded-lg w-full lg:max-w-lg lg:min-w-96 p-4 relative"
                                 >
                                     <p>{sub.plan.name}</p>
                                     <p>تاريخ البداية: {sub.start_date}</p>

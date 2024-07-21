@@ -39,6 +39,8 @@ import Clients from "../components/clients/Clients";
 import { GiMoneyStack, GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import Blocklist from "../components/clients/Blocklist";
 import Search from "../components/clients/Search";
+import { BiSolidCategory } from "react-icons/bi";
+import ProductCategories from "../components/settings/ProductCategories";
 
 export const routes = [
     {
@@ -95,6 +97,14 @@ export const routes = [
         children: [
             {
                 id: 1,
+                title: "الموظفين",
+                name: "staff-settings",
+                url: "/settings/staff",
+                icon: <MdPerson />,
+                element: <EmployeeSettings />,
+            },
+            {
+                id: 2,
                 title: "الاشتراكات",
                 name: "plans",
                 url: "/settings/plans",
@@ -102,21 +112,15 @@ export const routes = [
                 element: <Subscriptions />,
             },
             {
-                id: 2,
+                id: 3,
                 title: "اللوكر",
                 name: "lockers",
                 url: "/settings/lockers",
                 icon: <MdLock />,
                 element: <Lockers />,
             },
-            // {
-            //     id: 3,
-            //     title: "أرقام اللوكر",
-            //     url: "/settings/lockers-numbers",
-            //     icon: <MdLockOpen />,
-            // },
             {
-                id: 3,
+                id: 4,
                 title: "الاشتراكات الإضافية",
                 name: "additional-plans",
                 url: "/settings/additional-plans",
@@ -124,20 +128,19 @@ export const routes = [
                 element: <AdditionalPlans />,
             },
             {
-                id: 4,
+                id: 5,
+                title: "فئات المنتجات",
+                url: "/settings/product-categories",
+                icon: <BiSolidCategory />,
+                element: <ProductCategories />,
+            },
+            {
+                id: 6,
                 title: "بنود المصروفات",
                 name: "expenses-items",
                 url: "/settings/expenses",
                 icon: <FaMoneyBill />,
                 element: <FinancialItems />,
-            },
-            {
-                id: 5,
-                title: "الموظفين",
-                name: "staff-settings",
-                url: "/settings/staff",
-                icon: <MdPerson />,
-                element: <EmployeeSettings />,
             },
         ],
     },
