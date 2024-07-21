@@ -4,7 +4,7 @@ import { FaHome } from "react-icons/fa";
 
 const Section = ({ item }) => {
     return (
-        <div className="wrapper py-6 lg:py-8 px-8 lg:px-12">
+        <div className="wrapper py-6 lg:py-8 px-2 lg:px-12">
 
             {/* Section Title */}
             <h1 className="font-bold text-2xl text-gray-600 mb-6">{item.title}:</h1>

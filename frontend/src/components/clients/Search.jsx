@@ -167,6 +167,9 @@ const Search = () => {
                 >
                     <h1 className="font-bold text-text text-lg">بيانات عميل</h1>
                     <hr className="h-px my-3 bg-gray-200 border-0"></hr>
+                    <div className="table-wrapper overflow-x-auto">
+
+                    
                     <Table className="text-right text-lg">
                         <Table.Body>
                             {/* photo */}
@@ -180,6 +183,26 @@ const Search = () => {
                                             <img
                                                 src={currentClient.photo}
                                                 className="w-72"
+                                            />
+                                        ) : (
+                                            <span className="text-secondary">
+                                                لا توجد صورة حالية
+                                            </span>
+                                        )}
+                                    </span>
+                                </Table.Cell>
+                            </Table.Row>
+                            {/* barocde */}
+                            <Table.Row>
+                                <Table.Cell>
+                                    <span className="me-3">الباركود : </span>
+                                </Table.Cell>
+                                <Table.Cell>
+                                    <span>
+                                        {currentClient?.barcode ? (
+                                            <img
+                                                src={currentClient.barcode}
+                                                // className="w-72"
                                             />
                                         ) : (
                                             <span className="text-secondary">
@@ -436,6 +459,7 @@ const Search = () => {
                         </Table.Body>
                     </Table>
                 </div>
+                </div>
             )}
 
             {/* client subscriptions */}
@@ -450,7 +474,10 @@ const Search = () => {
                     {currentClient.subscription_history.length !== 0 ? (
                         <div className="subscriptions-wrapper flex gap-6 flex-wrap">
                             {currentClient.subscription_history.map((sub) => (
-                                <div className="border-2 flex flex-col gap-y-6 border-primary rounded-lg max-w-lg min-w-96 p-4 relative">
+                                <div
+                                    key={sub.id}
+                                    className="border-2 flex flex-col gap-y-6 border-primary rounded-lg max-w-lg min-w-96 p-4 relative"
+                                >
                                     <p>{sub.plan.name}</p>
                                     <p>تاريخ البداية: {sub.start_date}</p>
                                     <p>تاريخ النهاية: {sub.end_date}</p>

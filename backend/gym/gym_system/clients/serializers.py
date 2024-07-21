@@ -4,6 +4,7 @@ from .models import *
 from subscriptions.models import SubscriptionPlan
 from subscriptions.serializers import SubscriptionPlanSerializer
 from users.serializers import EmployeeReadSerializer, UserSerializer
+from django.conf import settings
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
@@ -28,15 +29,27 @@ class ClientReadSerializer(serializers.ModelSerializer):
     current_subscription = SubscriptionSerializer()
     subscription_history = SubscriptionSerializer(many=True)
     url = serializers.HyperlinkedIdentityField(view_name='client-detail')
+    qr_code = serializers.SerializerMethodField(read_only=True)
+    barcode = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Client
         fields = '__all__'
 
+    def get_qr_code(self, obj):
+        qr_code = self.context['request'].build_absolute_uri(f"{settings.MEDIA_URL}{obj.qr_code}")
+        return qr_code
+
+    def get_barcode(self, obj):
+        barcode = self.context['request'].build_absolute_uri(f"{settings.MEDIA_URL}{obj.barcode}")
+        return barcode
+
 
 class ClientWriteSerializer(serializers.ModelSerializer):
     subscription_plan = serializers.CharField(write_only=True, required=False)
     start_date = serializers.CharField(write_only=True, required=False)
+    qr_code = serializers.CharField(read_only=True)
+    barcode = serializers.CharField(read_only=True)
 
     class Meta:
         model = Client

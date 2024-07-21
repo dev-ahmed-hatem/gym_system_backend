@@ -4,9 +4,9 @@ import { SlCalculator } from "react-icons/sl";
 // Pagination
 theme.pagination.base += "font-bold";
 theme.pagination.pages.next.base =
-    "rounded-l-lg border border-gray-300 bg-white px-3 py-2 leading-tight enabled:hover:border-primary enabled:hover:text-primary";
+    "w-15 h-10 rounded-l-lg border border-gray-300 bg-white lg:px-3 lg:py-2 text-sm lg:text-base leading-tight enabled:hover:border-primary enabled:hover:text-primary";
 theme.pagination.pages.previous.base =
-    "ml-0 rounded-r-lg border border-gray-300 bg-white px-3 py-2 leading-tight enabled:hover:border-primary enabled:hover:text-primary";
+    "ml-0 w-15 h-10 rounded-r-lg border border-gray-300 bg-white lg:px-3 lg:py-2 text-sm lg:text-base leading-tight enabled:hover:border-primary enabled:hover:text-primary";
 theme.pagination.pages.selector.active =
     "bg-primary text-white hover:bg-primary hover:text-white font-bold";
 theme.pagination.pages.selector.base =

@@ -4,6 +4,7 @@ from os.path import join
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-k@vh#dx&%l962#oyj34w3^+#47f^burd%4x26ak2(h=lxs(s2i'
+FERNET_KEY = 'RWqdn6hhVjsKBqvuzDo7Z16uhI-oXElWn1W0nfipo6E='
 
 DEBUG = True
 
@@ -24,6 +25,7 @@ INSTALLED_APPS = [
     'subscriptions',
     'financials',
     'clients',
+    'shop',
 
     # Third Parties
     'rest_framework',
@@ -116,7 +118,7 @@ AUTH_USER_MODEL = 'users.User'
 # restframework setting
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.custom_pagination.CustomPagination',
-    'PAGE_SIZE': 5,
+    'PAGE_SIZE': 10,
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.OrderingFilter',

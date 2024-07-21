@@ -1,6 +1,13 @@
 from django.db import models
 from datetime import date
 from django.utils.timezone import now
+from django.conf import settings
+import qrcode
+from barcode import get_barcode_class, writer
+from io import BytesIO
+from django.core.files.base import File
+from cryptography.fernet import Fernet
+from random import randint
 
 
 class Subscription(models.Model):
@@ -40,6 +47,8 @@ class Client(models.Model):
     photo = models.ImageField(upload_to='photos/', blank=True, null=True)
     added_by = models.ForeignKey('users.User', on_delete=models.SET_NULL, null=True, blank=True, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
+    qr_code = models.ImageField(upload_to='qr_codes', blank=True, null=True)
+    barcode = models.ImageField(upload_to='barcodes', blank=True, null=True)
 
     trainer = models.ForeignKey('users.Employee', on_delete=models.SET_NULL, blank=True, null=True)
     current_subscription = models.OneToOneField(Subscription, on_delete=models.SET_NULL, blank=True, null=True,
@@ -53,3 +62,56 @@ class Client(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.qr_code:
+            self.generate_qr_code()
+        if not self.barcode:
+            self.generate_barcode()
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if self.qr_code:
+            if os.path.isfile(self.qr_code.path):
+                os.remove(self.qr_code.path)
+        if self.barcode:
+            if os.path.isfile(self.barcode.path):
+                os.remove(self.barcode.path)
+        super().delete(*args, **kwargs)
+
+    def generate_qr_code(self):
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(self.encrypt_id)
+        qr.make(fit=True)
+        img = qr.make_image(fill='black', back_color='white')
+
+        buffer = BytesIO()
+        img.save(buffer, 'png')
+        self.qr_code.save(f"{self.id}_{self.name}_qr.png", File(buffer), save=False)
+        buffer.close()
+
+    def generate_barcode(self):
+        barcode_class = get_barcode_class('code128')
+        img = barcode_class(str(self.id).zfill(5), writer=writer.ImageWriter())
+
+        buffer = BytesIO()
+        img.write(buffer)
+        self.barcode.save(f"{self.id}_{self.name}_bar.png", File(buffer), save=False)
+        buffer.close()
+
+    @property
+    def encrypt_id(self):
+        fernet = Fernet(settings.FERNET_KEY.encode())
+        encrypted_data = fernet.encrypt(str(self.id).encode())
+        return encrypted_data.decode()
+
+    @property
+    def decrypt_id(self):
+        fernet = Fernet(settings.FERNET_KEY.encode())
+        decrypted_data = fernet.decrypt(self.encrypt_id.encode())
+        return decrypted_data.decode()
