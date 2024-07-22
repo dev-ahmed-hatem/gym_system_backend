@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "flowbite-react";
+import { AiOutlineLoading } from "react-icons/ai";
 
 const FormGroup = ({ title, onSubmit, formFunction, post, children }) => {
     return (
@@ -23,6 +24,10 @@ const FormGroup = ({ title, onSubmit, formFunction, post, children }) => {
                             disabled={post}
                             className="w-32 h-10 flex justify-center items-center"
                             size={"xl"}
+                            isProcessing={post}
+                            processingSpinner={
+                                <AiOutlineLoading className="h-6 w-6 animate-spin" />
+                            }
                         >
                             {formFunction == "add" ? "إضافة" : "تعديل"}
                         </Button>
