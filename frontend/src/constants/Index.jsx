@@ -42,6 +42,7 @@ import Search from "../components/clients/Search";
 import { BiSolidCategory } from "react-icons/bi";
 import ProductCategories from "../components/settings/ProductCategories";
 import Products from "../components/shop/Products";
+import Transaction from "../components/financials/Transaction";
 
 export const routes = [
     {
@@ -137,7 +138,7 @@ export const routes = [
             },
             {
                 id: 6,
-                title: "بنود المصروفات",
+                title: "البنود المالية",
                 name: "expenses-items",
                 url: "/settings/expenses",
                 icon: <FaMoneyBill />,
@@ -281,7 +282,7 @@ export const routes = [
                 name: "products",
                 url: "/store/products",
                 icon: <RiShoppingBag3Fill />,
-                element: <Products />
+                element: <Products />,
             },
             {
                 id: 2,
@@ -306,6 +307,7 @@ export const routes = [
                 name: "incomes",
                 url: "/financials/incomes",
                 icon: <GiReceiveMoney />,
+                element: <Transaction type={"incomes"} />,
             },
             {
                 id: 2,
@@ -313,10 +315,11 @@ export const routes = [
                 name: "expenses",
                 url: "/financials/expenses",
                 icon: <GiPayMoney />,
+                element: <Transaction type={"expenses"} />,
             },
             {
                 id: 3,
-                title: "المرتبات",
+                title: "المرتبات الشهرية",
                 name: "salaries",
                 url: "/financials/salaries",
                 icon: <GiMoneyStack />,

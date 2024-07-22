@@ -1,22 +1,10 @@
-import React, { useEffect } from "react";
-import axios from "axios";
+import React from "react";
 
 const SearchField = ({
     placeholder,
     onChange,
     className,
 }) => {
-    const search = (event) => {
-        const url = `${fetchURL}&search=${event.target.value}`;
-        axios
-            .get(url)
-            .then((response) => {
-                setData(response.data);
-            })
-            .catch((error) => {
-                setfetchError(error);
-            });
-    };
 
     return (
         <div className={`${className} max-h-12 mb-10`}>

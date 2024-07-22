@@ -7,29 +7,29 @@ import {
     Button,
     Select,
     Textarea,
+    Datepicker,
 } from "flowbite-react";
 import Loading from "../groups/Loading";
 import axios from "axios";
 import ViewGroup from "../groups/ViewGroup";
 import TableGroup from "../groups/TableGroup";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import Notification from "../groups/Notification";
-import {
-    MdEdit,
-    MdDelete,
-    MdOutlineDriveFileRenameOutline,
-    MdInventory,
-} from "react-icons/md";
+import { MdEdit, MdDelete } from "react-icons/md";
 import DrawerHeader from "../groups/DrawerHeader";
-import CustomFileInput from "../groups/CustomFileInput";
 import TablePagination from "../groups/TablePagination";
 import endpoints from "../../../config";
 import { FaMoneyBill } from "react-icons/fa";
 
-const ProductsForm = ({ setToast, postURL, defaultValues, callBack }) => {
+const TransactionsForm = ({
+    setToast,
+    postURL,
+    defaultValues,
+    transactionType,
+    callBack,
+}) => {
     const [isLoading, setIsLoading] = useState(true);
     const [fetchError, setFetchError] = useState(null);
-    const [selectedFile, setSelectedFile] = useState(null);
     const [post, setPost] = useState(false);
     const {
         register,
@@ -37,20 +37,23 @@ const ProductsForm = ({ setToast, postURL, defaultValues, callBack }) => {
         trigger,
         formState: { errors },
         setError,
+        control,
         reset,
-        setValue,
     } = useForm({
-        defaultValues: defaultValues
-            ? { ...defaultValues, category: defaultValues?.category?.id }
-            : null,
+        defaultValues: {
+            ...defaultValues,
+            category: defaultValues?.category?.id,
+        },
     });
     const formFunction = defaultValues ? "edit" : "add";
-    const requestMethod = formFunction == "add" ? axios.post : axios.patch;
+    const requestMethod = formFunction == "add" ? axios.post : axios.put;
     const [categories, setCategories] = useState(null);
 
     const fetchCategories = () => {
         axios
-            .get(`${endpoints.product_category_list}page_size=200`)
+            .get(
+                `${endpoints.financial_item_list}page_size=200&type=${transactionType}`
+            )
             .then((response) => {
                 setCategories(response.data.results);
             })
@@ -65,36 +68,36 @@ const ProductsForm = ({ setToast, postURL, defaultValues, callBack }) => {
 
     useEffect(() => {
         fetchCategories();
-    }, []);
+    }, [transactionType]);
 
     const onSubmit = (data) => {
         setPost(true);
 
-        // check whether photo is a valid
-        if (!(data["photo"] instanceof File)) {
-            delete data["photo"];
-        }
-
         data = {
             ...data,
-            price: Number(data.price),
             category: Number(data.category),
-            stock: Number(data.stock),
+            amount: Number(data.amount),
+            date: data.date
+                ? data.date
+                : new Date().toLocaleDateString("en-CA"),
         };
+
         // console.log(data);
         // return;
 
-        requestMethod(postURL, data, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        })
+        requestMethod(postURL, data)
             .then((response) => {
                 setPost(false);
                 setToast(
                     formFunction == "add"
-                        ? "تم إضافة منتج جديد"
-                        : "تم تعديل المنتج"
+                        ? `تم إضافة ${
+                              transactionType == "expenses" ? "مصروف" : "إيراد"
+                          } جديد`
+                        : `تم تعديل ${
+                              transactionType == "expenses"
+                                  ? "المصروف"
+                                  : "الإيراد"
+                          }`
                 );
                 reset();
                 callBack();
@@ -120,7 +123,15 @@ const ProductsForm = ({ setToast, postURL, defaultValues, callBack }) => {
     return (
         <FormGroup
             onSubmit={handleSubmit(onSubmit)}
-            title={formFunction == "add" ? "إضافة منتج" : "تعديل منتج"}
+            title={
+                formFunction == "add"
+                    ? transactionType === "expenses"
+                        ? "إضافة مصروف"
+                        : "إضافة إيراد"
+                    : transactionType === "expenses"
+                    ? "تعديل مصروف"
+                    : "تعديل إيراد"
+            }
             formFunction={formFunction}
             post={post}
         >
@@ -134,77 +145,11 @@ const ProductsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                 <>
                     <div className="w-full lg:max-w-md lg:w-[30%]">
                         <div className="mb-2 block">
-                            <Label htmlFor="name" value="اسم المنتج :" />
-                        </div>
-                        <TextInput
-                            id="name"
-                            type="text"
-                            rightIcon={MdOutlineDriveFileRenameOutline}
-                            placeholder="اسم المنتج"
-                            color={errors.name ? "failure" : "primary"}
-                            {...register("name", {
-                                required: "هذا الحقل مطلوب",
-                            })}
-                            onBlur={() => trigger("name")}
-                        />
-
-                        {errors.name && (
-                            <p className="error-message">
-                                {errors.name.message}
-                            </p>
-                        )}
-                    </div>
-                    <div className="w-full lg:max-w-md lg:w-[30%]">
-                        <div className="mb-2 block">
-                            <Label htmlFor="price" value="السعر :" />
-                        </div>
-                        <TextInput
-                            id="price"
-                            type="number"
-                            rightIcon={FaMoneyBill}
-                            placeholder="السعر"
-                            color={errors.price ? "failure" : "primary"}
-                            {...register("price", {
-                                required: "هذا الحقل مطلوب",
-                            })}
-                            onBlur={() => trigger("price")}
-                        />
-                        {errors.price && (
-                            <p className="error-message">
-                                {errors.price.message}
-                            </p>
-                        )}
-                    </div>
-                    <div className="w-full lg:max-w-md lg:w-[30%]">
-                        <div className="mb-2 block">
-                            <Label htmlFor="stock" value="المخزون :" />
-                        </div>
-                        <TextInput
-                            id="stock"
-                            type="number"
-                            rightIcon={MdInventory}
-                            placeholder="المخزون"
-                            color={errors.stock ? "failure" : "primary"}
-                            defaultValue={0}
-                            {...register("stock", {
-                                required: "هذا الحقل مطلوب",
-                            })}
-                            onBlur={() => trigger("stock")}
-                        />
-                        {errors.stock && (
-                            <p className="error-message">
-                                {errors.stock.message}
-                            </p>
-                        )}
-                    </div>
-                    <div className="w-full lg:max-w-md lg:w-[30%]">
-                        <div className="mb-2 block">
-                            <Label htmlFor="category" value="الفئة :" />
+                            <Label htmlFor="category" value="البند :" />
                         </div>
                         <Select
                             id="category"
                             type="select"
-                            placeholder="الفئة"
                             color={errors.category ? "failure" : "primary"}
                             {...register("category", {
                                 required: "هذا الحقل مطلوب",
@@ -213,7 +158,7 @@ const ProductsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                         >
                             {categories.map((category) => (
                                 <option value={category.id} key={category.id}>
-                                    {category.name}
+                                    {category?.name}
                                 </option>
                             ))}
                         </Select>
@@ -222,6 +167,52 @@ const ProductsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                                 {errors.category.message}
                             </p>
                         )}
+                    </div>
+                    <div className="w-full lg:max-w-md lg:w-[30%]">
+                        <div className="mb-2 block">
+                            <Label htmlFor="amount" value="القيمة :" />
+                        </div>
+                        <TextInput
+                            id="amount"
+                            type="number"
+                            rightIcon={FaMoneyBill}
+                            placeholder="القيمة"
+                            color={errors.amount ? "failure" : "primary"}
+                            {...register("amount", {
+                                required: "هذا الحقل مطلوب",
+                            })}
+                            onBlur={() => trigger("amount")}
+                        />
+                        {errors.amount && (
+                            <p className="error-message">
+                                {errors.amount.message}
+                            </p>
+                        )}
+                    </div>
+                    <div className="w-full lg:max-w-md lg:w-[30%]">
+                        <div className="mb-2 block">
+                            <Label htmlFor="date" value="التاريخ  :" />
+                        </div>
+                        <Controller
+                            name="date"
+                            control={control}
+                            render={({ field }) => (
+                                <Datepicker
+                                    selected={field.value}
+                                    id="date"
+                                    language="ar"
+                                    labelClearButton="مسح"
+                                    labelTodayButton="اليوم"
+                                    placeholder="تاريخ الميلاد"
+                                    color={"primary"}
+                                    onSelectedDateChanged={(date) => {
+                                        field.onChange(
+                                            date.toLocaleDateString("en-CA")
+                                        );
+                                    }}
+                                />
+                            )}
+                        />
                     </div>
                     <div className="w-full lg:max-w-md lg:w-[30%]">
                         <div className="mb-2 block">
@@ -241,56 +232,31 @@ const ProductsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                             </p>
                         )}
                     </div>
-
-                    <div className="w-full lg:max-w-md lg:w-[30%]">
-                        <div className="mb-2 block">
-                            <Label htmlFor="image" value="الصورة :" />
-                        </div>
-                        <CustomFileInput
-                            register={register}
-                            setValue={setValue}
-                            name={"image"}
-                            error={errors.image ? "صورة غير صالحة" : null}
-                            selectedFile={selectedFile}
-                            setSelectedFile={setSelectedFile}
-                            onBlur={() => {
-                                trigger("image");
-                            }}
-                        />
-                    </div>
-
-                    {formFunction === "edit" && (
-                        <div className="w-full lg:max-w-md lg:w-[30%]">
-                            <div className="mb-2 block">
-                                <Label value="الصورة الحالية :" />
-                            </div>
-                            {defaultValues?.image ? (
-                                <img
-                                    src={defaultValues.image}
-                                    width={100}
-                                    height={100}
-                                    alt=""
-                                />
-                            ) : (
-                                <p className="error-message">لا توجد صورة</p>
-                            )}
-                        </div>
-                    )}
                 </>
             )}
         </FormGroup>
     );
 };
 
-const ConfirmDelete = ({ subscription, closeDrawer, setToast, callBack }) => {
+const ConfirmDelete = ({
+    transaction,
+    closeDrawer,
+    setToast,
+    transactionType,
+    callBack,
+}) => {
     const [post, setPost] = useState(false);
 
     const deleteManager = () => {
         setPost(true);
         axios
-            .delete(subscription.url)
+            .delete(transaction.url)
             .then(() => {
-                setToast("تم حذف المنتج بنجاح");
+                setToast(
+                    `تم حذف ${
+                        transactionType === "expenses" ? "المصروف" : "الإيراد"
+                    } بنجاح`
+                );
                 callBack();
                 closeDrawer();
             })
@@ -304,9 +270,10 @@ const ConfirmDelete = ({ subscription, closeDrawer, setToast, callBack }) => {
             className={`wrapper p-4 my-2 bg-white rounded border-t-4 border-primary shadow-lg`}
         >
             <p className="text-base">
-                هل أنت متأكد تريد حذف المنتج:{" "}
+                هل أنت متأكد تريد حذف{" "}
+                {transactionType === "expenses" ? "المصروف" : "الإيراد"}:{" "}
                 <span className="font-bold text-red-600">
-                    {subscription.name}
+                    {transaction?.category?.name}
                 </span>
             </p>
             <hr className="h-px my-3 bg-gray-200 border-0"></hr>
@@ -333,7 +300,7 @@ const ConfirmDelete = ({ subscription, closeDrawer, setToast, callBack }) => {
     );
 };
 
-const Products = () => {
+const Transactions = ({ type }) => {
     //////////////////////////////// form settings ////////////////////////////////
 
     //////////////////////////////// drawer settings ////////////////////////////////
@@ -345,19 +312,21 @@ const Products = () => {
     const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState(null);
     const [toast, setToast] = useState(null);
+    const [date, setDate] = useState(new Date().toLocaleDateString("en-CA"));
     const [searchParam, setSearchParam] = useState(null);
     const [pageNumber, setPageNumber] = useState(1);
 
-    const showDrawer = (drawerFunction, subscription) => {
+    const showDrawer = (drawerFunction, transaction) => {
         if (drawerFunction == "edit") {
             setDrawerData({
-                title: "تعديل منتج",
+                title: type === "expenses" ? "تعديل مصروف" : "تعديل إيراد",
                 icon: MdEdit,
                 content: (
-                    <ProductsForm
+                    <TransactionsForm
                         setToast={setToast}
-                        postURL={subscription.url}
-                        defaultValues={subscription}
+                        postURL={transaction.url}
+                        defaultValues={transaction}
+                        transactionType={type}
                         callBack={() => {
                             fetchListData();
                             closeDrawer();
@@ -367,13 +336,14 @@ const Products = () => {
             });
         } else {
             setDrawerData({
-                title: "حذف منتج",
+                title: type === "expense" ? "حذف مصروف" : "حذف إيراد",
                 icon: MdDelete,
                 content: (
                     <ConfirmDelete
-                        subscription={subscription}
+                        transaction={transaction}
                         closeDrawer={closeDrawer}
                         setToast={setToast}
+                        transactionType={type}
                         callBack={() => {
                             setSearchParam(null);
                             setPageNumber(null);
@@ -396,10 +366,13 @@ const Products = () => {
     };
 
     const fetchListData = () => {
-        const searchURL = `${endpoints.product_list}${
+        const searchURL = `${endpoints.transaction_list}${`&type=${type}`}${
             searchParam ? `&search=${searchParam}` : ""
-        }${pageNumber ? `&page=${pageNumber}` : ""}
+        }${pageNumber ? `&page=${pageNumber}` : ""}${
+            date ? `&date=${date}` : ""
+        }
         `;
+
         axios
             .get(searchURL)
             .then((response) => {
@@ -414,7 +387,7 @@ const Products = () => {
 
     useEffect(() => {
         fetchListData();
-    }, [searchParam, pageNumber]);
+    }, [searchParam, pageNumber, date, type]);
 
     return (
         <>
@@ -435,14 +408,19 @@ const Products = () => {
             )}
 
             {/* add form */}
-            <ProductsForm
+            <TransactionsForm
                 setToast={setToast}
-                postURL={endpoints.product_list}
+                postURL={endpoints.transaction_list}
                 callBack={fetchListData}
+                transactionType={type}
             />
 
             {/* table data */}
-            <ViewGroup title={"المنتجات الحالية"}>
+            <ViewGroup
+                title={`${
+                    type == "expenses" ? "مصروفات" : "إيرادات"
+                } يوم  ${date}`}
+            >
                 {loading ? (
                     <Loading />
                 ) : fetchError ? (
@@ -451,6 +429,25 @@ const Products = () => {
                     </p>
                 ) : (
                     <>
+                        <div className="w-full lg:max-w-md mb-5">
+                            <div className="mb-2 block">
+                                <Label
+                                    htmlFor="birth_date"
+                                    value="التاريخ  :"
+                                />
+                            </div>
+                            <Datepicker
+                                id="birth_date"
+                                language="ar"
+                                labelClearButton="مسح"
+                                labelTodayButton="اليوم"
+                                placeholder="تاريخ الميلاد"
+                                color={"primary"}
+                                onSelectedDateChanged={(date) => {
+                                    setDate(date.toLocaleDateString("en-CA"));
+                                }}
+                            />
+                        </div>
                         <TableGroup
                             onChange={(event) => {
                                 setSearchParam(event.target.value);
@@ -466,24 +463,22 @@ const Products = () => {
                             ) : (
                                 <>
                                     <Table.Head>
-                                        <Table.HeadCell>
-                                            اسم المنتج
-                                        </Table.HeadCell>
-                                        <Table.HeadCell>السعر</Table.HeadCell>
-                                        <Table.HeadCell>الفئة</Table.HeadCell>
-                                        <Table.HeadCell>المخزون</Table.HeadCell>
+                                        <Table.HeadCell>البند</Table.HeadCell>
+                                        <Table.HeadCell>القيمة</Table.HeadCell>
+                                        <Table.HeadCell>التاريخ</Table.HeadCell>
                                         <Table.HeadCell>إجراءات</Table.HeadCell>
                                     </Table.Head>
                                     <Table.Body>
-                                        {data.results.map((product) => {
+                                        {data.results.map((transaction) => {
                                             return (
                                                 <Table.Row
-                                                    key={product.id}
+                                                    key={transaction.id}
                                                     className="bg-white font-medium text-gray-900"
                                                 >
                                                     <Table.Cell>
-                                                        {product.name ? (
-                                                            product.name
+                                                        {transaction.category ? (
+                                                            transaction.category
+                                                                ?.name
                                                         ) : (
                                                             <span className="text-red-600">
                                                                 غير مسجل
@@ -491,8 +486,8 @@ const Products = () => {
                                                         )}
                                                     </Table.Cell>
                                                     <Table.Cell>
-                                                        {product.price ? (
-                                                            product.price
+                                                        {transaction.amount ? (
+                                                            transaction.amount
                                                         ) : (
                                                             <span className="text-red-600">
                                                                 غير مسجل
@@ -500,25 +495,8 @@ const Products = () => {
                                                         )}
                                                     </Table.Cell>
                                                     <Table.Cell>
-                                                        {product.category ? (
-                                                            <span className="text-sm">
-                                                                {
-                                                                    product
-                                                                        .category
-                                                                        ?.name
-                                                                }
-                                                            </span>
-                                                        ) : (
-                                                            <span className="text-red-600">
-                                                                غير مسجل
-                                                            </span>
-                                                        )}
-                                                    </Table.Cell>
-                                                    <Table.Cell>
-                                                        {product.stock ? (
-                                                            <span className="text-sm">
-                                                                {product.stock}
-                                                            </span>
+                                                        {transaction.date ? (
+                                                            transaction.date
                                                         ) : (
                                                             <span className="text-red-600">
                                                                 غير مسجل
@@ -532,7 +510,7 @@ const Products = () => {
                                                                 onClick={() => {
                                                                     showDrawer(
                                                                         "edit",
-                                                                        product
+                                                                        transaction
                                                                     );
                                                                 }}
                                                             />
@@ -541,7 +519,7 @@ const Products = () => {
                                                                 onClick={() => {
                                                                     showDrawer(
                                                                         "delete",
-                                                                        product
+                                                                        transaction
                                                                     );
                                                                 }}
                                                             />
@@ -571,4 +549,4 @@ const Products = () => {
     );
 };
 
-export default Products;
+export default Transactions;

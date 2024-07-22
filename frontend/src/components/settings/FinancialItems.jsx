@@ -277,7 +277,7 @@ const FinancialItems = () => {
             />
 
             {/* table data */}
-            <ViewGroup title={"بنود المصروفات الحالية"}>
+            <ViewGroup title={"البنود المالية الحالية"}>
                 {loading ? (
                     <Loading />
                 ) : fetchError ? (
