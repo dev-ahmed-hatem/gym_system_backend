@@ -21,7 +21,7 @@ const System = () => {
                                 key={child.id}
                                 to={child.url}
                                 className="flex flex-col gap-y-3 justify-center text-center items-center bg-primary p-5 text-white 
-                                    rounded-lg max-sm:w-[46%] min-h-24 min-w-28 lg:min-w-32
+                                    rounded-lg max-sm:w-[46%] min-h-[140px] min-w-28 lg:min-w-32
                                     hover:shadow-xl hover:text-accent text-lg"
                             >
                                 <span className="text-2xl">{child.icon}</span>
