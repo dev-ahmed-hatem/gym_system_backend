@@ -3,3 +3,4 @@ from .models import *
 
 admin.site.register(FinancialItem)
 admin.site.register(Transaction)
+admin.site.register(Salary)

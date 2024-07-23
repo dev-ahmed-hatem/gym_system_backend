@@ -43,6 +43,7 @@ import { BiSolidCategory } from "react-icons/bi";
 import ProductCategories from "../components/settings/ProductCategories";
 import Products from "../components/shop/Products";
 import Transaction from "../components/financials/Transaction";
+import Salaries from "../components/financials/Salaries";
 
 export const routes = [
     {
@@ -323,6 +324,7 @@ export const routes = [
                 name: "salaries",
                 url: "/financials/salaries",
                 icon: <GiMoneyStack />,
+                element: <Salaries />,
             },
         ],
     },

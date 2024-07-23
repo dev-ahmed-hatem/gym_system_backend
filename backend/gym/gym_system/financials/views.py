@@ -39,3 +39,21 @@ class TransactionViewSet(ModelViewSet):
         if date:
             queryset = queryset.filter(date=datetime.strptime(date, '%Y-%m-%d'))
         return queryset
+
+
+class SalaryViewSet(ModelViewSet):
+    queryset = Salary.objects.all()
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return SalaryWriteSerializer
+        return SalaryReadSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        employee = self.request.query_params.get('employee', None)
+        month = self.request.query_params.get('month', None)
+        year = self.request.query_params.get('year', None)
+        if employee and month and year:
+            queryset = queryset.filter(employee=employee, month=month, year=year)
+        return queryset

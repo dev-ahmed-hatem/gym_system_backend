@@ -2,6 +2,7 @@ from django.db import models
 from users.models import Employee
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.timezone import datetime
+from decimal import Decimal
 
 
 class FinancialItem(models.Model):
@@ -31,14 +32,15 @@ class Salary(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     month = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(12)])
     year = models.IntegerField()
-    base_salary = models.DecimalField(max_digits=10, decimal_places=2, default=5000)
+    base_salary = models.DecimalField(max_digits=10, decimal_places=2, default=10000)
     deductions = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     extra_hours = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    private_percent = models.IntegerField(default=0)
-    subscription_percent = models.IntegerField(default=0)
+    private_percent = models.DecimalField(max_digits=2, decimal_places=2, default=0)
+    subscription_percent = models.DecimalField(max_digits=2, decimal_places=2, default=0)
     bonuses = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     got_advance = models.BooleanField(default=False)
     advance_payment = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    advance_date = models.DateField(null=True, blank=True)
     vacations = models.IntegerField(default=0)
     working_hours = models.IntegerField(default=8)
     working_days = models.IntegerField(default=26)
@@ -48,6 +50,16 @@ class Salary(models.Model):
 
     class Meta:
         unique_together = ('employee', 'month', 'year')
+        verbose_name_plural = "Salaries"
+
+    def __str__(self):
+        return f"{self.employee} - {self.month} - {self.year}"
+
+    def save(self, *args, **kwargs):
+        self.got_advance = self.advance_payment > 0
+        if not self.got_advance:
+            self.advance_date = None
+        return super().save(*args, **kwargs)
 
     @property
     def hourly_rate(self):
@@ -69,4 +81,4 @@ class Salary(models.Model):
         days = datetime.today().day
         current_salary = days * self.working_hours * self.hourly_rate
         current_salary = current_salary + self.bonuses - self.deductions * self.hourly_rate
-        return current_salary * 0.4
+        return current_salary * Decimal(0.4)
