@@ -83,3 +83,7 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# celery files
+celery*
+*.rdb

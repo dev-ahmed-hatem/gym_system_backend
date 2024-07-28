@@ -7,6 +7,7 @@ import {
     Button,
     ToggleSwitch,
     Textarea,
+    Select,
 } from "flowbite-react";
 import Loading from "../groups/Loading";
 import axios from "axios";
@@ -36,7 +37,7 @@ const SubscriptionsForm = ({ setToast, postURL, defaultValues, callBack }) => {
         reset,
     } = useForm({ defaultValues: defaultValues });
     const formFunction = defaultValues ? "edit" : "add";
-    const requestMethod = formFunction == "add" ? axios.post : axios.put;
+    const requestMethod = formFunction == "add" ? axios.post : axios.patch;
     const [forStudents, setForStudents] = useState(
         formFunction === "edit" ? defaultValues?.for_students : false
     );
@@ -65,6 +66,7 @@ const SubscriptionsForm = ({ setToast, postURL, defaultValues, callBack }) => {
             classes_no: data.classes_no ? Number(data.classes_no) : null,
             freezable: isFreezable,
             freeze_no: Number(data.freeze_no),
+            subscription_type: data.subscription_type,
         };
         // console.log(data);
         // return;
@@ -105,6 +107,36 @@ const SubscriptionsForm = ({ setToast, postURL, defaultValues, callBack }) => {
             formFunction={formFunction}
             post={post}
         >
+            <div className="w-full lg:max-w-md lg:w-[30%]">
+                <div className="mb-2 block">
+                    <Label htmlFor="subscription_type" value="النوع :" />
+                </div>
+                <Select
+                    id="subscription_type"
+                    type="select"
+                    placeholder="النوع"
+                    color={errors.subscription_type ? "failure" : "primary"}
+                    {...register("subscription_type", {
+                        required: "هذا الحقل مطلوب",
+                    })}
+                    onBlur={() => trigger("subscription_type")}
+                >
+                    <option value={"main"} key={0}>
+                        اشتراك أساسى
+                    </option>
+                    <option value={"sub"} key={1}>
+                        اشتراك إضافى
+                    </option>
+                    <option value={"locker"} key={2}>
+                        اشتراك لوكر
+                    </option>
+                </Select>
+                {errors.subscription_type && (
+                    <p className="error-message">
+                        {errors.subscription_type.message}
+                    </p>
+                )}
+            </div>
             <div className="w-full lg:max-w-md lg:w-[30%]">
                 <div className="mb-2 block">
                     <Label htmlFor="name" value="اسم الاشتراك :" />
@@ -509,6 +541,7 @@ const Subscriptions = () => {
                                         <Table.HeadCell>
                                             اسم الاشتراك
                                         </Table.HeadCell>
+                                        <Table.HeadCell>النوع</Table.HeadCell>
                                         <Table.HeadCell>السعر</Table.HeadCell>
                                         <Table.HeadCell>الفترة</Table.HeadCell>
                                         <Table.HeadCell>
@@ -520,15 +553,15 @@ const Subscriptions = () => {
                                         <Table.HeadCell>إجراءات</Table.HeadCell>
                                     </Table.Head>
                                     <Table.Body>
-                                        {data.results.map((susbcription) => {
+                                        {data.results.map((subscription) => {
                                             return (
                                                 <Table.Row
-                                                    key={susbcription.id}
+                                                    key={subscription.id}
                                                     className="bg-white font-medium text-gray-900"
                                                 >
                                                     <Table.Cell>
-                                                        {susbcription.name ? (
-                                                            susbcription.name
+                                                        {subscription.name ? (
+                                                            subscription.name
                                                         ) : (
                                                             <span className="text-red-600">
                                                                 غير مسجل
@@ -536,8 +569,8 @@ const Subscriptions = () => {
                                                         )}
                                                     </Table.Cell>
                                                     <Table.Cell>
-                                                        {susbcription.price ? (
-                                                            susbcription.price
+                                                        {subscription.sub_type ? (
+                                                            subscription.sub_type
                                                         ) : (
                                                             <span className="text-red-600">
                                                                 غير مسجل
@@ -545,12 +578,34 @@ const Subscriptions = () => {
                                                         )}
                                                     </Table.Cell>
                                                     <Table.Cell>
-                                                        {susbcription.days ? (
+                                                        {subscription.price ? (
+                                                            subscription.price
+                                                        ) : (
+                                                            <span className="text-red-600">
+                                                                غير مسجل
+                                                            </span>
+                                                        )}
+                                                    </Table.Cell>
+                                                    <Table.Cell>
+                                                        {subscription.duration_display ? (
                                                             <span className="text-sm">
                                                                 {
-                                                                    susbcription.days
+                                                                    subscription.duration_display
+                                                                }
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-red-600">
+                                                                غير مسجل
+                                                            </span>
+                                                        )}
+                                                    </Table.Cell>
+                                                    <Table.Cell>
+                                                        {subscription.validity ? (
+                                                            <span className="text-sm">
+                                                                {
+                                                                    subscription.validity
                                                                 }{" "}
-                                                                {susbcription.days >
+                                                                {subscription.validity >
                                                                 9
                                                                     ? "يوم"
                                                                     : "أيام"}
@@ -562,24 +617,7 @@ const Subscriptions = () => {
                                                         )}
                                                     </Table.Cell>
                                                     <Table.Cell>
-                                                        {susbcription.validity ? (
-                                                            <span className="text-sm">
-                                                                {
-                                                                    susbcription.validity
-                                                                }{" "}
-                                                                {susbcription.validity >
-                                                                9
-                                                                    ? "يوم"
-                                                                    : "أيام"}
-                                                            </span>
-                                                        ) : (
-                                                            <span className="text-red-600">
-                                                                غير مسجل
-                                                            </span>
-                                                        )}
-                                                    </Table.Cell>
-                                                    <Table.Cell>
-                                                        {susbcription.for_students ? (
+                                                        {subscription.for_students ? (
                                                             <span>نعم</span>
                                                         ) : (
                                                             <span>لا</span>
@@ -592,7 +630,7 @@ const Subscriptions = () => {
                                                                 onClick={() => {
                                                                     showDrawer(
                                                                         "edit",
-                                                                        susbcription
+                                                                        subscription
                                                                     );
                                                                 }}
                                                             />
@@ -601,7 +639,7 @@ const Subscriptions = () => {
                                                                 onClick={() => {
                                                                     showDrawer(
                                                                         "delete",
-                                                                        susbcription
+                                                                        subscription
                                                                     );
                                                                 }}
                                                             />

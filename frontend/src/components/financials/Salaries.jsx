@@ -134,6 +134,7 @@ const SalariesForm = ({ setToast, setDrawerData, setDrawerOpen }) => {
             setCurrentSalary(null);
             return;
         }
+        setCurrentSalary("loading");
         const url = `${endpoints.salary_list}${
             salaryParams.employee ? `&employee=${salaryParams?.employee}` : ""
         }${salaryParams.month ? `&month=${salaryParams?.month}` : ""}${
@@ -332,7 +333,9 @@ const SalariesForm = ({ setToast, setDrawerData, setDrawerOpen }) => {
                                 )}
                             </div>
 
-                            {currentSalary === null ? (
+                            {currentSalary === "loading" ? (
+                                <Loading className={`w-full text-center`} />
+                            ) : currentSalary === null ? (
                                 <></>
                             ) : currentSalary === "no data" ? (
                                 <p className="text-lg text-center py-4 w-full m-auto">
@@ -705,7 +708,6 @@ const SalariesForm = ({ setToast, setDrawerData, setDrawerOpen }) => {
                                         )}
                                     </div>
 
-                                    {/* <div className="w-full" /> */}
                                     <div className="w-full flex items-end">
                                         <div className="mb-2 ">
                                             {currentSalary.got_advance ? (

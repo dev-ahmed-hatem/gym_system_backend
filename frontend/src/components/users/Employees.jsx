@@ -21,7 +21,7 @@ import { MdEdit, MdDelete, MdEmail } from "react-icons/md";
 import DrawerHeader from "../groups/DrawerHeader";
 import TablePagination from "../groups/TablePagination";
 import endpoints from "../../../config";
-import { FaAddressCard, FaPercentage } from "react-icons/fa";
+import { FaAddressCard } from "react-icons/fa";
 import CustomFileInput from "../groups/CustomFileInput";
 
 const EmployeesForm = ({ setToast, postURL, defaultValues, callBack }) => {
@@ -69,7 +69,7 @@ const EmployeesForm = ({ setToast, postURL, defaultValues, callBack }) => {
         control,
     } = useForm({ defaultValues: transformValues(defaultValues) });
     const formFunction = defaultValues ? "edit" : "add";
-    const requestMethod = formFunction == "add" ? axios.post : axios.put;
+    const requestMethod = formFunction == "add" ? axios.post : axios.patch;
 
     const calculateAge = (birth) => {
         const date = new Date(birth);
@@ -100,19 +100,19 @@ const EmployeesForm = ({ setToast, postURL, defaultValues, callBack }) => {
                 cityResponse,
                 cityDistrictResponse,
             ] = await Promise.all([
-                axios.get(endpoints.nationality_list),
-                axios.get(endpoints.marital_status_list),
-                axios.get(endpoints.employee_type_list),
-                axios.get(endpoints.city_list),
-                axios.get(endpoints.city_district_list),
+                axios.get(`${endpoints.nationality_list}no_pagination=true`),
+                axios.get(`${endpoints.marital_status_list}no_pagination=true`),
+                axios.get(`${endpoints.employee_type_list}no_pagination=true`),
+                axios.get(`${endpoints.city_list}no_pagination=true`),
+                axios.get(`${endpoints.city_district_list}no_pagination=true`),
             ]);
 
             const employee_options = {
-                nationality_list: nationalityResponse.data.results,
-                marital_status_list: maritalStatusResponse.data.results,
-                employee_type_list: employeeTypeResponse.data.results,
-                city_list: cityResponse.data.results,
-                city_district_list: cityDistrictResponse.data.results,
+                nationality_list: nationalityResponse.data,
+                marital_status_list: maritalStatusResponse.data,
+                employee_type_list: employeeTypeResponse.data,
+                city_list: cityResponse.data,
+                city_district_list: cityDistrictResponse.data,
             };
 
             setEmployeeOptions(employee_options);
@@ -417,7 +417,7 @@ const EmployeesForm = ({ setToast, postURL, defaultValues, callBack }) => {
                                 placeholder="العنوان"
                             />
                         </div>
-                        <div className="w-full lg:max-w-md lg:w-[30%]">
+                        {/* <div className="w-full lg:max-w-md lg:w-[30%]">
                             <div className="mb-2 block">
                                 <Label
                                     htmlFor="subscription_percent"
@@ -438,7 +438,7 @@ const EmployeesForm = ({ setToast, postURL, defaultValues, callBack }) => {
                                     {errors.subscription_percent.message}
                                 </p>
                             )}
-                        </div>
+                        </div> */}
                         <div className="w-full lg:max-w-md lg:w-[30%]">
                             <div className="mb-2 block">
                                 <Label
@@ -828,8 +828,8 @@ const Employees = () => {
                 ) : (
                     <>
                         <TableGroup
-                                onChange={(event) => {
-                                setPageNumber(1)
+                            onChange={(event) => {
+                                setPageNumber(1);
                                 setSearchParam(event.target.value);
                             }}
                         >

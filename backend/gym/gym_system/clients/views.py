@@ -22,8 +22,3 @@ class ClientViewSet(ModelViewSet):
                 Q(phone__icontains=search) |
                 Q(phone2__icontains=search))
         return queryset
-
-
-class SubscriptionViewSet(ModelViewSet):
-    queryset = Subscription.objects.all()
-    serializer_class = SubscriptionSerializer

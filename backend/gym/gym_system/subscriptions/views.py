@@ -16,27 +16,6 @@ class SubscriptionPlanViewSet(ModelViewSet):
         return queryset
 
 
-class LockerPlanViewSet(ModelViewSet):
-    queryset = LockerPlan.objects.all()
-    serializer_class = LockerPlanSerializer
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        search = self.request.query_params.get('search', None)
-        if search:
-            queryset = queryset.filter(name__icontains=search)
-
-        return queryset
-
-
-class AdditionalPlanViewSet(ModelViewSet):
-    queryset = AdditionalPlan.objects.all()
-    serializer_class = AdditionalPlanSerializer
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        search = self.request.query_params.get('search', None)
-        if search:
-            queryset = queryset.filter(name__icontains=search)
-
-        return queryset
+class SubscriptionViewSet(ModelViewSet):
+    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionSerializer

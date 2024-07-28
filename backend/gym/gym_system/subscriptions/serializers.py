@@ -5,10 +5,21 @@ from .models import *
 
 class SubscriptionPlanSerializer(serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='subscription-plan-detail', lookup_field='pk')
+    sub_type = serializers.SerializerMethodField()
+    duration_display = serializers.SerializerMethodField()
 
     class Meta:
         model = SubscriptionPlan
         fields = '__all__'
+
+    def get_sub_type(self, obj):
+        return obj.get_subscription_type_display()
+
+    def get_duration_display(self, obj):
+        if obj.is_duration:
+            return f"{obj.days} {'يوم' if obj.days > 10 else 'أيام'}"
+        else:
+            return f"{obj.classes_no} {'حصة' if obj.classes_no > 10 else 'حصص'}"
 
     def validate(self, attrs):
         days = attrs.get('days')
@@ -24,15 +35,10 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class LockerPlanSerializer(serializers.ModelSerializer):
-    url = HyperlinkedIdentityField(view_name='locker-plan-detail', lookup_field='pk')
-    class Meta:
-        model = LockerPlan
-        fields = '__all__'
+class SubscriptionSerializer(serializers.ModelSerializer):
+    url = HyperlinkedIdentityField(view_name='subscription-detail', lookup_field='pk')
+    plan = SubscriptionPlanSerializer()
 
-
-class AdditionalPlanSerializer(serializers.ModelSerializer):
-    url = HyperlinkedIdentityField(view_name='additional-plan-detail', lookup_field='pk')
     class Meta:
-        model = AdditionalPlan
+        model = Subscription
         fields = '__all__'

@@ -50,9 +50,9 @@ const ProductsForm = ({ setToast, postURL, defaultValues, callBack }) => {
 
     const fetchCategories = () => {
         axios
-            .get(`${endpoints.product_category_list}page_size=200`)
+            .get(`${endpoints.product_category_list}no_pagination=true`)
             .then((response) => {
-                setCategories(response.data.results);
+                setCategories(response.data);
             })
             .catch((error) => {
                 console.log(error);

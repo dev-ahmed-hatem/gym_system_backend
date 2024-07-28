@@ -27,7 +27,7 @@ const ManagersForm = ({ setToast, postURL, defaultValues, callBack }) => {
         reset,
     } = useForm({ defaultValues: defaultValues });
     const formFunction = defaultValues ? "edit" : "add";
-    const requestMethod = formFunction == "add" ? axios.post : axios.put;
+    const requestMethod = formFunction == "add" ? axios.post : axios.patch;
     const password = watch("password");
     const password2 = watch("password2");
 

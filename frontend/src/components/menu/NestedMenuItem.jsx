@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Arrow from "../../assets/Arrow";
 import SingleMenuItem from "./SingleMenuItem";
@@ -8,9 +8,12 @@ const NestedMenuItem = ({ item, setMenuState }) => {
     const itemRef = useRef(null);
     const location = useLocation();
     const currentDisplay = location.pathname.startsWith(item.url);
-    const [active, setActive] = useState(!currentDisplay);
+    const [active, setActive] = useState(currentDisplay);
 
-    const changeDropDown = (dropDown) => {
+    const changeDropDown = () => {
+        const dropDown =
+            itemRef.current.parentElement.querySelector(".drop-down");
+
         if (active) {
             dropDown.style.height = dropDown.scrollHeight + "px";
             dropDown.style.paddingBottom = "12px";
@@ -20,14 +23,15 @@ const NestedMenuItem = ({ item, setMenuState }) => {
         }
     };
 
-    const toggle = function () {
-        const dropDown =
-            itemRef.current.parentElement.querySelector(".drop-down");
+    useEffect(() => {
+        if (!currentDisplay) {
+            setActive(false);
+        }
+    }, [location]);
 
-        changeDropDown(dropDown);
-
-        setActive(!active);
-    };
+    useEffect(() => {
+        changeDropDown();
+    }, [location, active, currentDisplay]);
 
     return (
         <div className="relative block w-full cursor-pointer active">
@@ -36,13 +40,15 @@ const NestedMenuItem = ({ item, setMenuState }) => {
                     currentDisplay ? "bg-primary text-white" : ""
                 }  px-2 lg:px-4 hover:bg-primary h-10 rounded`}
                 ref={itemRef}
-                onClick={toggle}
+                onClick={() => {
+                    setActive(!active);
+                }}
             >
                 <div className={`flex items-center`}>
                     <span className="me-2 lg:me-4">{item.icon}</span>
                     <div className="font-bold">{item.title}</div>
                 </div>
-                <Arrow className={`${active ? "rotate-90" : ""}`} />
+                <Arrow className={`${active ? "" : "rotate-90"}`} />
             </div>
 
             <div

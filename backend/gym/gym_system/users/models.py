@@ -123,7 +123,6 @@ class Employee(models.Model):
     district = models.ForeignKey(CityDistrict, on_delete=models.SET_NULL, null=True)
     address = models.TextField(blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
-    subscription_percent = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     photo = models.ImageField(upload_to='photos/', blank=True, null=True)
     added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, default=1)
     emp_type = models.ForeignKey(EmployeeType, on_delete=models.SET_NULL, null=True, blank=True)

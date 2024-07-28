@@ -2,5 +2,4 @@ from django.contrib import admin
 from .models import *
 
 admin.site.register(SubscriptionPlan)
-admin.site.register(LockerPlan)
-admin.site.register(AdditionalPlan)
+admin.site.register(Subscription)

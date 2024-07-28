@@ -7,12 +7,11 @@ import {
     Button,
     Select as FlowbiteSelect,
 } from "flowbite-react";
-import Select from "react-select";
 import Loading from "../groups/Loading";
 import axios from "axios";
 import ViewGroup from "../groups/ViewGroup";
 import TableGroup from "../groups/TableGroup";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Notification from "../groups/Notification";
 import { MdEdit, MdDelete } from "react-icons/md";
 import DrawerHeader from "../groups/DrawerHeader";
@@ -36,10 +35,13 @@ const EmployeeSettingsForm = ({
         formState: { errors },
         setError,
         reset,
-        control,
-    } = useForm({ defaultValues: defaultValues });
+    } = useForm({
+        defaultValues: { ...defaultValues, city: defaultValues?.city.id },
+    });
     const formFunction = defaultValues ? "edit" : "add";
-    const requestMethod = formFunction == "add" ? axios.post : axios.put;
+    const requestMethod = formFunction == "add" ? axios.post : axios.patch;
+    const [loading, setLoading] = useState(false);
+    const [fetchError, setFetchError] = useState(false);
 
     const changeCurrentSetting = (event) => {
         switch (event.target.value) {
@@ -77,17 +79,22 @@ const EmployeeSettingsForm = ({
                     name: "الحى",
                     list_url: endpoints.city_district_list,
                 });
-                fetchCities();
                 break;
         }
     };
 
     const onSubmit = (data) => {
-        setPost(true);
+        // setPost(true);
 
         if (currentSetting.value === "city-district") {
-            data.city = data.city.value;
+            if (data.city === "") {
+                data.city = citiesList ? citiesList[0].id : null;
+            } else {
+                data.city = Number(data.city);
+            }
         }
+        // console.log(data);
+        // return;
 
         requestMethod(postURL, data)
             .then((response) => {
@@ -120,24 +127,29 @@ const EmployeeSettingsForm = ({
             });
     };
 
-    const fetchCities = (search_word) => {
-        const options = [];
-        const url = `${endpoints.city_list}page_size=20&ordering=-id${
-            search_word ? `&search=${search_word}` : ""
-        }`;
+    const fetchCities = () => {
+        setLoading(true);
+        const url = `${endpoints.city_list}no_pagination=true&ordering=-id`;
 
         axios
             .get(url)
             .then((response) => {
-                response.data.results.map((city) => {
-                    options.push({ value: city.id, label: city.name });
-                });
-                setCitiesList(options);
+                setCitiesList(response.data);
             })
             .catch((error) => {
+                setFetchError(error);
                 setCitiesList(null);
+            })
+            .finally(() => {
+                setLoading(false);
             });
     };
+
+    useEffect(() => {
+        if (currentSetting.value == "city-district") {
+            fetchCities();
+        }
+    }, [currentSetting]);
 
     return (
         <FormGroup
@@ -150,126 +162,93 @@ const EmployeeSettingsForm = ({
             post={post}
             formFunction={formFunction}
         >
-            {formFunction === "add" && (
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label htmlFor="options" value="اختيارات :" />
-                    </div>
-                    <FlowbiteSelect
-                        id="options"
-                        type="select"
-                        color={"primary"}
-                        onChange={changeCurrentSetting}
-                        value={currentSetting.value}
-                    >
-                        <option value={"nationality"} key={0}>
-                            الجنسية
-                        </option>
-                        <option value={"marital-status"} key={1}>
-                            الحالة الاجتماعية
-                        </option>
-                        <option value={"employee-type"} key={2}>
-                            نوع الموظف
-                        </option>
-                        <option value={"city"} key={3}>
-                            المدينة
-                        </option>
-                        <option value={"city-district"} key={4}>
-                            الحي
-                        </option>
-                    </FlowbiteSelect>
-                    {errors.financial_type && (
-                        <p className="error-message">
-                            {errors.financial_type.message}
-                        </p>
+            {loading ? (
+                <Loading className={`w-full text-center`} />
+            ) : fetchError ? (
+                <p className="text-lg text-center text-red-600 py-4 w-full m-auto">
+                    خطأ في تحميل البيانات
+                </p>
+            ) : (
+                <>
+                    {formFunction === "add" && (
+                        <div className="w-full lg:max-w-md lg:w-[30%]">
+                            <div className="mb-2 block">
+                                <Label htmlFor="options" value="اختيارات :" />
+                            </div>
+                            <FlowbiteSelect
+                                id="options"
+                                type="select"
+                                color={"primary"}
+                                onChange={changeCurrentSetting}
+                                value={currentSetting.value}
+                            >
+                                <option value={"nationality"} key={0}>
+                                    الجنسية
+                                </option>
+                                <option value={"marital-status"} key={1}>
+                                    الحالة الاجتماعية
+                                </option>
+                                <option value={"employee-type"} key={2}>
+                                    نوع الموظف
+                                </option>
+                                <option value={"city"} key={3}>
+                                    المدينة
+                                </option>
+                                <option value={"city-district"} key={4}>
+                                    الحي
+                                </option>
+                            </FlowbiteSelect>
+                            {errors.financial_type && (
+                                <p className="error-message">
+                                    {errors.financial_type.message}
+                                </p>
+                            )}
+                        </div>
                     )}
-                </div>
-            )}
 
-            <div className="w-full lg:max-w-md lg:w-[30%]">
-                <div className="mb-2 block">
-                    <Label htmlFor="name" value="الاسم :" />
-                </div>
-                <TextInput
-                    id="name"
-                    type="text"
-                    color={errors.name ? "failure" : "primary"}
-                    {...register("name", {
-                        required: "هذا الحقل مطلوب",
-                    })}
-                    onBlur={() => trigger("name")}
-                />
-
-                {errors.name && (
-                    <p className="error-message">{errors.name.message}</p>
-                )}
-            </div>
-
-            {currentSetting.value === "city-district" && (
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label
-                            htmlFor="city"
-                            value="اختر المدينة التابع لها :"
+                    <div className="w-full lg:max-w-md lg:w-[30%]">
+                        <div className="mb-2 block">
+                            <Label htmlFor="name" value="الاسم :" />
+                        </div>
+                        <TextInput
+                            id="name"
+                            type="text"
+                            color={errors.name ? "failure" : "primary"}
+                            {...register("name", {
+                                required: "هذا الحقل مطلوب",
+                            })}
+                            onBlur={() => trigger("name")}
                         />
+
+                        {errors.name && (
+                            <p className="error-message">
+                                {errors.name.message}
+                            </p>
+                        )}
                     </div>
 
-                    <Controller
-                        name="city"
-                        control={control}
-                        rules={{ required: "يجب اختيار مدينة" }}
-                        render={({ field }) => (
-                            <>
-                                <Select
-                                    noOptionsMessage={() =>
-                                        "لا يوجد نتائج مطابقة"
-                                    }
-                                    placeholder="بحث ..."
-                                    options={citiesList || []}
-                                    onInputChange={fetchCities}
-                                    value={field.value}
-                                    onBlur={() => {
-                                        trigger("city");
-                                    }}
-                                    {...field}
-                                    styles={{
-                                        control: (base, state) => ({
-                                            ...base,
-                                            borderColor: errors.city
-                                                ? "red"
-                                                : base.borderColor,
-                                            color: errors.city
-                                                ? "red"
-                                                : base.color,
-                                            "&:hover": {
-                                                borderColor: errors.city
-                                                    ? "red"
-                                                    : base["&:hover"]
-                                                          .borderColor,
-                                            },
-                                            boxShadow: state.isFocused
-                                                ? errors.city
-                                                    ? "0 0 0 1px red"
-                                                    : "0 0 0 1px blue"
-                                                : base.boxShadow,
-                                        }),
-                                        placeholder: (base, state) => ({
-                                            ...base,
-                                            color: errors.city
-                                                ? "red"
-                                                : base.color,
-                                        }),
-                                    }}
-                                ></Select>
-                                {errors.city && (
-                                    <p className="error-message">
-                                        {errors.city.message}
-                                    </p>
-                                )}
-                            </>
-                        )}
-                    />
-                </div>
+                    {currentSetting.value === "city-district" && (
+                        <div className="w-full lg:max-w-md lg:w-[30%]">
+                            <div className="mb-2 block">
+                                <Label htmlFor="city" value="المدينة :" />
+                            </div>
+                            <FlowbiteSelect
+                                id="city"
+                                type="select"
+                                placeholder="المدينة"
+                                color={errors.city ? "failure" : "primary"}
+                                {...register("city", {})}
+                                onBlur={() => trigger("city")}
+                            >
+                                {citiesList?.map((city) => (
+                                    <option value={city.id} key={city.id}>
+                                        {city.name}
+                                    </option>
+                                ))}
+                            </FlowbiteSelect>
+                        </div>
+                    )}
+                </>
             )}
         </FormGroup>
     );

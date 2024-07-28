@@ -393,42 +393,42 @@ const ClientsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                         placeholder="العنوان"
                     />
                 </div>
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label htmlFor="trainer" value="المدرب :" />
-                    </div>
-
-                    <Controller
-                        name="trainer"
-                        control={control}
-                        render={({ field }) => (
-                            <>
-                                <Select
-                                    noOptionsMessage={() =>
-                                        "لا يوجد نتائج مطابقة"
-                                    }
-                                    placeholder="بحث ..."
-                                    options={trainersList || []}
-                                    onInputChange={fetchTrainers}
-                                    value={field.value}
-                                    onBlur={() => {
-                                        trigger("trainer");
-                                    }}
-                                    {...field}
-                                    styles={style(errors.trainer)}
-                                ></Select>
-                                {errors.trainer && (
-                                    <p className="error-message">
-                                        {errors.trainer.message}
-                                    </p>
-                                )}
-                            </>
-                        )}
-                    />
-                </div>
 
                 {formFunction === "add" && (
                     <>
+                        <div className="w-full lg:max-w-md lg:w-[30%]">
+                            <div className="mb-2 block">
+                                <Label htmlFor="trainer" value="المدرب :" />
+                            </div>
+
+                            <Controller
+                                name="trainer"
+                                control={control}
+                                render={({ field }) => (
+                                    <>
+                                        <Select
+                                            noOptionsMessage={() =>
+                                                "لا يوجد نتائج مطابقة"
+                                            }
+                                            placeholder="بحث ..."
+                                            options={trainersList || []}
+                                            onInputChange={fetchTrainers}
+                                            value={field.value}
+                                            onBlur={() => {
+                                                trigger("trainer");
+                                            }}
+                                            {...field}
+                                            styles={style(errors.trainer)}
+                                        ></Select>
+                                        {errors.trainer && (
+                                            <p className="error-message">
+                                                {errors.trainer.message}
+                                            </p>
+                                        )}
+                                    </>
+                                )}
+                            />
+                        </div>
                         <div className="w-full lg:max-w-md lg:w-[30%]">
                             <div className="mb-2 block">
                                 <Label

@@ -4,8 +4,7 @@ from django.urls import path, include
 
 router = DefaultRouter()
 router.register("subscription-plan", SubscriptionPlanViewSet, basename="subscription-plan")
-router.register("locker-plan", LockerPlanViewSet, basename="locker-plan")
-router.register("additional-plan", AdditionalPlanViewSet, basename="additional-plan")
+router.register("subscription", SubscriptionViewSet, basename="subscription")
 
 urlpatterns = [
     path("", include(router.urls)),

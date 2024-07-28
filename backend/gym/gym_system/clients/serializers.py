@@ -7,27 +7,8 @@ from users.serializers import EmployeeReadSerializer, UserSerializer
 from django.conf import settings
 
 
-class SubscriptionSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='subscription-detail')
-    plan = SubscriptionPlanSerializer()
-    is_current = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Subscription
-        fields = '__all__'
-
-    def get_is_current(self, obj):
-        if obj.end_date:
-            return obj.is_current
-        else:
-            return None
-
-
 class ClientReadSerializer(serializers.ModelSerializer):
-    trainer = EmployeeReadSerializer()
     added_by = UserSerializer()
-    current_subscription = SubscriptionSerializer()
-    subscription_history = SubscriptionSerializer(many=True)
     url = serializers.HyperlinkedIdentityField(view_name='client-detail')
     qr_code = serializers.SerializerMethodField(read_only=True)
     barcode = serializers.SerializerMethodField(read_only=True)
@@ -79,8 +60,8 @@ class ClientWriteSerializer(serializers.ModelSerializer):
                                                      start_date=start_date,
                                                      end_date=end_date)
             client_sub.save()
-            client.current_subscription = client_sub
-            client.subscription_history.add(client_sub)
+            # client.current_subscription = client_sub
+            # client.subscription_history.add(client_sub)
             client.save()
 
         return client

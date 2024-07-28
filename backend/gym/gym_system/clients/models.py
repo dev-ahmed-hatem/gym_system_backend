@@ -7,26 +7,6 @@ from barcode import get_barcode_class, writer
 from io import BytesIO
 from django.core.files.base import File
 from cryptography.fernet import Fernet
-from random import randint
-
-
-class Subscription(models.Model):
-    plan = models.ForeignKey('subscriptions.SubscriptionPlan', on_delete=models.CASCADE, null=True)
-    client = models.ForeignKey('clients.Client', on_delete=models.CASCADE, null=True)
-    start_date = models.DateField(default=date.today)
-    end_date = models.DateField(blank=True, null=True)
-
-    is_active = models.BooleanField(default=True)
-
-    class Meta:
-        ordering = ('-start_date',)
-
-    @property
-    def is_current(self):
-        return self.end_date >= now().date()
-
-    def __str__(self):
-        return f"{self.client.name} - {self.plan.name}"
 
 
 class Client(models.Model):
@@ -49,12 +29,6 @@ class Client(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     qr_code = models.ImageField(upload_to='qr_codes', blank=True, null=True)
     barcode = models.ImageField(upload_to='barcodes', blank=True, null=True)
-
-    trainer = models.ForeignKey('users.Employee', on_delete=models.SET_NULL, blank=True, null=True)
-    current_subscription = models.OneToOneField(Subscription, on_delete=models.SET_NULL, blank=True, null=True,
-                                                related_name='current_subscription')
-    subscription_history = models.ManyToManyField(Subscription, blank=True,
-                                                  related_name='subscription_history')
     is_blocked = models.BooleanField(default=False)
 
     class Meta:

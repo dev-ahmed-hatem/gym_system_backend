@@ -23,7 +23,13 @@ const Menu = forwardRef(({ menuOpen, setMenuState }, menuRef) => {
          bg-white bg-clip-border py-4 text-gray-700 shadow-xl shadow-blue-gray-900/5 select-none`}
         >
             {/* logo */}
-            <Link to={"/"} className="p-4 mb-2">
+            <Link
+                to={"/"}
+                className="p-4 mb-2"
+                onClick={() => {
+                    setMenuState(false);
+                }}
+            >
                 <img
                     className="m-auto w-16 h-16"
                     src="/vite.svg"

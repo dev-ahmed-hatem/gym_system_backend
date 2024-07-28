@@ -57,6 +57,7 @@ const Permissions = () => {
                         <Label htmlFor="name" value="اختر مشرف :" />
                     </div>
                     <Select
+                        isClearable
                         noOptionsMessage={() => "لا يوجد نتائج مطابقة"}
                         placeholder="بحث ..."
                         options={moderatorsList || []}

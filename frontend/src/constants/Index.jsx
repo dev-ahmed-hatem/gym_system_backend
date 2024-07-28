@@ -17,11 +17,8 @@ import {
     MdPerson,
     MdSecurity,
     MdSubscriptions,
-    MdLock,
-    MdMoneyOff,
     MdAssignment,
-    MdReport,
-    MdAddCircle,
+    MdOutlineTimerOff,
 } from "react-icons/md";
 import { FaShop } from "react-icons/fa6";
 import { RiShoppingBag3Fill } from "react-icons/ri";
@@ -31,24 +28,25 @@ import Employees from "../components/users/Employees";
 import Moderators from "../components/users/Moderators";
 import Permissions from "../components/users/Permissions";
 import Subscriptions from "../components/settings/Subscriptions";
-import Lockers from "../components/settings/Lockers";
-import AdditionalPlans from "../components/settings/AdditionalPlans";
 import FinancialItems from "../components/settings/FinancialItems";
 import EmployeeSettings from "../components/settings/EmployeeSettings";
 import Clients from "../components/clients/Clients";
 import { GiMoneyStack, GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import Blocklist from "../components/clients/Blocklist";
 import Search from "../components/clients/Search";
-import { BiSolidCategory } from "react-icons/bi";
+import { BiSolidCategory, BiSolidOffer } from "react-icons/bi";
 import ProductCategories from "../components/settings/ProductCategories";
 import Products from "../components/shop/Products";
 import Transaction from "../components/financials/Transaction";
 import Salaries from "../components/financials/Salaries";
+import { HiMiniPlayPause } from "react-icons/hi2";
+import { TbReport } from "react-icons/tb";
+import { IoIosFitness } from "react-icons/io";
 
 export const routes = [
     {
         id: 1,
-        title: "إدارة المستخدمين",
+        title: "إدارة طاقم العمل",
         name: "user-management",
         url: "/users",
         icon: <FaUsers />,
@@ -100,6 +98,13 @@ export const routes = [
         children: [
             {
                 id: 1,
+                title: "بيانات الجيم",
+                name: "gym-data",
+                url: "/settings/gym-data",
+                icon: <IoIosFitness />,
+            },
+            {
+                id: 2,
                 title: "الموظفين",
                 name: "staff-settings",
                 url: "/settings/staff",
@@ -107,7 +112,7 @@ export const routes = [
                 element: <EmployeeSettings />,
             },
             {
-                id: 2,
+                id: 3,
                 title: "الاشتراكات",
                 name: "plans",
                 url: "/settings/plans",
@@ -115,27 +120,18 @@ export const routes = [
                 element: <Subscriptions />,
             },
             {
-                id: 3,
-                title: "اللوكر",
-                name: "lockers",
-                url: "/settings/lockers",
-                icon: <MdLock />,
-                element: <Lockers />,
-            },
-            {
                 id: 4,
-                title: "الاشتراكات الإضافية",
-                name: "additional-plans",
-                url: "/settings/additional-plans",
-                icon: <MdAddCircle />,
-                element: <AdditionalPlans />,
-            },
-            {
-                id: 5,
                 title: "فئات المنتجات",
                 url: "/settings/product-categories",
                 icon: <BiSolidCategory />,
                 element: <ProductCategories />,
+            },
+            {
+                id: 5,
+                title: "العروض",
+                name: "offers",
+                url: "/settings/offers",
+                icon: <BiSolidOffer />,
             },
             {
                 id: 6,
@@ -233,7 +229,7 @@ export const routes = [
                 title: "إيقاف الاشتراكات",
                 name: "freeze-subscriptions",
                 url: "/subscriptions/freeze",
-                icon: <MdMoneyOff />,
+                icon: <HiMiniPlayPause />,
                 permissions: "unadjustable",
             },
             {
@@ -241,7 +237,7 @@ export const routes = [
                 title: "الاشتراكات المنتهية",
                 name: "expired-subscriptions",
                 url: "/subscriptions/expired",
-                icon: <MdSubscriptions />,
+                icon: <MdOutlineTimerOff />,
                 permissions: "unadjustable",
             },
         ],
@@ -341,7 +337,7 @@ export const routes = [
                 title: "التقارير اليومية",
                 name: "daily-reports",
                 url: "/reports/daily",
-                icon: <FaRegFileAlt />,
+                icon: <MdAssignment />,
             },
             {
                 id: 2,
@@ -355,14 +351,14 @@ export const routes = [
                 title: "التقارير خلال فترة",
                 name: "within-duration-reports",
                 url: "/reports/within-duration",
-                icon: <MdReport />,
+                icon: <TbReport />,
             },
             {
                 id: 4,
                 title: "تقارير الاشتراكات",
                 name: "subscription-reports",
                 url: "/reports/subscriptions",
-                icon: <MdAssignment />,
+                icon: <MdSubscriptions />,
             },
             {
                 id: 5,

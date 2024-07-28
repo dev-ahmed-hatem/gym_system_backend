@@ -6,6 +6,12 @@ from math import ceil
 class CustomPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
 
+    def paginate_queryset(self, queryset, request, view=None):
+        no_pagination = request.query_params.get('no_pagination')
+        if no_pagination:
+            return None
+        return super().paginate_queryset(queryset, request, view)
+
     def get_paginated_response(self, data):
         total_pages = ceil(self.page.paginator.count / self.page_size)
         return Response({
