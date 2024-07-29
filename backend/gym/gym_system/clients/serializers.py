@@ -1,8 +1,9 @@
-from django.utils import timezone
+from django.utils.timezone import datetime
 from rest_framework import serializers
 from .models import *
-from subscriptions.models import SubscriptionPlan
+from subscriptions.models import SubscriptionPlan, Subscription
 from subscriptions.serializers import SubscriptionPlanSerializer
+from users.models import Employee
 from users.serializers import EmployeeReadSerializer, UserSerializer
 from django.conf import settings
 
@@ -31,6 +32,7 @@ class ClientWriteSerializer(serializers.ModelSerializer):
     start_date = serializers.CharField(write_only=True, required=False)
     qr_code = serializers.CharField(read_only=True)
     barcode = serializers.CharField(read_only=True)
+    trainer = serializers.IntegerField(write_only=True, required=False)
 
     class Meta:
         model = Client
@@ -38,30 +40,27 @@ class ClientWriteSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         subscription_plan = validated_data.pop('subscription_plan', None)
-        subscription_history = validated_data.pop('subscription_history', None)
+        trainer = validated_data.pop('trainer', None)
         start_date = validated_data.pop('start_date', None)
         client = super().create(validated_data)
+        if not client.qr_code:
+            client.generate_qr_code()
+        if not client.barcode:
+            client.generate_barcode()
+
+        trainer = Employee.objects.get(pk=trainer) if trainer else None
         if subscription_plan:
             plan = SubscriptionPlan.objects.get(id=subscription_plan)
-            # assign start date
             if start_date:
-                start_date = timezone.make_aware(timezone.datetime.strptime(start_date, '%Y-%m-%d'),
-                                                 timezone.get_current_timezone())
+                start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
             else:
-                start_date = timezone.now()
+                start_date = datetime.now().date()
 
-            # assign end date
-            if plan.is_duration:
-                end_date = start_date + timezone.timedelta(days=plan.days)
-            else:
-                end_date = start_date + timezone.timedelta(days=plan.validity)
             client_sub = Subscription.objects.create(plan=plan,
                                                      client=client,
                                                      start_date=start_date,
-                                                     end_date=end_date)
+                                                     trainer=trainer)
             client_sub.save()
-            # client.current_subscription = client_sub
-            # client.subscription_history.add(client_sub)
-            client.save()
+        client.save()
 
         return client

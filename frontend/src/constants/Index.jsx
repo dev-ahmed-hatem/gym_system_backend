@@ -42,6 +42,9 @@ import Salaries from "../components/financials/Salaries";
 import { HiMiniPlayPause } from "react-icons/hi2";
 import { TbReport } from "react-icons/tb";
 import { IoIosFitness } from "react-icons/io";
+import { VscRunAll } from "react-icons/vsc";
+import { SlCalender } from "react-icons/sl";
+import SubscriptionAdd from "../components/subscriptions/SubscriptionAdd";
 
 export const routes = [
     {
@@ -199,25 +202,10 @@ export const routes = [
                 name: "add-subscription",
                 url: "/subscriptions/add",
                 icon: <MdSubscriptions />,
+                element: <SubscriptionAdd />
             },
             {
                 id: 2,
-                title: "الاشتراكات خلال فترة",
-                name: "subscriptions-within-duration",
-                url: "/subscriptions/within-duration",
-                icon: <MdSubscriptions />,
-                permissions: "unadjustable",
-            },
-            {
-                id: 3,
-                title: "الاشتراكات الحالية",
-                name: "current-subscriptions",
-                url: "/subscriptions/current-active",
-                icon: <MdSubscriptions />,
-                permissions: "unadjustable",
-            },
-            {
-                id: 4,
                 title: "بحث",
                 name: "search-subscriptions",
                 url: "/subscriptions/search",
@@ -225,7 +213,7 @@ export const routes = [
                 permissions: "unadjustable",
             },
             {
-                id: 5,
+                id: 3,
                 title: "إيقاف الاشتراكات",
                 name: "freeze-subscriptions",
                 url: "/subscriptions/freeze",
@@ -233,11 +221,27 @@ export const routes = [
                 permissions: "unadjustable",
             },
             {
-                id: 6,
+                id: 4,
+                title: "الاشتراكات الحالية",
+                name: "current-subscriptions",
+                url: "/subscriptions/current-active",
+                icon: <VscRunAll />,
+                permissions: "unadjustable",
+            },
+            {
+                id: 5,
                 title: "الاشتراكات المنتهية",
                 name: "expired-subscriptions",
                 url: "/subscriptions/expired",
                 icon: <MdOutlineTimerOff />,
+                permissions: "unadjustable",
+            },
+            {
+                id: 6,
+                title: "الاشتراكات خلال فترة",
+                name: "subscriptions-within-duration",
+                url: "/subscriptions/within-duration",
+                icon: <SlCalender />,
                 permissions: "unadjustable",
             },
         ],

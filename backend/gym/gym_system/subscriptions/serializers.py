@@ -35,9 +35,17 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class SubscriptionSerializer(serializers.ModelSerializer):
+class SubscriptionReadSerializer(serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='subscription-detail', lookup_field='pk')
     plan = SubscriptionPlanSerializer()
+
+    class Meta:
+        model = Subscription
+        fields = '__all__'
+
+
+class SubscriptionWriteSerializer(serializers.ModelSerializer):
+    url = HyperlinkedIdentityField(view_name='subscription-detail', lookup_field='pk')
 
     class Meta:
         model = Subscription

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import FormGroup from "../groups/FormGroup";
 import {
     TextInput,
@@ -76,7 +76,6 @@ const ClientsForm = ({ setToast, postURL, defaultValues, callBack }) => {
         axios
             .get(url)
             .then((response) => {
-                options.push({ value: 0, label: "بدون مدرب" });
                 response.data.results.map((trainer) => {
                     options.push({
                         value: trainer.id,
@@ -96,14 +95,13 @@ const ClientsForm = ({ setToast, postURL, defaultValues, callBack }) => {
 
     const fetchSubscriptions = (search_word) => {
         const options = [];
-        const url = `${endpoints.subscription_list}page_size=20&ordering=-id${
+        const url = `${endpoints.subscription_plan_list}page_size=20&ordering=-id${
             search_word ? `&search=${search_word}` : ""
         }`;
 
         axios
             .get(url)
             .then((response) => {
-                options.push({ value: 0, label: "بدون اشتراك" });
                 response.data.results.map((subscription) => {
                     options.push({
                         value: subscription.id,
@@ -131,14 +129,14 @@ const ClientsForm = ({ setToast, postURL, defaultValues, callBack }) => {
         }
 
         //  validate trainer
-        if (data.trainer && data.trainer?.value != 0) {
+        if (data.trainer) {
             data.trainer = data.trainer.value;
         } else {
             data.trainer = null;
         }
 
         //  validate start date for current subscription
-        if (data.subscription_plan && data.subscription_plan?.value != 0) {
+        if (data.subscription_plan) {
             data.subscription_plan = data.subscription_plan.value;
             if (!data.start_date) {
                 data.start_date = new Date().toLocaleDateString("en-CA");
@@ -147,8 +145,6 @@ const ClientsForm = ({ setToast, postURL, defaultValues, callBack }) => {
             data.subscription_plan = null;
         }
 
-        console.log(data);
-        // return;
         setPost(true);
 
         requestMethod(postURL, data, {
@@ -407,6 +403,7 @@ const ClientsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                                 render={({ field }) => (
                                     <>
                                         <Select
+                                            isClearable
                                             noOptionsMessage={() =>
                                                 "لا يوجد نتائج مطابقة"
                                             }
@@ -443,6 +440,7 @@ const ClientsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                                 render={({ field }) => (
                                     <>
                                         <Select
+                                            isClearable
                                             noOptionsMessage={() =>
                                                 "لا يوجد نتائج مطابقة"
                                             }
@@ -453,7 +451,6 @@ const ClientsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                                             onBlur={() => {
                                                 trigger("subscription_plan");
                                             }}
-                                            // defaultValue={}
                                             {...field}
                                             styles={style(
                                                 errors.subscription_plan

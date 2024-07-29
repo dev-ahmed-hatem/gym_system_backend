@@ -468,7 +468,7 @@ const Subscriptions = () => {
     };
 
     const fetchListData = () => {
-        const searchURL = `${endpoints.subscription_list}${
+        const searchURL = `${endpoints.subscription_plan_list}${
             searchParam ? `&search=${searchParam}` : ""
         }${pageNumber ? `&page=${pageNumber}` : ""}
         `;
@@ -509,7 +509,7 @@ const Subscriptions = () => {
             {/* add form */}
             <SubscriptionsForm
                 setToast={setToast}
-                postURL={endpoints.subscription_list}
+                postURL={endpoints.subscription_plan_list}
                 callBack={fetchListData}
             />
 

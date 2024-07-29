@@ -7,6 +7,7 @@ from barcode import get_barcode_class, writer
 from io import BytesIO
 from django.core.files.base import File
 from cryptography.fernet import Fernet
+import os
 
 
 class Client(models.Model):
@@ -36,13 +37,6 @@ class Client(models.Model):
 
     def __str__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.qr_code:
-            self.generate_qr_code()
-        if not self.barcode:
-            self.generate_barcode()
-        return super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         if self.qr_code:

@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils import timezone
+from django.utils.timezone import timedelta
 
 
 class SubscriptionPlan(models.Model):
@@ -29,7 +29,10 @@ class SubscriptionPlan(models.Model):
 class Subscription(models.Model):
     client = models.ForeignKey('clients.Client', on_delete=models.CASCADE, related_name='subscriptions')
     plan = models.ForeignKey(SubscriptionPlan, on_delete=models.CASCADE, related_name='subscriptions')
-    trainer = models.ForeignKey('users.Employee', on_delete=models.SET_NULL, blank=True, null=True)
+    trainer = models.ForeignKey('users.Employee', on_delete=models.SET_NULL, blank=True, null=True,
+                                related_name='training')
+    referrer = models.ForeignKey('users.Employee', on_delete=models.SET_NULL, blank=True, null=True,
+                                 related_name='associated_subscriptions')
     start_date = models.DateField()
     end_date = models.DateField(blank=True, null=True)
     freeze_days_used = models.PositiveIntegerField(default=0)
@@ -38,7 +41,10 @@ class Subscription(models.Model):
     unfreeze_date = models.DateField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        # self.end_date = timezone.timedelta(days=self.plan.)
+        if self.plan.is_duration:
+            self.end_date = self.start_date + timedelta(days=self.plan.days)
+        else:
+            self.end_date = self.start_date + timedelta(days=self.plan.validity)
         return super(Subscription, self).save(*args, **kwargs)
 
     def freeze(self, freeze_date=None):

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import FormGroup from "../groups/FormGroup";
 import { TextInput, Label, Table, Button } from "flowbite-react";
 import { HiLockClosed, HiUser } from "react-icons/hi";
@@ -13,6 +13,7 @@ import DrawerHeader from "../groups/DrawerHeader";
 import TablePagination from "../groups/TablePagination";
 import endpoints from "../../../config";
 import Select from "react-select";
+import style from "../../assets/rect-select-style";
 
 const ModeratorsForm = ({ setToast, postURL, defaultValues, callBack }) => {
     const [post, setPost] = useState(false);
@@ -164,34 +165,7 @@ const ModeratorsForm = ({ setToast, postURL, defaultValues, callBack }) => {
                                         trigger("employee");
                                     }}
                                     {...field}
-                                    styles={{
-                                        control: (base, state) => ({
-                                            ...base,
-                                            borderColor: errors.employee
-                                                ? "red"
-                                                : base.borderColor,
-                                            color: errors.employee
-                                                ? "red"
-                                                : base.color,
-                                            "&:hover": {
-                                                borderColor: errors.employee
-                                                    ? "red"
-                                                    : base["&:hover"]
-                                                          .borderColor,
-                                            },
-                                            boxShadow: state.isFocused
-                                                ? errors.employee
-                                                    ? "0 0 0 1px red"
-                                                    : "0 0 0 1px blue"
-                                                : base.boxShadow,
-                                        }),
-                                        placeholder: (base, state) => ({
-                                            ...base,
-                                            color: errors.employee
-                                                ? "red"
-                                                : base.color,
-                                        }),
-                                    }}
+                                    styles={style(errors.employee)}
                                 ></Select>
                                 {errors.employee && (
                                     <p className="error-message">
