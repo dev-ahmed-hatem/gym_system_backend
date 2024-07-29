@@ -85,5 +85,5 @@ Thumbs.db
 *.swp
 
 # celery files
-celery*
+celerybeat*
 *.rdb
