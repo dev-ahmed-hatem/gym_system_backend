@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
+from users.serializers import EmployeeReadSerializer
 from .models import *
 
 
@@ -38,10 +39,23 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
 class SubscriptionReadSerializer(serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='subscription-detail', lookup_field='pk')
     plan = SubscriptionPlanSerializer()
+    trainer = EmployeeReadSerializer()
+    client_name = serializers.SerializerMethodField()
+    client_id = serializers.SerializerMethodField()
+    is_expired = serializers.SerializerMethodField()
 
     class Meta:
         model = Subscription
         fields = '__all__'
+
+    def get_is_expired(self, obj):
+        return obj.is_expired()
+
+    def get_client_name(self, obj):
+        return obj.client.name
+
+    def get_client_id(self, obj):
+        return obj.client.id
 
 
 class SubscriptionWriteSerializer(serializers.ModelSerializer):

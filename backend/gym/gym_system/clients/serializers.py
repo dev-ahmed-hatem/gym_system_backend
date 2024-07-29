@@ -2,9 +2,9 @@ from django.utils.timezone import datetime
 from rest_framework import serializers
 from .models import *
 from subscriptions.models import SubscriptionPlan, Subscription
-from subscriptions.serializers import SubscriptionPlanSerializer
+from subscriptions.serializers import SubscriptionReadSerializer
 from users.models import Employee
-from users.serializers import EmployeeReadSerializer, UserSerializer
+from users.serializers import UserSerializer
 from django.conf import settings
 
 
@@ -13,6 +13,7 @@ class ClientReadSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='client-detail')
     qr_code = serializers.SerializerMethodField(read_only=True)
     barcode = serializers.SerializerMethodField(read_only=True)
+    subscriptions = serializers.SerializerMethodField()
 
     class Meta:
         model = Client
@@ -25,6 +26,12 @@ class ClientReadSerializer(serializers.ModelSerializer):
     def get_barcode(self, obj):
         barcode = self.context['request'].build_absolute_uri(f"{settings.MEDIA_URL}{obj.barcode}")
         return barcode
+
+    def get_subscriptions(self, obj):
+        from subscriptions.serializers import SubscriptionReadSerializer
+        subscriptions = obj.subscriptions.all().order_by('-start_date')
+        return SubscriptionReadSerializer(subscriptions, many=True,
+                                          context={'request': self.context.get('request')}).data
 
 
 class ClientWriteSerializer(serializers.ModelSerializer):

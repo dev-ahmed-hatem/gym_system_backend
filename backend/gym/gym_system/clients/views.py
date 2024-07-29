@@ -17,6 +17,7 @@ class ClientViewSet(ModelViewSet):
         search = self.request.query_params.get('search', None)
         if search:
             queryset = queryset.filter(
+                Q(id__icontains=search) |
                 Q(name__icontains=search) |
                 Q(national_id__icontains=search) |
                 Q(phone__icontains=search) |

@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.timezone import timedelta
+from django.utils.timezone import timedelta, datetime
 
 
 class SubscriptionPlan(models.Model):
@@ -75,3 +75,6 @@ class Subscription(models.Model):
 
         active_duration = (self.end_date - self.start_date).days - freeze_duration
         return active_duration
+
+    def is_expired(self):
+        return datetime.today().date() > self.end_date

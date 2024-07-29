@@ -156,317 +156,333 @@ const Search = () => {
                     <h1 className="font-bold text-text text-lg">بيانات عميل</h1>
                     <hr className="h-px my-3 bg-gray-200 border-0"></hr>
                     <div className="table-wrapper overflow-x-auto">
-
-                    
-                    <Table className="text-right text-lg">
-                        <Table.Body>
-                            {/* photo */}
-                            <Table.Row>
-                                <Table.Cell>
-                                    <span className="me-3">الصورة : </span>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <span>
-                                        {currentClient?.photo ? (
-                                            <img
-                                                src={currentClient.photo}
-                                                className="w-72"
-                                            />
-                                        ) : (
-                                            <span className="text-secondary">
-                                                لا توجد صورة حالية
-                                            </span>
-                                        )}
-                                    </span>
-                                </Table.Cell>
-                            </Table.Row>
-                            {/* barocde */}
-                            <Table.Row>
-                                <Table.Cell>
-                                    <span className="me-3">الباركود : </span>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <span>
-                                        {currentClient?.barcode ? (
-                                            <img
-                                                src={currentClient.barcode}
-                                                // className="w-72"
-                                            />
-                                        ) : (
-                                            <span className="text-secondary">
-                                                لا توجد صورة حالية
-                                            </span>
-                                        )}
-                                    </span>
-                                </Table.Cell>
-                            </Table.Row>
-                            {/* qrocde */}
-                            <Table.Row>
-                                <Table.Cell>
-                                    <span className="me-3">ال qr : </span>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <span>
-                                        {currentClient?.qr_code ? (
-                                            <img
-                                                src={currentClient.qr_code}
-                                                className="w-64"
-                                            />
-                                        ) : (
-                                            <span className="text-secondary">
-                                                لا توجد صورة حالية
-                                            </span>
-                                        )}
-                                    </span>
-                                </Table.Cell>
-                            </Table.Row>
-                            {/* name */}
-                            <Table.Row>
-                                <Table.Cell>
-                                    <span className="me-3">الاسم : </span>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <span>
-                                        {currentClient?.name ? (
-                                            <span>{currentClient.name}</span>
-                                        ) : (
-                                            <span className="text-secondary">
-                                                غير مسجل
-                                            </span>
-                                        )}
-                                    </span>
-                                </Table.Cell>
-                            </Table.Row>
-                            {/* id */}
-                            <Table.Row>
-                                <Table.Cell>
-                                    <span className="me-3">الكود : </span>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <span>
-                                        {currentClient?.id ? (
-                                            <span>{currentClient.id}</span>
-                                        ) : (
-                                            <span className="text-secondary">
-                                                غير مسجل
-                                            </span>
-                                        )}
-                                    </span>
-                                </Table.Cell>
-                            </Table.Row>
-                            {/* is blocked */}
-                            <Table.Row>
-                                <Table.Cell>
-                                    <span className="me-3">محظور : </span>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    {currentClient.is_blocked ? (
-                                        <span className="text-secondary font-bold">
-                                            نعم
+                        <Table className="text-right text-lg">
+                            <Table.Body>
+                                {/* photo */}
+                                <Table.Row>
+                                    <Table.Cell>
+                                        <span className="me-3">الصورة : </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span>
+                                            {currentClient?.photo ? (
+                                                <img
+                                                    src={currentClient.photo}
+                                                    className="w-72"
+                                                />
+                                            ) : (
+                                                <span className="text-secondary">
+                                                    لا توجد صورة حالية
+                                                </span>
+                                            )}
                                         </span>
-                                    ) : (
-                                        <span>لا</span>
-                                    )}
-                                </Table.Cell>
-                            </Table.Row>
-                            {/* phone */}
-                            <Table.Row>
-                                <Table.Cell>
-                                    <span className="me-3">
-                                        رقم الموبايل :{" "}
-                                    </span>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <span>
-                                        {currentClient?.phone ? (
-                                            <span>{currentClient.phone}</span>
-                                        ) : (
-                                            <span className="text-secondary">
-                                                غير مسجل
-                                            </span>
-                                        )}
-                                    </span>
-                                </Table.Cell>
-                            </Table.Row>
-                            {/* phone2 */}
-                            <Table.Row>
-                                <Table.Cell>
-                                    <span className="me-3">
-                                        رقم الموبايل 2 :{" "}
-                                    </span>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <span>
-                                        {currentClient?.phone2 ? (
-                                            <span>{currentClient.phone2}</span>
-                                        ) : (
-                                            <span className="text-secondary">
-                                                غير مسجل
-                                            </span>
-                                        )}
-                                    </span>
-                                </Table.Cell>
-                            </Table.Row>
-                            {/* national_id */}
-                            <Table.Row>
-                                <Table.Cell>
-                                    <span className="me-3">رقم الهوية : </span>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <span>
-                                        {currentClient?.national_id ? (
-                                            <span>
-                                                {currentClient.national_id}
-                                            </span>
-                                        ) : (
-                                            <span className="text-secondary">
-                                                غير مسجل
-                                            </span>
-                                        )}
-                                    </span>
-                                </Table.Cell>
-                            </Table.Row>
-                            {/* gander */}
-                            <Table.Row>
-                                <Table.Cell>
-                                    <span className="me-3">النوع : </span>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <span>
-                                        {currentClient?.gander ? (
-                                            <span>
-                                                {currentClient.gander == "male"
-                                                    ? "ذكر"
-                                                    : "أنثى"}
-                                            </span>
-                                        ) : (
-                                            <span className="text-secondary">
-                                                غير مسجل
-                                            </span>
-                                        )}
-                                    </span>
-                                </Table.Cell>
-                            </Table.Row>
-                            {/* birth date */}
-                            <Table.Row>
-                                <Table.Cell>
-                                    <span className="me-3">
-                                        تاريخ الميلاد :{" "}
-                                    </span>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <span>
-                                        {currentClient?.birth_date ? (
-                                            <span>
-                                                {currentClient.birth_date}
+                                    </Table.Cell>
+                                </Table.Row>
+                                {/* barocde */}
+                                <Table.Row>
+                                    <Table.Cell>
+                                        <span className="me-3">
+                                            الباركود :{" "}
+                                        </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span>
+                                            {currentClient?.barcode ? (
+                                                <img
+                                                    src={currentClient.barcode}
+                                                    // className="w-72"
+                                                />
+                                            ) : (
+                                                <span className="text-secondary">
+                                                    لا توجد صورة حالية
+                                                </span>
+                                            )}
+                                        </span>
+                                    </Table.Cell>
+                                </Table.Row>
+                                {/* qrocde */}
+                                <Table.Row>
+                                    <Table.Cell>
+                                        <span className="me-3">ال qr : </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span>
+                                            {currentClient?.qr_code ? (
+                                                <img
+                                                    src={currentClient.qr_code}
+                                                    className="w-64"
+                                                />
+                                            ) : (
+                                                <span className="text-secondary">
+                                                    لا توجد صورة حالية
+                                                </span>
+                                            )}
+                                        </span>
+                                    </Table.Cell>
+                                </Table.Row>
+                                {/* name */}
+                                <Table.Row>
+                                    <Table.Cell>
+                                        <span className="me-3">الاسم : </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span>
+                                            {currentClient?.name ? (
+                                                <span>
+                                                    {currentClient.name}
+                                                </span>
+                                            ) : (
+                                                <span className="text-secondary">
+                                                    غير مسجل
+                                                </span>
+                                            )}
+                                        </span>
+                                    </Table.Cell>
+                                </Table.Row>
+                                {/* id */}
+                                <Table.Row>
+                                    <Table.Cell>
+                                        <span className="me-3">الكود : </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span>
+                                            {currentClient?.id ? (
+                                                <span>{currentClient.id}</span>
+                                            ) : (
+                                                <span className="text-secondary">
+                                                    غير مسجل
+                                                </span>
+                                            )}
+                                        </span>
+                                    </Table.Cell>
+                                </Table.Row>
+                                {/* is blocked */}
+                                <Table.Row>
+                                    <Table.Cell>
+                                        <span className="me-3">محظور : </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        {currentClient.is_blocked ? (
+                                            <span className="text-secondary font-bold">
+                                                نعم
                                             </span>
                                         ) : (
-                                            <span className="text-secondary">
-                                                غير مسجل
-                                            </span>
+                                            <span>لا</span>
                                         )}
-                                    </span>
-                                </Table.Cell>
-                            </Table.Row>
-                            {/* age */}
-                            <Table.Row>
-                                <Table.Cell>
-                                    <span className="me-3">العمر : </span>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <span>
-                                        {currentClient?.age ? (
-                                            <span>{currentClient.age}</span>
-                                        ) : (
-                                            <span className="text-secondary">
-                                                غير مسجل
-                                            </span>
-                                        )}
-                                    </span>
-                                </Table.Cell>
-                            </Table.Row>
-                            {/* email */}
-                            <Table.Row>
-                                <Table.Cell>
-                                    <span className="me-3">
-                                        البريد الالكترونى :{" "}
-                                    </span>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <span>
-                                        {currentClient?.email ? (
-                                            <span>{currentClient.email}</span>
-                                        ) : (
-                                            <span className="text-secondary">
-                                                غير مسجل
-                                            </span>
-                                        )}
-                                    </span>
-                                </Table.Cell>
-                            </Table.Row>
-                            {/* address */}
-                            <Table.Row>
-                                <Table.Cell>
-                                    <span className="me-3">العنوان : </span>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <span>
-                                        {currentClient?.address ? (
-                                            <span>{currentClient.address}</span>
-                                        ) : (
-                                            <span className="text-secondary">
-                                                غير مسجل
-                                            </span>
-                                        )}
-                                    </span>
-                                </Table.Cell>
-                            </Table.Row>
-                            {/* trainer */}
-                            <Table.Row>
-                                <Table.Cell>
-                                    <span className="me-3">المدرب : </span>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <span>
-                                        {currentClient?.trainer ? (
-                                            <span>
-                                                {currentClient.trainer?.name}
-                                            </span>
-                                        ) : (
-                                            <span className="text-secondary">
-                                                بدون مدرب
-                                            </span>
-                                        )}
-                                    </span>
-                                </Table.Cell>
-                            </Table.Row>
-                            {/* added by */}
-                            <Table.Row>
-                                <Table.Cell>
-                                    <span className="me-3">
-                                        تمت الإضافة بواسطة :{" "}
-                                    </span>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <span>
-                                        {currentClient?.added_by ? (
-                                            <span>
-                                                {
-                                                    currentClient.added_by
-                                                        ?.username
-                                                }
-                                            </span>
-                                        ) : (
-                                            <span className="text-secondary">
-                                                غير مسجل
-                                            </span>
-                                        )}
-                                    </span>
-                                </Table.Cell>
-                            </Table.Row>
-                        </Table.Body>
-                    </Table>
-                </div>
+                                    </Table.Cell>
+                                </Table.Row>
+                                {/* phone */}
+                                <Table.Row>
+                                    <Table.Cell>
+                                        <span className="me-3">
+                                            رقم الموبايل :{" "}
+                                        </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span>
+                                            {currentClient?.phone ? (
+                                                <span>
+                                                    {currentClient.phone}
+                                                </span>
+                                            ) : (
+                                                <span className="text-secondary">
+                                                    غير مسجل
+                                                </span>
+                                            )}
+                                        </span>
+                                    </Table.Cell>
+                                </Table.Row>
+                                {/* phone2 */}
+                                <Table.Row>
+                                    <Table.Cell>
+                                        <span className="me-3">
+                                            رقم الموبايل 2 :{" "}
+                                        </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span>
+                                            {currentClient?.phone2 ? (
+                                                <span>
+                                                    {currentClient.phone2}
+                                                </span>
+                                            ) : (
+                                                <span className="text-secondary">
+                                                    غير مسجل
+                                                </span>
+                                            )}
+                                        </span>
+                                    </Table.Cell>
+                                </Table.Row>
+                                {/* national_id */}
+                                <Table.Row>
+                                    <Table.Cell>
+                                        <span className="me-3">
+                                            رقم الهوية :{" "}
+                                        </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span>
+                                            {currentClient?.national_id ? (
+                                                <span>
+                                                    {currentClient.national_id}
+                                                </span>
+                                            ) : (
+                                                <span className="text-secondary">
+                                                    غير مسجل
+                                                </span>
+                                            )}
+                                        </span>
+                                    </Table.Cell>
+                                </Table.Row>
+                                {/* gander */}
+                                <Table.Row>
+                                    <Table.Cell>
+                                        <span className="me-3">النوع : </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span>
+                                            {currentClient?.gander ? (
+                                                <span>
+                                                    {currentClient.gander ==
+                                                    "male"
+                                                        ? "ذكر"
+                                                        : "أنثى"}
+                                                </span>
+                                            ) : (
+                                                <span className="text-secondary">
+                                                    غير مسجل
+                                                </span>
+                                            )}
+                                        </span>
+                                    </Table.Cell>
+                                </Table.Row>
+                                {/* birth date */}
+                                <Table.Row>
+                                    <Table.Cell>
+                                        <span className="me-3">
+                                            تاريخ الميلاد :{" "}
+                                        </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span>
+                                            {currentClient?.birth_date ? (
+                                                <span>
+                                                    {currentClient.birth_date}
+                                                </span>
+                                            ) : (
+                                                <span className="text-secondary">
+                                                    غير مسجل
+                                                </span>
+                                            )}
+                                        </span>
+                                    </Table.Cell>
+                                </Table.Row>
+                                {/* age */}
+                                <Table.Row>
+                                    <Table.Cell>
+                                        <span className="me-3">العمر : </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span>
+                                            {currentClient?.age ? (
+                                                <span>{currentClient.age}</span>
+                                            ) : (
+                                                <span className="text-secondary">
+                                                    غير مسجل
+                                                </span>
+                                            )}
+                                        </span>
+                                    </Table.Cell>
+                                </Table.Row>
+                                {/* email */}
+                                <Table.Row>
+                                    <Table.Cell>
+                                        <span className="me-3">
+                                            البريد الالكترونى :{" "}
+                                        </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span>
+                                            {currentClient?.email ? (
+                                                <span>
+                                                    {currentClient.email}
+                                                </span>
+                                            ) : (
+                                                <span className="text-secondary">
+                                                    غير مسجل
+                                                </span>
+                                            )}
+                                        </span>
+                                    </Table.Cell>
+                                </Table.Row>
+                                {/* address */}
+                                <Table.Row>
+                                    <Table.Cell>
+                                        <span className="me-3">العنوان : </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span>
+                                            {currentClient?.address ? (
+                                                <span>
+                                                    {currentClient.address}
+                                                </span>
+                                            ) : (
+                                                <span className="text-secondary">
+                                                    غير مسجل
+                                                </span>
+                                            )}
+                                        </span>
+                                    </Table.Cell>
+                                </Table.Row>
+                                {/* trainer */}
+                                <Table.Row>
+                                    <Table.Cell>
+                                        <span className="me-3">المدرب : </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span>
+                                            {currentClient?.trainer ? (
+                                                <span>
+                                                    {
+                                                        currentClient.trainer
+                                                            ?.name
+                                                    }
+                                                </span>
+                                            ) : (
+                                                <span className="text-secondary">
+                                                    بدون مدرب
+                                                </span>
+                                            )}
+                                        </span>
+                                    </Table.Cell>
+                                </Table.Row>
+                                {/* added by */}
+                                <Table.Row>
+                                    <Table.Cell>
+                                        <span className="me-3">
+                                            تمت الإضافة بواسطة :{" "}
+                                        </span>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <span>
+                                            {currentClient?.added_by ? (
+                                                <span>
+                                                    {
+                                                        currentClient.added_by
+                                                            ?.username
+                                                    }
+                                                </span>
+                                            ) : (
+                                                <span className="text-secondary">
+                                                    غير مسجل
+                                                </span>
+                                            )}
+                                        </span>
+                                    </Table.Cell>
+                                </Table.Row>
+                            </Table.Body>
+                        </Table>
+                    </div>
                 </div>
             )}
 
@@ -479,18 +495,40 @@ const Search = () => {
                         سجل الاشتراكات
                     </h1>
                     <hr className="h-px my-3 bg-gray-200 border-0"></hr>
-                    {currentClient.subscription_history.length !== 0 ? (
+                    {currentClient.subscriptions.length !== 0 ? (
                         <div className="subscriptions-wrapper flex gap-6 flex-wrap">
-                            {currentClient.subscription_history.map((sub) => (
+                            {currentClient.subscriptions.map((sub) => (
                                 <div
-                                    key={sub.id}
+                                    key={sub?.id}
                                     className="border-2 flex flex-col gap-y-6 border-primary rounded-lg w-full lg:max-w-lg lg:min-w-96 p-4 relative"
                                 >
-                                    <p>{sub.plan.name}</p>
-                                    <p>تاريخ البداية: {sub.start_date}</p>
-                                    <p>تاريخ النهاية: {sub.end_date}</p>
+                                    <p className="text-primary-900 font-bold">{sub?.plan?.name}</p>
+                                    <p>
+                                        كود الاشتراك:{" "}
+                                        <span className="text-primary font-bold ms-2">
+                                            {sub.id}
+                                        </span>
+                                    </p>
+                                    <p>
+                                        نوع الاشتراك:{" "}
+                                        <span className="text-primary font-bold ms-2">
+                                            {sub?.plan?.sub_type}
+                                        </span>
+                                    </p>
+                                    <p>
+                                        تاريخ البداية:{" "}
+                                        <span className="text-primary font-bold ms-2">
+                                            {sub?.start_date}
+                                        </span>
+                                    </p>
+                                    <p>
+                                        تاريخ النهاية:{" "}
+                                        <span className="text-primary font-bold ms-2">
+                                            {sub?.end_date}
+                                        </span>
+                                    </p>
                                     <p className="state absolute top-5 left-8">
-                                        {sub.is_current ? (
+                                        {!sub?.is_expired ? (
                                             <span className="bg-green-400 w-20 h-12 flex justify-center items-center rounded-lg text-white font-bold">
                                                 حالى
                                             </span>
