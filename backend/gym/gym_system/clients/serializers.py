@@ -35,7 +35,7 @@ class ClientReadSerializer(serializers.ModelSerializer):
                                           context={'request': self.context.get('request')}).data
 
     def get_date_created(self, obj):
-        return f"{obj.created_at:%Y-%m-%d    %H:%M:%S}"
+        return f"{obj.created_at:%Y-%m-%d - %H:%M:%S}"
 
 
 class ClientWriteSerializer(serializers.ModelSerializer):

@@ -26,3 +26,11 @@ class SubscriptionViewSet(ModelViewSet):
         if self.action in ['create', 'update', 'partial_update']:
             return SubscriptionWriteSerializer
         return SubscriptionReadSerializer
+
+    def get_queryset(self):
+        sub_code = self.request.query_params.get('code', None)
+        if sub_code is not None:
+            return Subscription.objects.filter(pk=sub_code)
+        queryset = super().get_queryset()
+
+        return queryset

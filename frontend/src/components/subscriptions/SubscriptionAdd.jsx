@@ -9,15 +9,64 @@ import Select from "react-select";
 import style from "../../assets/rect-select-style";
 import Loading from "../groups/Loading";
 
-const SubscriptionAddForm = ({
-    setToast,
-    postURL,
-    defaultValues,
-    callBack,
-}) => {
+const SubscriptionAddForm = ({ setToast, postURL, defaultValues }) => {
     const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState(false);
     const [post, setPost] = useState(false);
+
+    const transformValues = () => {
+        if (defaultValues) {
+            const transformedValues = {};
+            // transform client
+            if (defaultValues.client) {
+                transformedValues["client"] = {
+                    value: defaultValues.client_id,
+                    label: defaultValues.client_name,
+                };
+            }
+
+            // transform trainer
+            if (defaultValues.trainer) {
+                transformedValues["trainer"] = {
+                    value: defaultValues.trainer.id,
+                    label: `${defaultValues.trainer.name} ${
+                        defaultValues.trainer?.emp_type?.name
+                            ? `(${defaultValues.trainer.emp_type.name})`
+                            : ""
+                    }`,
+                };
+            }
+
+            // transform plan
+            if (defaultValues.plan) {
+                transformedValues["plan"] = {
+                    value: defaultValues.client.id,
+                    label: defaultValues.plan.name,
+                    duration: defaultValues.plan.is_duration
+                        ? `${defaultValues.plan.days} (يوم)`
+                        : `${defaultValues.plan.classes_no} (حصة)`,
+                    price: defaultValues.plan?.price,
+                };
+            }
+
+            // transform referrer
+            if (defaultValues.referrer) {
+                transformedValues["referrer"] = {
+                    value: defaultValues.referrer.id,
+                    label: `${defaultValues.referrer.name} ${
+                        defaultValues.referrer?.emp_type?.name
+                            ? `(${defaultValues.referrer.emp_type.name})`
+                            : ""
+                    }`,
+                };
+            }
+
+            transformedValues.start_date = defaultValues?.start_date;
+            return transformedValues;
+        } else {
+            return null;
+        }
+    };
 
     const {
         handleSubmit,
@@ -29,11 +78,15 @@ const SubscriptionAddForm = ({
         control,
         watch,
         setValue,
-    } = useForm({ defaultValues });
+    } = useForm({ defaultValues: transformValues(defaultValues) });
     const formFunction = defaultValues ? "edit" : "add";
     const requestMethod = formFunction == "add" ? axios.post : axios.patch;
 
-    const [subType, setSubType] = useState("main");
+    const [subType, setSubType] = useState(
+        defaultValues?.plan?.subscription_type
+            ? defaultValues.plan.subscription_type
+            : "main"
+    );
     const [dataList, setDataList] = useState({
         subscriptions: [],
         trainers: [],
@@ -138,7 +191,6 @@ const SubscriptionAddForm = ({
                 );
                 reset();
                 clearErrors();
-                callBack();
             })
             .catch((error) => {
                 console.log(error);
@@ -189,6 +241,7 @@ const SubscriptionAddForm = ({
                                 onChange={(event) => {
                                     setSubType(event.target.value);
                                 }}
+                                defaultValue={subType}
                             >
                                 <option value={"main"} key={0}>
                                     أساسى
@@ -206,7 +259,6 @@ const SubscriptionAddForm = ({
                                 </p>
                             )}
                         </div>
-
                         <div className="w-full lg:max-w-md lg:w-[30%]">
                             <div className="mb-2 block">
                                 <Label htmlFor="client" value="العميل :" />
@@ -266,10 +318,10 @@ const SubscriptionAddForm = ({
                                                 fetchData("plans", value);
                                             }}
                                             value={field.value}
-                                            {...field}
                                             onBlur={() => {
                                                 trigger("plan");
                                             }}
+                                            {...field}
                                             styles={style(errors.plan)}
                                             onChange={(value) => {
                                                 setValue("plan", value);
@@ -391,7 +443,13 @@ const SubscriptionAddForm = ({
                                                 date.toLocaleDateString("en-CA")
                                             );
                                         }}
-                                        defaultDate={new Date()}
+                                        defaultDate={
+                                            defaultValues?.start_date
+                                                ? new Date(
+                                                      defaultValues?.start_date
+                                                  )
+                                                : new Date()
+                                        }
                                     />
                                 )}
                             />
@@ -471,7 +529,7 @@ const SubscriptionAddForm = ({
     );
 };
 
-const SubscriptionAdd = () => {
+const SubscriptionAdd = ({ defaultValues, postURL }) => {
     const [toast, setToast] = useState(null);
 
     return (
@@ -482,7 +540,8 @@ const SubscriptionAdd = () => {
             {/* add form */}
             <SubscriptionAddForm
                 setToast={setToast}
-                postURL={endpoints.subscription_list}
+                postURL={postURL ? postURL : endpoints.subscription_list}
+                defaultValues={defaultValues}
             />
         </>
     );

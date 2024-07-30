@@ -40,6 +40,7 @@ const ClientFilterForm = ({ setLoading, setFetchError, setData }) => {
             });
             return;
         }
+        setLoading(true);
 
         setPost(true);
         const url = `${endpoints.client_list}from=${data.from}&to=${data.to}&no_pagination=true`;

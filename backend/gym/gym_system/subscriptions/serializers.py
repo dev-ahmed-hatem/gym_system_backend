@@ -40,6 +40,7 @@ class SubscriptionReadSerializer(serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='subscription-detail', lookup_field='pk')
     plan = SubscriptionPlanSerializer()
     trainer = EmployeeReadSerializer()
+    referrer = EmployeeReadSerializer()
     client_name = serializers.SerializerMethodField()
     client_id = serializers.SerializerMethodField()
     is_expired = serializers.SerializerMethodField()

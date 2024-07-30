@@ -46,6 +46,7 @@ import { VscRunAll } from "react-icons/vsc";
 import { SlCalender } from "react-icons/sl";
 import SubscriptionAdd from "../components/subscriptions/SubscriptionAdd";
 import ClientFilter from "../components/clients/ClientFilter";
+import SubscriptionSearch from "../components/subscriptions/SubscriptionSearch";
 
 export const routes = [
     {
@@ -213,6 +214,7 @@ export const routes = [
                 url: "/subscriptions/search",
                 icon: <FaSearch />,
                 permissions: "unadjustable",
+                element: <SubscriptionSearch />
             },
             {
                 id: 3,
