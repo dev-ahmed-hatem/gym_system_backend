@@ -14,6 +14,7 @@ class ClientReadSerializer(serializers.ModelSerializer):
     qr_code = serializers.SerializerMethodField(read_only=True)
     barcode = serializers.SerializerMethodField(read_only=True)
     subscriptions = serializers.SerializerMethodField()
+    date_created = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Client
@@ -32,6 +33,9 @@ class ClientReadSerializer(serializers.ModelSerializer):
         subscriptions = obj.subscriptions.all().order_by('-start_date')
         return SubscriptionReadSerializer(subscriptions, many=True,
                                           context={'request': self.context.get('request')}).data
+
+    def get_date_created(self, obj):
+        return f"{obj.created_at:%Y-%m-%d    %H:%M:%S}"
 
 
 class ClientWriteSerializer(serializers.ModelSerializer):

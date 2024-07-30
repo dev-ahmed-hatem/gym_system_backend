@@ -33,7 +33,7 @@ import EmployeeSettings from "../components/settings/EmployeeSettings";
 import Clients from "../components/clients/Clients";
 import { GiMoneyStack, GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import Blocklist from "../components/clients/Blocklist";
-import Search from "../components/clients/Search";
+import ClientSearch from "../components/clients/ClientSearch";
 import { BiSolidCategory, BiSolidOffer } from "react-icons/bi";
 import ProductCategories from "../components/settings/ProductCategories";
 import Products from "../components/shop/Products";
@@ -45,6 +45,7 @@ import { IoIosFitness } from "react-icons/io";
 import { VscRunAll } from "react-icons/vsc";
 import { SlCalender } from "react-icons/sl";
 import SubscriptionAdd from "../components/subscriptions/SubscriptionAdd";
+import ClientFilter from "../components/clients/ClientFilter";
 
 export const routes = [
     {
@@ -177,7 +178,7 @@ export const routes = [
                 url: "/clients/search",
                 icon: <FaSearch />,
                 permissions: "unadjustable",
-                element: <Search />,
+                element: <ClientSearch />,
             },
             {
                 id: 4,
@@ -186,6 +187,7 @@ export const routes = [
                 url: "/clients/filter",
                 icon: <FaFilter />,
                 permissions: "unadjustable",
+                element: <ClientFilter />,
             },
         ],
     },
@@ -202,7 +204,7 @@ export const routes = [
                 name: "add-subscription",
                 url: "/subscriptions/add",
                 icon: <MdSubscriptions />,
-                element: <SubscriptionAdd />
+                element: <SubscriptionAdd />,
             },
             {
                 id: 2,

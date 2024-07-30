@@ -140,8 +140,6 @@ const EmployeesForm = ({ setToast, postURL, defaultValues, callBack }) => {
         data["district"] = Number(currentDistrict) || null;
 
         if (age) data["age"] = age;
-        // console.log(data);
-        // return;
 
         requestMethod(postURL, data, {
             headers: {
@@ -417,28 +415,6 @@ const EmployeesForm = ({ setToast, postURL, defaultValues, callBack }) => {
                                 placeholder="العنوان"
                             />
                         </div>
-                        {/* <div className="w-full lg:max-w-md lg:w-[30%]">
-                            <div className="mb-2 block">
-                                <Label
-                                    htmlFor="subscription_percent"
-                                    value="النسبة على الاشتراكات : (%)"
-                                />
-                            </div>
-                            <TextInput
-                                id="subscription_percent"
-                                type="number"
-                                rightIcon={FaPercentage}
-                                placeholder="النسبة على الاشتراكات"
-                                color={"primary"}
-                                {...register("subscription_percent", {})}
-                                defaultValue={0}
-                            />
-                            {errors.subscription_percent && (
-                                <p className="error-message">
-                                    {errors.subscription_percent.message}
-                                </p>
-                            )}
-                        </div> */}
                         <div className="w-full lg:max-w-md lg:w-[30%]">
                             <div className="mb-2 block">
                                 <Label

@@ -7,7 +7,7 @@ import TableGroup from "../groups/TableGroup";
 import TablePagination from "../groups/TablePagination";
 import endpoints from "../../../config";
 
-const Search = () => {
+const ClientSearch = () => {
     //////////////////////////////// list data ////////////////////////////////
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -550,4 +550,4 @@ const Search = () => {
     );
 };
 
-export default Search;
+export default ClientSearch;
