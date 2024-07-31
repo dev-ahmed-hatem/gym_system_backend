@@ -12,6 +12,7 @@ import {
     FaBirthdayCake,
     FaUserTie,
     FaTools,
+    FaRegStopCircle,
 } from "react-icons/fa";
 import {
     MdSupervisorAccount,
@@ -227,6 +228,14 @@ export const routes = [
             },
             {
                 id: 4,
+                title: "الاشتراكات المعلقة",
+                name: "frozen-subscriptions",
+                url: "/subscriptions/frozen",
+                icon: <FaRegStopCircle />,
+                permissions: "unadjustable",
+            },
+            {
+                id: 5,
                 title: "الاشتراكات المنتهية",
                 name: "expired-subscriptions",
                 url: "/subscriptions/expired",
@@ -234,7 +243,7 @@ export const routes = [
                 permissions: "unadjustable",
             },
             {
-                id: 5,
+                id: 6,
                 title: "الاشتراكات خلال فترة",
                 name: "subscriptions-within-duration",
                 url: "/subscriptions/within-duration",

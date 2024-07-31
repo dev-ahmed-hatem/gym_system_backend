@@ -606,7 +606,7 @@ const Subscriptions = () => {
                                                                     subscription.validity
                                                                 }{" "}
                                                                 {subscription.validity >
-                                                                9
+                                                                10
                                                                     ? "يوم"
                                                                     : "أيام"}
                                                             </span>
