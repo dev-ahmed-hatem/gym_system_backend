@@ -29,6 +29,7 @@ const SubscriptionsList = ({ category }) => {
     };
 
     const fetchListData = () => {
+        setLoading(true)
         const searchURL = `${endpoints.subscription_base}${category}/?${
             pageNumber ? `&page=${pageNumber}` : ""
         }
