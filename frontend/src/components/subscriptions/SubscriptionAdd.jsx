@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import FormGroup from "../groups/FormGroup";
 import { Label, Select as FlowbiteSelect, Datepicker } from "flowbite-react";
 import axios from "axios";
 import { useForm, Controller } from "react-hook-form";
@@ -8,10 +7,17 @@ import endpoints from "../../../config";
 import Select from "react-select";
 import style from "../../assets/rect-select-style";
 import Loading from "../groups/Loading";
+import FormGroup from "../groups/FormGroup";
 
-const SubscriptionAddForm = ({ setToast, postURL, defaultValues }) => {
+const SubscriptionAddForm = ({
+    setToast,
+    postURL,
+    defaultValues,
+    callBack,
+}) => {
     const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState(false);
+    const [submitError, setSubmitError] = useState(false);
     const [post, setPost] = useState(false);
 
     const transformValues = () => {
@@ -168,6 +174,11 @@ const SubscriptionAddForm = ({ setToast, postURL, defaultValues }) => {
     }, [subType]);
 
     const onSubmit = (data) => {
+        if (formFunction === "edit" && defaultValues?.is_expired) {
+            setSubmitError(true);
+            return;
+        }
+
         const dataKeys = ["client", "plan", "referrer", "trainer"];
         for (let i of dataKeys) {
             if (data[i]) {
@@ -183,6 +194,7 @@ const SubscriptionAddForm = ({ setToast, postURL, defaultValues }) => {
 
         requestMethod(postURL, data)
             .then((response) => {
+                // console.log(response);
                 setPost(false);
                 setToast(
                     formFunction == "add"
@@ -191,6 +203,7 @@ const SubscriptionAddForm = ({ setToast, postURL, defaultValues }) => {
                 );
                 reset();
                 clearErrors();
+                if (callBack) callBack();
             })
             .catch((error) => {
                 console.log(error);
@@ -524,12 +537,22 @@ const SubscriptionAddForm = ({ setToast, postURL, defaultValues }) => {
                         </div>
                     </>
                 )}
+
+                {submitError && (
+                    <>
+                        <br />
+
+                        <p className="text-lg text-center text-red-600 py-4">
+                            غير مسموح بالتعديل (اشتراك منتهى)
+                        </p>
+                    </>
+                )}
             </FormGroup>
         </>
     );
 };
 
-const SubscriptionAdd = ({ defaultValues, postURL }) => {
+const SubscriptionAdd = ({ defaultValues, postURL, callBack }) => {
     const [toast, setToast] = useState(null);
 
     return (
@@ -542,6 +565,7 @@ const SubscriptionAdd = ({ defaultValues, postURL }) => {
                 setToast={setToast}
                 postURL={postURL ? postURL : endpoints.subscription_list}
                 defaultValues={defaultValues}
+                callBack={callBack}
             />
         </>
     );

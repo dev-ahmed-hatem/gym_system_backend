@@ -11,6 +11,7 @@ import {
     FaRegFileAlt,
     FaBirthdayCake,
     FaUserTie,
+    FaTools,
 } from "react-icons/fa";
 import {
     MdSupervisorAccount,
@@ -46,7 +47,7 @@ import { VscRunAll } from "react-icons/vsc";
 import { SlCalender } from "react-icons/sl";
 import SubscriptionAdd from "../components/subscriptions/SubscriptionAdd";
 import ClientFilter from "../components/clients/ClientFilter";
-import SubscriptionSearch from "../components/subscriptions/SubscriptionSearch";
+import SubscriptionEdit from "../components/subscriptions/SubscriptionEdit";
 
 export const routes = [
     {
@@ -209,23 +210,15 @@ export const routes = [
             },
             {
                 id: 2,
-                title: "بحث",
-                name: "search-subscriptions",
-                url: "/subscriptions/search",
-                icon: <FaSearch />,
+                title: "تعديل اشتراك",
+                name: "edit-subscription",
+                url: "/subscriptions/edit",
+                icon: <FaTools />,
                 permissions: "unadjustable",
-                element: <SubscriptionSearch />
+                element: <SubscriptionEdit />,
             },
             {
                 id: 3,
-                title: "إيقاف الاشتراكات",
-                name: "freeze-subscriptions",
-                url: "/subscriptions/freeze",
-                icon: <HiMiniPlayPause />,
-                permissions: "unadjustable",
-            },
-            {
-                id: 4,
                 title: "الاشتراكات الحالية",
                 name: "current-subscriptions",
                 url: "/subscriptions/current-active",
@@ -233,7 +226,7 @@ export const routes = [
                 permissions: "unadjustable",
             },
             {
-                id: 5,
+                id: 4,
                 title: "الاشتراكات المنتهية",
                 name: "expired-subscriptions",
                 url: "/subscriptions/expired",
@@ -241,7 +234,7 @@ export const routes = [
                 permissions: "unadjustable",
             },
             {
-                id: 6,
+                id: 5,
                 title: "الاشتراكات خلال فترة",
                 name: "subscriptions-within-duration",
                 url: "/subscriptions/within-duration",

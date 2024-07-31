@@ -126,7 +126,7 @@ REST_FRAMEWORK = {
     ]
 }
 
-# corsheaders settings
+# cors headers settings
 CORS_ALLOW_ALL_ORIGINS = True
 
 # celery

@@ -3,7 +3,7 @@ from django.utils.timezone import timedelta, datetime
 
 
 class SubscriptionPlan(models.Model):
-    SUBSCUBSCRIPTION_TYPE_CHOICES = (
+    SUBSCRIPTION_TYPE_CHOICES = (
         ("main", "اشتراك أساسى"),
         ("sub", "اشتراك إضافى"),
         ("locker", "اشتراك لوكر"),
@@ -12,7 +12,7 @@ class SubscriptionPlan(models.Model):
     name = models.CharField(max_length=100)
     price = models.FloatField(default=0)
     days = models.IntegerField(default=30)
-    subscription_type = models.CharField(max_length=12, choices=SUBSCUBSCRIPTION_TYPE_CHOICES)
+    subscription_type = models.CharField(max_length=12, choices=SUBSCRIPTION_TYPE_CHOICES)
     description = models.TextField(default='', blank=True, null=True)
     freezable = models.BooleanField(default=False)
     freeze_no = models.IntegerField(default=7)
@@ -45,31 +45,34 @@ class Subscription(models.Model):
             self.end_date = self.start_date + timedelta(days=self.plan.days)
         else:
             self.end_date = self.start_date + timedelta(days=self.plan.validity)
+        self.end_date += timedelta(days=self.freeze_days_used)
         return super(Subscription, self).save(*args, **kwargs)
 
     def freeze(self, freeze_date=None):
         if self.plan.freezable and self.freeze_days_used < self.plan.freeze_no:
             if not freeze_date:
-                freeze_date = timezone.now().date()
+                freeze_date = datetime.now().date()
             self.freeze_start_date = freeze_date
             self.is_frozen = True
             self.save()
 
+    def check_freeze(self):
+        if self.is_frozen:
+            self.freeze_days_used += 1
+            self.save()
+        if self.freeze_days_used > self.plan.freeze_no:
+            self.unfreeze()
+
     def unfreeze(self):
         if self.is_frozen:
-            unfreeze_date = timezone.now().date()
-            freeze_duration = (unfreeze_date - self.freeze_start_date).days
-            self.freeze_days_used += freeze_duration
-            self.end_date += freeze_duration
-            self.freeze_start_date = None
             self.is_frozen = False
-            self.unfreeze_date = unfreeze_date
+            self.unfreeze_date = datetime.now().date()
             self.save()
 
     def get_active_days(self):
         # Calculate the active days, excluding the frozen days
         if self.is_frozen:
-            freeze_duration = (timezone.now().date() - self.freeze_start_date).days
+            freeze_duration = (datetime.now().date() - self.freeze_start_date).days
         else:
             freeze_duration = self.freeze_days_used
 
@@ -78,3 +81,7 @@ class Subscription(models.Model):
 
     def is_expired(self):
         return datetime.today().date() > self.end_date
+
+    @classmethod
+    def get_active_subscriptions(cls):
+        return cls.objects.filter(end_date__gte=datetime.now().date())

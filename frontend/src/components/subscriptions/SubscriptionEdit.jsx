@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import { Label, Button, TextInput } from "flowbite-react";
 import axios from "axios";
@@ -6,8 +6,33 @@ import endpoints from "../../../config";
 import { MdSubscriptions } from "react-icons/md";
 import { useForm } from "react-hook-form";
 import SubscriptionAdd from "./SubscriptionAdd";
+import SubscriptionFreeze from "./SubscriptionFreeze";
 
-const SubscriptionSearchForm = ({ setFetchError, setData }) => {
+const fetchData = (code, setData, setFetchError, setPost) => {
+    setData(null);
+    if (setPost) {
+        setPost(true);
+    }
+    const url = `${endpoints.subscription_list}code=${code}`;
+    // return
+
+    axios
+        .get(url)
+        .then((response) => {
+            setData(response.data);
+        })
+        .catch((error) => {
+            console.log(error);
+            setFetchError(error);
+        })
+        .finally(() => {
+            if (setPost) {
+                setPost(false);
+            }
+        });
+};
+
+const SubscriptionEditForm = ({ setFetchError, setData }) => {
     const [post, setPost] = useState(false);
 
     const {
@@ -18,25 +43,9 @@ const SubscriptionSearchForm = ({ setFetchError, setData }) => {
     } = useForm();
 
     const onSubmit = (data) => {
-        setData(null);
-        setPost(true);
-        const url = `${endpoints.subscription_list}code=${data.code}`;
-        // console.log(url);
-        // return
-
-        axios
-            .get(url)
-            .then((response) => {
-                setData(response.data);
-            })
-            .catch((error) => {
-                console.log(error);
-                setFetchError(error);
-            })
-            .finally(() => {
-                setPost(false);
-            });
+        fetchData(data.code, setData, setFetchError, setPost);
     };
+
     return (
         <div
             className={`wrapper p-4 my-8 bg-white rounded border-t-4 border-primary shadow-lg`}
@@ -90,7 +99,7 @@ const SubscriptionSearchForm = ({ setFetchError, setData }) => {
     );
 };
 
-const SubscriptionSearch = () => {
+const SubscriptionEdit = () => {
     //////////////////////////////// list data ////////////////////////////////
     const [fetchError, setFetchError] = useState(null);
     const [data, setData] = useState(null);
@@ -98,7 +107,7 @@ const SubscriptionSearch = () => {
     return (
         <>
             {/* search form */}
-            <SubscriptionSearchForm
+            <SubscriptionEditForm
                 setFetchError={setFetchError}
                 setData={setData}
             />
@@ -120,17 +129,30 @@ const SubscriptionSearch = () => {
                         <div
                             className={`wrapper p-4 my-8 bg-white rounded border-t-4 border-primary shadow-lg`}
                         >
-                            <h1 className="font-bold text-text text-lg">خطأ</h1>
+                            <h1 className="font-bold text-text text-lg">
+                                كود اشتراك غير موجود
+                            </h1>
                             <hr className="h-px my-3 bg-gray-200 border-0"></hr>
                             <p className="text-lg text-center text-gray-800 py-3 font-bold bg-primary-200">
                                 لا توجد بيانات
                             </p>
                         </div>
                     ) : (
-                        <SubscriptionAdd
-                            defaultValues={data?.results[0]}
-                            postURL={data?.results[0]?.url}
-                        />
+                        <>
+                            <SubscriptionAdd
+                                defaultValues={data?.results[0]}
+                                postURL={data?.results[0]?.url}
+                                callBack={() => {
+                                    fetchData(
+                                        data?.results[0].id,
+                                        setData,
+                                        setFetchError
+                                    );
+                                }}
+                            />
+                            {/* freeze options */}
+                            <SubscriptionFreeze sub={data?.results[0]} />
+                        </>
                     )}
                 </>
             )}
@@ -138,4 +160,4 @@ const SubscriptionSearch = () => {
     );
 };
 
-export default SubscriptionSearch;
+export default SubscriptionEdit;
