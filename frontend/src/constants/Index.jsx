@@ -50,6 +50,7 @@ import SubscriptionAdd from "../components/subscriptions/SubscriptionAdd";
 import ClientFilter from "../components/clients/ClientFilter";
 import SubscriptionEdit from "../components/subscriptions/SubscriptionEdit";
 import SubscriptionsList from "../components/subscriptions/SubscriptionsList";
+import SubscriptionFilter from "../components/subscriptions/SubscriptionFilter";
 
 export const routes = [
     {
@@ -253,6 +254,7 @@ export const routes = [
                 url: "/subscriptions/within-duration",
                 icon: <SlCalender />,
                 permissions: "unadjustable",
+                element: <SubscriptionFilter />,
             },
         ],
     },
