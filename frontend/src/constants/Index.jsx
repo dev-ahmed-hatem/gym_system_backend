@@ -49,6 +49,7 @@ import { SlCalender } from "react-icons/sl";
 import SubscriptionAdd from "../components/subscriptions/SubscriptionAdd";
 import ClientFilter from "../components/clients/ClientFilter";
 import SubscriptionEdit from "../components/subscriptions/SubscriptionEdit";
+import SubscriptionsList from "../components/subscriptions/SubscriptionsList";
 
 export const routes = [
     {
@@ -225,6 +226,7 @@ export const routes = [
                 url: "/subscriptions/current-active",
                 icon: <VscRunAll />,
                 permissions: "unadjustable",
+                element: <SubscriptionsList category={"active"} />,
             },
             {
                 id: 4,
@@ -233,6 +235,7 @@ export const routes = [
                 url: "/subscriptions/frozen",
                 icon: <FaRegStopCircle />,
                 permissions: "unadjustable",
+                element: <SubscriptionsList category={"frozen"} />,
             },
             {
                 id: 5,
@@ -241,6 +244,7 @@ export const routes = [
                 url: "/subscriptions/expired",
                 icon: <MdOutlineTimerOff />,
                 permissions: "unadjustable",
+                element: <SubscriptionsList category={"expired"} />,
             },
             {
                 id: 6,

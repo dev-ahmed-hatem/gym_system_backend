@@ -11,7 +11,7 @@ const SubscriptionFreeze = ({ sub, setToast, callBack }) => {
     const switchSubscriptionState = () => {
         setPost(true);
         const action = sub?.is_frozen ? "unfreeze" : "freeze";
-        const url = `${endpoints.subscription_item}${sub?.id}/${action}`;
+        const url = `${endpoints.subscription_base}${sub?.id}/${action}`;
 
         axios
             .get(url)
@@ -36,9 +36,8 @@ const SubscriptionFreeze = ({ sub, setToast, callBack }) => {
         >
             <h1 className="font-bold text-text text-lg">تعليق الاشتراك</h1>
             <hr className="h-px my-3 bg-gray-200 border-0"></hr>
-            <form
+            <div
                 className="fields gap-x-10 gap-y-6 flex-wrap"
-                // onSubmit={onSubmit}
             >
                 {sub?.plan?.freezable ? (
                     <>
@@ -110,7 +109,7 @@ const SubscriptionFreeze = ({ sub, setToast, callBack }) => {
                         اشتراك غير قابل للتعليق
                     </p>
                 )}
-            </form>
+            </div>
         </div>
     );
 };

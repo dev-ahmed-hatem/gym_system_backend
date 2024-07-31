@@ -1,5 +1,6 @@
 from .models import *
 from .serializers import *
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -31,11 +32,12 @@ class SubscriptionViewSet(ModelViewSet):
         return SubscriptionReadSerializer
 
     def get_queryset(self):
+        # return a subscription with code param
         sub_code = self.request.query_params.get('code', None)
         if sub_code is not None:
             return Subscription.objects.filter(pk=sub_code)
-        queryset = super().get_queryset()
 
+        queryset = super().get_queryset()
         return queryset
 
     @action(detail=True, methods=['get'])
@@ -55,3 +57,37 @@ class SubscriptionViewSet(ModelViewSet):
             return Response({'detail': 'الاشتراك مفعل'}, status=status.HTTP_400_BAD_REQUEST)
         subscription.unfreeze()
         return Response({'detail': 'Subscription has been unfrozen'}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'])
+    def active(self, request):
+        active_subscriptions = Subscription.get_active_subscriptions().filter(is_frozen=False)
+        page = self.paginate_queryset(active_subscriptions)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(active_subscriptions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'])
+    def expired(self, request):
+        active_subscriptions = Subscription.get_active_subscriptions()
+        expired_subscriptions = Subscription.objects.filter(~Q(id__in=active_subscriptions))
+        page = self.paginate_queryset(expired_subscriptions)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(expired_subscriptions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'])
+    def frozen(self, request):
+        frozen_subscriptions = Subscription.objects.filter(is_frozen=True)
+        page = self.paginate_queryset(frozen_subscriptions)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = SubscriptionReadSerializer(frozen_subscriptions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
