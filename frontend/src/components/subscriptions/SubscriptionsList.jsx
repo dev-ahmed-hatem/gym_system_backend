@@ -60,15 +60,15 @@ const SubscriptionsList = ({ category }) => {
                 {new Date().toLocaleDateString("ar-EG")}
             </h1>
             <hr className="h-px my-3 bg-gray-200 border-0"></hr>
-            <div className="subscriptions flex gap-x-10 gap-y-6 flex-wrap">
-                {loading ? (
-                    <Loading />
-                ) : fetchError ? (
-                    <p className="w-full text-lg text-center text-red-600 py-4">
-                        خطأ في تحميل البيانات
-                    </p>
-                ) : (
-                    <>
+            {loading ? (
+                <Loading />
+            ) : fetchError ? (
+                <p className="w-full text-lg text-center text-red-600 py-4">
+                    خطأ في تحميل البيانات
+                </p>
+            ) : (
+                <>
+                    <div className="subscriptions flex gap-x-10 gap-y-6 flex-wrap">
                         {data.count == 0 ? (
                             <p className="w-full text-lg text-center text-gray-800 py-3 font-bold bg-primary-200">
                                 لا توجد بيانات
@@ -80,22 +80,22 @@ const SubscriptionsList = ({ category }) => {
                                 ))}
                             </>
                         )}
-                    </>
-                )}
-            </div>
-
-            {data.total_pages > 1 ? (
-                <TablePagination
-                    totalPages={data.total_pages}
-                    currentPage={data.current_page}
-                    onPageChange={changePage}
-                />
-            ) : (
-                <></>
+                    </div>
+                    {data.total_pages > 1 ? (
+                        <TablePagination
+                            totalPages={data.total_pages}
+                            currentPage={data.current_page}
+                            onPageChange={changePage}
+                        />
+                    ) : (
+                        <></>
+                    )}
+                    <div className="flex justify-center text-lg">
+                        العدد : {data.count}{" "}
+                        {data?.count > 10 ? "اشتراك" : "اشتراكات"}
+                    </div>
+                </>
             )}
-            <div className="flex justify-center text-lg">
-                العدد : {data.count} {data?.count > 10 ? "اشتراك" : "اشتراكات"}
-            </div>
         </div>
     );
 };
