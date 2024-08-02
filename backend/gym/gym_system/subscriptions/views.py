@@ -82,7 +82,7 @@ class SubscriptionViewSet(ModelViewSet):
     @action(detail=False, methods=['get'])
     def expired(self, request):
         active_subscriptions = Subscription.get_active_subscriptions()
-        expired_subscriptions = Subscription.objects.filter(~Q(id__in=active_subscriptions))
+        expired_subscriptions = Subscription.objects.filter(~Q(id__in=active_subscriptions)).order_by('-end_date')
         page = self.paginate_queryset(expired_subscriptions)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -93,7 +93,7 @@ class SubscriptionViewSet(ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def frozen(self, request):
-        frozen_subscriptions = Subscription.objects.filter(is_frozen=True)
+        frozen_subscriptions = Subscription.objects.filter(is_frozen=True).order_by('-freeze_start_date')
         page = self.paginate_queryset(frozen_subscriptions)
         if page is not None:
             serializer = self.get_serializer(page, many=True)

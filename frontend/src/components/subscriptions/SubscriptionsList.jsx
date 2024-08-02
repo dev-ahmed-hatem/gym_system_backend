@@ -91,7 +91,7 @@ const SubscriptionsList = ({ category }) => {
                     ) : (
                         <></>
                     )}
-                    <div className="flex justify-center text-lg">
+                    <div className="flex justify-center text-lg mt-5">
                         العدد : {data.count}{" "}
                         {data?.count > 10 ? "اشتراك" : "اشتراكات"}
                     </div>
