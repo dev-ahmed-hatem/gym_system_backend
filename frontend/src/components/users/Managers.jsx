@@ -4,7 +4,7 @@ import { TextInput, Label, Table, Button } from "flowbite-react";
 import { HiLockClosed, HiDeviceMobile, HiUser } from "react-icons/hi";
 import Loading from "../groups/Loading";
 import { HiMiniIdentification } from "react-icons/hi2";
-import { axiosInstance as axios } from "../../config/axiosconfig";
+import axios from "../../config/axiosconfig";
 import ViewGroup from "../groups/ViewGroup";
 import TableGroup from "../groups/TableGroup";
 import { useForm } from "react-hook-form";
