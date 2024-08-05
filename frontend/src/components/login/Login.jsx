@@ -26,6 +26,8 @@ const Login = () => {
     } = useForm();
 
     const onSubmit = (data) => {
+        setPost(true);
+
         axios
             .post(endpoints.token_obtain, data)
             .then(async (response) => {
