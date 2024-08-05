@@ -38,7 +38,7 @@ const Main = () => {
         const navigateToLogin = () => {
             if (location.pathname == "/login") return;
             let next = encodeURI(location.pathname);
-            navigate(`/login?next${next}`);
+            navigate(`/login?next=${next}`);
         };
 
         const checkToken = async () => {
