@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Label, Select as FlowbiteSelect, Datepicker } from "flowbite-react";
-import axios from "axios";
+import axios from "../../config/axiosconfig";
 import { useForm, Controller } from "react-hook-form";
 import Notification from "../groups/Notification";
 import endpoints from "../../config/config";

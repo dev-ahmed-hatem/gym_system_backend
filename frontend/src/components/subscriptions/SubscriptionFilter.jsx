@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import { Label, Table, Button, Datepicker } from "flowbite-react";
 import Loading from "../groups/Loading";
-import axios from "axios";
+import axios from "../../config/axiosconfig";
 import ViewGroup from "../groups/ViewGroup";
 import { useForm, Controller } from "react-hook-form";
 import endpoints from "../../config/config";

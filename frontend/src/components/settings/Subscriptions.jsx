@@ -10,7 +10,7 @@ import {
     Select,
 } from "flowbite-react";
 import Loading from "../groups/Loading";
-import axios from "axios";
+import axios from "../../config/axiosconfig";
 import ViewGroup from "../groups/ViewGroup";
 import TableGroup from "../groups/TableGroup";
 import { useForm } from "react-hook-form";

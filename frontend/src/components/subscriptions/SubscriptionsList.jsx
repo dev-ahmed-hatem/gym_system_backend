@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import endpoints from "../../config/config";
-import axios from "axios";
+import axios from "../../config/axiosconfig";
 import Loading from "../groups/Loading";
 import TablePagination from "../groups/TablePagination";
 import SubscriptionCard from "./SubscriptionCard";

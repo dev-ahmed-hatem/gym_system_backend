@@ -3,7 +3,7 @@ import { routes } from "../../constants/Index";
 import { Checkbox, Label } from "flowbite-react";
 import Select from "react-select";
 import endpoints from "../../config/config";
-import axios from "axios";
+import axios from "../../config/axiosconfig";
 
 const Permissions = () => {
     const [moderatorsList, setModeratorsList] = useState(null);

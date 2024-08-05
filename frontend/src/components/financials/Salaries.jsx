@@ -7,7 +7,7 @@ import {
 } from "flowbite-react";
 import Select from "react-select";
 import Loading from "../groups/Loading";
-import axios from "axios";
+import axios from "../../config/axiosconfig";
 import { useForm } from "react-hook-form";
 import Notification from "../groups/Notification";
 import {

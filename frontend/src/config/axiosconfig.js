@@ -1,7 +1,7 @@
 import axios from "axios";
 import endpoints from "./config";
 
-export const axiosInstance = axios.create();
+const axiosInstance = axios.create();
 
 axiosInstance.interceptors.request.use(
     (config) => {
