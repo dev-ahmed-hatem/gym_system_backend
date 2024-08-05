@@ -1,10 +1,23 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const UserIcon = () => {
+    const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem("auth_user"));
+
+    const logout = () => {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        localStorage.removeItem("auth_user");
+
+        navigate("/login");
+    };
+
     return (
-        <div 
-        className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse relative"
-        id="user-icon">
+        <div
+            className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse relative"
+            id="user-icon"
+        >
             <button
                 type="button"
                 className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4
@@ -27,20 +40,20 @@ const UserIcon = () => {
             >
                 <div className="px-4 py-3">
                     <span className="block text-m text-text font-bold">
-                        (اسم المستخدم)
+                        {user?.username}
                     </span>
                     <span className="block text-sm  text-text">
-                        (مشرف | مدير)
+                        {user?.is_superuser ? "مدير" : "مشرف"}
                     </span>
                 </div>
                 <ul className="py-2" aria-labelledby="user-menu-button">
                     <li>
-                        <a
-                            href="#"
-                            className="block px-4 py-2 text-sm text-black hover:bg-white"
+                        <span
+                            onClick={logout}
+                            className="block px-4 py-2 text-sm text-black hover:bg-white cursor-pointer"
                         >
                             تسجيل خروج
-                        </a>
+                        </span>
                     </li>
                 </ul>
             </div>

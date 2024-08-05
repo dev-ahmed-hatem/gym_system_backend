@@ -386,5 +386,3 @@ export const routes = [
         ],
     },
 ];
-
-const formMapping = {};

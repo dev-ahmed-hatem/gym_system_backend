@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "flowbite-react";
 import { AiOutlineLoading } from "react-icons/ai";
-import endpoints from "../../../config";
+import endpoints from "../../config/config";
 import axios from "axios";
 
 const SubscriptionFreeze = ({ sub, setToast, callBack }) => {

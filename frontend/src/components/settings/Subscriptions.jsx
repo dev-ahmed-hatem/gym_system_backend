@@ -18,7 +18,7 @@ import Notification from "../groups/Notification";
 import { MdEdit, MdDelete, MdSubscriptions } from "react-icons/md";
 import DrawerHeader from "../groups/DrawerHeader";
 import TablePagination from "../groups/TablePagination";
-import endpoints from "../../../config";
+import endpoints from "../../config/config";
 import { FaMoneyBill } from "react-icons/fa";
 import { FcInvite } from "react-icons/fc";
 import { TbTimeDuration30 } from "react-icons/tb";

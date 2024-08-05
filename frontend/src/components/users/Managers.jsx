@@ -4,7 +4,7 @@ import { TextInput, Label, Table, Button } from "flowbite-react";
 import { HiLockClosed, HiDeviceMobile, HiUser } from "react-icons/hi";
 import Loading from "../groups/Loading";
 import { HiMiniIdentification } from "react-icons/hi2";
-import axios from "axios";
+import { axiosInstance as axios } from "../../config/axiosconfig";
 import ViewGroup from "../groups/ViewGroup";
 import TableGroup from "../groups/TableGroup";
 import { useForm } from "react-hook-form";
@@ -12,7 +12,7 @@ import Notification from "../groups/Notification";
 import { MdEdit, MdDelete } from "react-icons/md";
 import DrawerHeader from "../groups/DrawerHeader";
 import TablePagination from "../groups/TablePagination";
-import endpoints from "../../../config";
+import endpoints from "../../config/config";
 
 const ManagersForm = ({ setToast, postURL, defaultValues, callBack }) => {
     const [post, setPost] = useState(false);

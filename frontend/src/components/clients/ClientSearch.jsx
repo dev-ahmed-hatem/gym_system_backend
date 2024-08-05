@@ -5,7 +5,7 @@ import axios from "axios";
 import ViewGroup from "../groups/ViewGroup";
 import TableGroup from "../groups/TableGroup";
 import TablePagination from "../groups/TablePagination";
-import endpoints from "../../../config";
+import endpoints from "../../config/config";
 import SubscriptionCard from "../subscriptions/SubscriptionCard";
 
 const ClientSearch = () => {

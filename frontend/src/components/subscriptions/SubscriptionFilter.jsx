@@ -5,7 +5,7 @@ import Loading from "../groups/Loading";
 import axios from "axios";
 import ViewGroup from "../groups/ViewGroup";
 import { useForm, Controller } from "react-hook-form";
-import endpoints from "../../../config";
+import endpoints from "../../config/config";
 import SubscriptionCard from "./SubscriptionCard";
 
 const SubscriptionFilterForm = ({ setLoading, setFetchError, setData }) => {

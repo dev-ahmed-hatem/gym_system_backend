@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { routes } from "../../constants/Index";
 import { Checkbox, Label } from "flowbite-react";
 import Select from "react-select";
-import endpoints from "../../../config";
+import endpoints from "../../config/config";
 import axios from "axios";
 
 const Permissions = () => {

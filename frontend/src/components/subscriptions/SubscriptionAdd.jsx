@@ -3,7 +3,7 @@ import { Label, Select as FlowbiteSelect, Datepicker } from "flowbite-react";
 import axios from "axios";
 import { useForm, Controller } from "react-hook-form";
 import Notification from "../groups/Notification";
-import endpoints from "../../../config";
+import endpoints from "../../config/config";
 import Select from "react-select";
 import style from "../../assets/rect-select-style";
 import Loading from "../groups/Loading";

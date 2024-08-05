@@ -3,6 +3,7 @@ import Subsection from "../components/sections/Subsection";
 import NotFound from "../NotFound";
 import Main from "../components/main";
 import { routes } from "./Index";
+import Login from "../components/login/Login";
 
 export const browserRoutes = [
     {
@@ -10,6 +11,16 @@ export const browserRoutes = [
         element: <Main />,
         errorElement: <NotFound />,
         children: [],
+    },
+    {
+        path: "/login",
+        element: <Login />,
+        errorElement: <NotFound />,
+    },
+    {
+        path: "/logout",
+        element: <Main />,
+        errorElement: <NotFound />,
     },
 ];
 

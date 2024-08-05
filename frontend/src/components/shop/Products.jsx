@@ -23,7 +23,7 @@ import {
 import DrawerHeader from "../groups/DrawerHeader";
 import CustomFileInput from "../groups/CustomFileInput";
 import TablePagination from "../groups/TablePagination";
-import endpoints from "../../../config";
+import endpoints from "../../config/config";
 import { FaMoneyBill } from "react-icons/fa";
 
 const ProductsForm = ({ setToast, postURL, defaultValues, callBack }) => {

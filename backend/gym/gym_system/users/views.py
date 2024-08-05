@@ -5,6 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 from django.db.models import Q
 from .serializers import *
 from .models import *
+from rest_framework.decorators import action
 
 
 class UserViewSet(ModelViewSet):
@@ -30,6 +31,12 @@ class UserViewSet(ModelViewSet):
                 queryset = queryset.filter(is_superuser=True)
 
         return queryset
+
+    @action(detail=False, methods=['GET'])
+    def get_authenticated_user(self, request):
+        user = request.user
+        serializer = UserSerializer(user, context={'request': request})
+        return Response(serializer.data)
 
 
 class EmployeeViewSet(ModelViewSet):

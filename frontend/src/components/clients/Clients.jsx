@@ -20,7 +20,7 @@ import Notification from "../groups/Notification";
 import { MdEdit, MdDelete, MdEmail } from "react-icons/md";
 import DrawerHeader from "../groups/DrawerHeader";
 import TablePagination from "../groups/TablePagination";
-import endpoints from "../../../config";
+import endpoints from "../../config/config";
 import { FaAddressCard } from "react-icons/fa";
 import CustomFileInput from "../groups/CustomFileInput";
 import Select from "react-select";

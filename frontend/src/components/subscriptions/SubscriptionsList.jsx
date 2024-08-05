@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import endpoints from "../../../config";
+import endpoints from "../../config/config";
 import axios from "axios";
 import Loading from "../groups/Loading";
 import TablePagination from "../groups/TablePagination";
@@ -29,7 +29,7 @@ const SubscriptionsList = ({ category }) => {
     };
 
     const fetchListData = () => {
-        setLoading(true)
+        setLoading(true);
         const searchURL = `${endpoints.subscription_base}${category}/?${
             pageNumber ? `&page=${pageNumber}` : ""
         }

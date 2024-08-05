@@ -1,22 +1,28 @@
 import React from "react";
 import { useState, useRef, useEffect } from "react";
-import { useMatch } from "react-router-dom";
-import { Outlet } from "react-router-dom";
+import { useMatch, Outlet, useNavigate, useLocation } from "react-router-dom";
 import Navbar from "./nav/NavBar.jsx";
 import Menu from "./menu/Menu.jsx";
 import Home from "./home/Home.jsx";
+import { verifyToken } from "../config/axiosconfig.js";
+import Loading from "./groups/Loading.jsx";
 
 const Main = () => {
+    const navigate = useNavigate();
     const isHome = useMatch("/");
     const menuRef = useRef(null);
     const [menuOpen, setMenuOpen] = useState(false);
 
+    const location = useLocation();
+    const [isLoading, setIsLoading] = useState(true);
+
+    // handles onscreen clicks
     useEffect(() => {
         const handleClick = (event) => {
             if (
                 menuRef &&
                 !menuRef.current.contains(event.target) &&
-                !document.getElementById("menu-btn").contains(event.target)
+                !document.getElementById("menu-btn")?.contains(event.target)
             ) {
                 setMenuOpen(false);
             }
@@ -28,17 +34,66 @@ const Main = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const navigateToLogin = () => {
+            if (location.pathname == "/login") return;
+            let next = encodeURI(location.pathname);
+            navigate(`/login?next${next}`);
+        };
+
+        const checkToken = async () => {
+            const token = localStorage.getItem("access_token");
+            if (token) {
+                const isValid = await verifyToken(token);
+                if (!isValid) {
+                    navigateToLogin();
+                }
+            } else {
+                navigateToLogin();
+            }
+            setIsLoading(false);
+        };
+
+        checkToken();
+    }, [navigate]);
+
     return (
         <>
-            <Navbar menuState={menuOpen} setMenuState={setMenuOpen} />
-            <Menu
-                menuOpen={menuOpen}
-                setMenuState={setMenuOpen}
-                ref={menuRef}
-            />
-            {isHome ? <Home /> : <Outlet />}
+            {isLoading ? (
+                <div className="full-screen w-full h-svh overflow-hidden flex items-center">
+                    <Loading />
+                </div>
+            ) : (
+                <>
+                        <Navbar
+                            menuState={menuOpen}
+                            setMenuState={setMenuOpen}
+                        />
+                        <Menu
+                            menuOpen={menuOpen}
+                            setMenuState={setMenuOpen}
+                            ref={menuRef}
+                        />
+                        {isHome ? <Home /> : <Outlet />}
+                </>
+            )}
         </>
     );
+
+    // isAuth ? (
+    //     <>
+    //         <Navbar menuState={menuOpen} setMenuState={setMenuOpen} />
+    //         <Menu
+    //             menuOpen={menuOpen}
+    //             setMenuState={setMenuOpen}
+    //             ref={menuRef}
+    //         />
+    //         {isHome ? <Home /> : <Outlet />}
+    //     </>
+    // ) : (
+    //     <></>
+    //     // <Login />
+    // );
 };
 
 export default Main;

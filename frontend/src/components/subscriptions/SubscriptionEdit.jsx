@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import { Label, Button, TextInput } from "flowbite-react";
 import axios from "axios";
-import endpoints from "../../../config";
+import endpoints from "../../config/config";
 import { MdSubscriptions } from "react-icons/md";
 import { useForm } from "react-hook-form";
 import SubscriptionAdd from "./SubscriptionAdd";

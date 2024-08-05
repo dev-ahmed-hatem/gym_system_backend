@@ -16,7 +16,7 @@ import {
     MdOutlineTimer,
 } from "react-icons/md";
 import DrawerHeader from "../groups/DrawerHeader";
-import endpoints from "../../../config";
+import endpoints from "../../config/config";
 import { FaInfoCircle, FaMoneyBill, FaPercentage } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
 import { GrMoney } from "react-icons/gr";
