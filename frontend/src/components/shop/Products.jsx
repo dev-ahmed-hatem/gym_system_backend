@@ -13,14 +13,12 @@ import axios from "../../config/axiosconfig";
 import ViewGroup from "../groups/ViewGroup";
 import TableGroup from "../groups/TableGroup";
 import { useForm } from "react-hook-form";
-import Notification from "../groups/Notification";
 import {
     MdEdit,
     MdDelete,
     MdOutlineDriveFileRenameOutline,
     MdInventory,
 } from "react-icons/md";
-import DrawerHeader from "../groups/DrawerHeader";
 import CustomFileInput from "../groups/CustomFileInput";
 import TablePagination from "../groups/TablePagination";
 import endpoints from "../../config/config";
@@ -418,22 +416,6 @@ const Products = () => {
 
     return (
         <>
-            {/*  notification */}
-            {toast && <Notification setToast={setToast} title={toast} />}
-
-            {/* drawer */}
-            {{ drawerOpen } && (
-                <DrawerHeader
-                    title={drawerData?.title}
-                    openState={drawerOpen}
-                    setOpenState={setDrawerOpen}
-                    icon={drawerData?.icon}
-                    handleClose={closeDrawer}
-                >
-                    {drawerData?.content}
-                </DrawerHeader>
-            )}
-
             {/* add form */}
             <ProductsForm
                 setToast={setToast}

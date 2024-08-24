@@ -14,9 +14,7 @@ import axios from "../../config/axiosconfig";
 import ViewGroup from "../groups/ViewGroup";
 import TableGroup from "../groups/TableGroup";
 import { useForm, Controller } from "react-hook-form";
-import Notification from "../groups/Notification";
 import { MdEdit, MdDelete } from "react-icons/md";
-import DrawerHeader from "../groups/DrawerHeader";
 import TablePagination from "../groups/TablePagination";
 import endpoints from "../../config/config";
 import { FaMoneyBill } from "react-icons/fa";
@@ -391,22 +389,6 @@ const Transactions = ({ type }) => {
 
     return (
         <>
-            {/*  notification */}
-            {toast && <Notification setToast={setToast} title={toast} />}
-
-            {/* drawer */}
-            {{ drawerOpen } && (
-                <DrawerHeader
-                    title={drawerData?.title}
-                    openState={drawerOpen}
-                    setOpenState={setDrawerOpen}
-                    icon={drawerData?.icon}
-                    handleClose={closeDrawer}
-                >
-                    {drawerData?.content}
-                </DrawerHeader>
-            )}
-
             {/* add form */}
             <TransactionsForm
                 setToast={setToast}

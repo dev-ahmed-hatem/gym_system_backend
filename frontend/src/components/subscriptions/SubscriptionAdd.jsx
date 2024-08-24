@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Label, Select as FlowbiteSelect, Datepicker } from "flowbite-react";
 import axios from "../../config/axiosconfig";
 import { useForm, Controller } from "react-hook-form";
-import Notification from "../groups/Notification";
 import endpoints from "../../config/config";
 import Select from "react-select";
 import style from "../../assets/rect-select-style";
@@ -557,9 +556,6 @@ const SubscriptionAdd = ({ defaultValues, postURL, callBack }) => {
 
     return (
         <>
-            {/*  notification */}
-            {toast && <Notification setToast={setToast} title={toast} />}
-
             {/* add form */}
             <SubscriptionAddForm
                 setToast={setToast}

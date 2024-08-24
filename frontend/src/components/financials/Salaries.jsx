@@ -9,13 +9,11 @@ import Select from "react-select";
 import Loading from "../groups/Loading";
 import axios from "../../config/axiosconfig";
 import { useForm } from "react-hook-form";
-import Notification from "../groups/Notification";
 import {
     MdOutlineHolidayVillage,
     MdOutlineMoreTime,
     MdOutlineTimer,
 } from "react-icons/md";
-import DrawerHeader from "../groups/DrawerHeader";
 import endpoints from "../../config/config";
 import { FaInfoCircle, FaMoneyBill, FaPercentage } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
@@ -928,22 +926,6 @@ const Salaries = () => {
 
     return (
         <>
-            {/*  notification */}
-            {toast && <Notification setToast={setToast} title={toast} />}
-
-            {/* drawer */}
-            {{ drawerOpen } && (
-                <DrawerHeader
-                    title={drawerData?.title}
-                    openState={drawerOpen}
-                    setOpenState={setDrawerOpen}
-                    icon={drawerData?.icon}
-                    handleClose={closeDrawer}
-                >
-                    {drawerData?.content}
-                </DrawerHeader>
-            )}
-
             {/* add form */}
             <SalariesForm
                 setToast={setToast}

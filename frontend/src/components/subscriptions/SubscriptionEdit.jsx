@@ -7,7 +7,6 @@ import { MdSubscriptions } from "react-icons/md";
 import { useForm } from "react-hook-form";
 import SubscriptionAdd from "./SubscriptionAdd";
 import SubscriptionFreeze from "./SubscriptionFreeze";
-import Notification from "../groups/Notification";
 
 const fetchData = (code, setData, setFetchError, setPost) => {
     setData(null);
@@ -108,9 +107,6 @@ const SubscriptionEdit = () => {
 
     return (
         <>
-            {/*  notification */}
-            {toast && <Notification setToast={setToast} title={toast} />}
-
             {/* search form */}
             <SubscriptionEditForm
                 setFetchError={setFetchError}
@@ -155,7 +151,7 @@ const SubscriptionEdit = () => {
                                     );
                                 }}
                             />
-                            
+
                             {/* freeze options */}
                             <SubscriptionFreeze
                                 sub={data?.results[0]}
