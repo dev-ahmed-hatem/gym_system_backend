@@ -71,10 +71,17 @@ const ConfirmBlock = ({ client, state, closeDrawer, callBack }) => {
 const Blocklist = () => {
     //////////////////////////////// providers ////////////////////////////////
     const { showDrawer, closeDrawer } = useDrawer();
-    const { has_permission } = usePermission();
+    const { set_page_permissions } = usePermission();
 
     //////////////////////////////// permissions ////////////////////////////////
-    const [app_label, model_name, perm_name] = ["clients", "client", "client"];
+    const permissions = set_page_permissions("clients", "client");
+    if (!permissions.change && !permissions.view) {
+        return (
+            <p className="text-lg text-center text-red-600 py-4">
+                ليس لديك صلاحيات هنا
+            </p>
+        );
+    }
 
     //////////////////////////////// list data ////////////////////////////////
     const [data, setData] = useState([]);
@@ -115,7 +122,7 @@ const Blocklist = () => {
     };
 
     useEffect(() => {
-        if (has_permission(`${app_label}.${model_name}`, `view_${perm_name}`)) {
+        if (permissions.view) {
             get_current_clients();
         }
     }, [searchParam, pageNumber]);
@@ -123,10 +130,7 @@ const Blocklist = () => {
     return (
         <>
             {/* table data */}
-            {has_permission(
-                `${app_label}.${model_name}`,
-                `view_${perm_name}`
-            ) ? (
+            {permissions.view ? (
                 <ViewGroup title={"العملاء الحاليين"}>
                     {loading ? (
                         <Loading />
@@ -209,10 +213,7 @@ const Blocklist = () => {
                                                             </span>
                                                         </Table.Cell>
                                                         <Table.Cell>
-                                                            {has_permission(
-                                                                `${app_label}.${model_name}`,
-                                                                `change_${perm_name}`
-                                                            ) && (
+                                                            {permissions.change && (
                                                                 <Button
                                                                     color={
                                                                         client.is_blocked

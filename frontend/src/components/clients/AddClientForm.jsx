@@ -19,6 +19,7 @@ import Select from "react-select";
 import style from "../../assets/rect-select-style";
 import { defaultFormSubmission } from "../../config/actions";
 import { calculateAge } from "../../utils";
+import { useToast } from "../../providers/ToastProvider";
 
 const AddClientForm = ({ postURL, defaultValues, callBack }) => {
     const [post, setPost] = useState(false);
@@ -26,6 +27,7 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [trainersList, setTrainersList] = useState(null);
     const [subscriptionsList, setSubscriptionsList] = useState(null);
+    const { showToast } = useToast();
 
     const {
         register,
@@ -275,7 +277,10 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
                                 placeholder="تاريخ الميلاد"
                                 color={"primary"}
                                 onSelectedDateChanged={(date) => {
-                                    calculateAge(date, setAge);
+                                    calculateAge({
+                                        birth: date,
+                                        setAge: setAge,
+                                    });
                                     field.onChange(
                                         date.toLocaleDateString("en-CA")
                                     );

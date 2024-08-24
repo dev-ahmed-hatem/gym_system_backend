@@ -26,7 +26,7 @@ class Client(models.Model):
     email = models.EmailField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     photo = models.ImageField(upload_to='photos/', blank=True, null=True)
-    added_by = models.ForeignKey('users.User', on_delete=models.SET_NULL, null=True, blank=True, default=1)
+    added_by = models.ForeignKey('users.User', on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     qr_code = models.ImageField(upload_to='qr_codes', blank=True, null=True)
     barcode = models.ImageField(upload_to='barcodes', blank=True, null=True)

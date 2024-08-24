@@ -157,9 +157,11 @@ const ClientFilter = () => {
     const [fetchError, setFetchError] = useState(null);
     const [data, setData] = useState(null);
 
-    const { has_permission } = usePermission();
+    //////////////////////////////// permissions ////////////////////////////////
+    const { set_page_permissions } = usePermission();
+    const permissions = set_page_permissions("clients", "client");
 
-    if (!has_permission("clients.client", "view_client"))
+    if (!permissions.view)
         return (
             <ErrorGroup
                 title={"العملاء الحاليين"}

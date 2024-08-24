@@ -16,14 +16,20 @@ import { useDrawer } from "../../../providers/DrawerProvider";
 const Subscriptions = () => {
     //////////////////////////////// providers ////////////////////////////////
     const { showDrawer, closeDrawer } = useDrawer();
-    const { has_permission } = usePermission();
+    const { set_page_permissions } = usePermission();
 
     //////////////////////////////// permissions ////////////////////////////////
-    const [app_label, model_name, perm_name] = [
+    const permissions = set_page_permissions(
         "subscriptions",
-        "subscriptionplan",
-        "subscriptionplan",
-    ];
+        "subscriptionplan"
+    );
+    if (!permissions.add && !permissions.view) {
+        return (
+            <p className="text-lg text-center text-red-600 py-4">
+                ليس لديك صلاحيات هنا
+            </p>
+        );
+    }
 
     //////////////////////////////// list data ////////////////////////////////
     const [data, setData] = useState([]);
@@ -83,7 +89,7 @@ const Subscriptions = () => {
     };
 
     useEffect(() => {
-        if (has_permission(`${app_label}.${model_name}`, `view_${perm_name}`)) {
+        if (permissions.view) {
             get_current_subscriptions();
         }
     }, [searchParam, pageNumber]);
@@ -91,10 +97,7 @@ const Subscriptions = () => {
     return (
         <>
             {/* add form */}
-            {has_permission(
-                `${app_label}.${model_name}`,
-                `add_${perm_name}`
-            ) ? (
+            {permissions.add ? (
                 <SubscriptionPlanForm
                     postURL={endpoints.subscription_plan_list}
                     callBack={get_current_subscriptions}
@@ -107,10 +110,7 @@ const Subscriptions = () => {
             )}
 
             {/* table data */}
-            {has_permission(
-                `${app_label}.${model_name}`,
-                `view_${perm_name}`
-            ) ? (
+            {permissions.view ? (
                 <ViewGroup title={"الاشتراكات الحالية"}>
                     {loading ? (
                         <Loading />
@@ -239,10 +239,7 @@ const Subscriptions = () => {
                                                             </Table.Cell>
                                                             <Table.Cell>
                                                                 <span className="flex text-xl gap-x-3">
-                                                                    {has_permission(
-                                                                        `${app_label}.${model_name}`,
-                                                                        `change_${perm_name}`
-                                                                    ) && (
+                                                                    {permissions.change && (
                                                                         <MdEdit
                                                                             className="text-accent cursor-pointer"
                                                                             onClick={() => {
@@ -253,10 +250,7 @@ const Subscriptions = () => {
                                                                             }}
                                                                         />
                                                                     )}
-                                                                    {has_permission(
-                                                                        `${app_label}.${model_name}`,
-                                                                        `delete_${perm_name}`
-                                                                    ) && (
+                                                                    {permissions.delete && (
                                                                         <MdDelete
                                                                             className="text-secondary cursor-pointer"
                                                                             onClick={() => {

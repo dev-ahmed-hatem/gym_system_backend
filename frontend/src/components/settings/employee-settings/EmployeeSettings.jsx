@@ -19,17 +19,20 @@ const EmployeeSettings = () => {
         name: "الجنسية",
         list_url: endpoints.nationality_list,
     });
-    
+
     //////////////////////////////// providers ////////////////////////////////
     const { showDrawer, closeDrawer } = useDrawer();
-    const { has_permission } = usePermission();
+    const { set_page_permissions } = usePermission();
 
     //////////////////////////////// permissions ////////////////////////////////
-    const [app_label, model_name, perm_name] = [
-        "users",
-        "employeetype",
-        "employeesettings",
-    ];
+    const permissions = set_page_permissions("users", "employeesettings");
+    if (!permissions.add && !permissions.view) {
+        return (
+            <p className="text-lg text-center text-red-600 py-4">
+                ليس لديك صلاحيات هنا
+            </p>
+        );
+    }
 
     //////////////////////////////// list data ////////////////////////////////
     const [data, setData] = useState([]);
@@ -91,7 +94,7 @@ const EmployeeSettings = () => {
     };
 
     useEffect(() => {
-        if (has_permission(`${app_label}.${model_name}`, `view_${perm_name}`)) {
+        if (permissions.view) {
             get_current_items();
         }
     }, [searchParam, pageNumber, currentSetting]);
@@ -99,10 +102,7 @@ const EmployeeSettings = () => {
     return (
         <>
             {/* add form */}
-            {has_permission(
-                `${app_label}.${model_name}`,
-                `add_${perm_name}`
-            ) ? (
+            {permissions.add ? (
                 <EmployeeSettingsForm
                     currentSetting={currentSetting}
                     setCurrentSetting={setCurrentSetting}
@@ -117,10 +117,7 @@ const EmployeeSettings = () => {
             )}
 
             {/* table data */}
-            {has_permission(
-                `${app_label}.${model_name}`,
-                `view_${perm_name}`
-            ) ? (
+            {permissions.view ? (
                 <ViewGroup title={`اختيارات ${currentSetting.name} الحالية`}>
                     {loading ? (
                         <Loading />
@@ -192,10 +189,7 @@ const EmployeeSettings = () => {
                                                         )}
                                                         <Table.Cell>
                                                             <span className="flex text-xl gap-x-3">
-                                                                {has_permission(
-                                                                    `${app_label}.${model_name}`,
-                                                                    `change_${perm_name}`
-                                                                ) && (
+                                                                {permissions.change && (
                                                                     <MdEdit
                                                                         className="text-accent cursor-pointer"
                                                                         onClick={() => {
@@ -206,10 +200,7 @@ const EmployeeSettings = () => {
                                                                         }}
                                                                     />
                                                                 )}
-                                                                {has_permission(
-                                                                    `${app_label}.${model_name}`,
-                                                                    `delete_${perm_name}`
-                                                                ) && (
+                                                                {permissions.delete && (
                                                                     <MdDelete
                                                                         className="text-secondary cursor-pointer"
                                                                         onClick={() => {

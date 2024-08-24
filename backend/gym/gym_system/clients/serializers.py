@@ -72,6 +72,9 @@ class ClientWriteSerializer(serializers.ModelSerializer):
                                                      start_date=start_date,
                                                      trainer=trainer)
             client_sub.save()
+
+        user = self.context['request'].user
+        client.added_by = user
         client.save()
 
         return client

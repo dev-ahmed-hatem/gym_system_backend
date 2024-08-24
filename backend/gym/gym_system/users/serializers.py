@@ -47,6 +47,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class NationalitySerializer(serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='nationality-detail', lookup_field='pk')
+
     class Meta:
         model = Nationality
         fields = '__all__'
@@ -54,6 +55,7 @@ class NationalitySerializer(serializers.ModelSerializer):
 
 class MaritalStatusSerializer(serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='marital-status-detail', lookup_field='pk')
+
     class Meta:
         model = MaritalStatus
         fields = '__all__'
@@ -61,6 +63,7 @@ class MaritalStatusSerializer(serializers.ModelSerializer):
 
 class EmployeeTypeSerializer(serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='employee-type-detail', lookup_field='pk')
+
     class Meta:
         model = EmployeeType
         fields = '__all__'
@@ -68,6 +71,7 @@ class EmployeeTypeSerializer(serializers.ModelSerializer):
 
 class CitySerializer(serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='city-detail', lookup_field='pk')
+
     class Meta:
         model = City
         fields = '__all__'
@@ -76,6 +80,7 @@ class CitySerializer(serializers.ModelSerializer):
 class CityDistrictReadSerializer(serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='city-district-detail', lookup_field='pk')
     city = CitySerializer(read_only=True)
+
     class Meta:
         model = CityDistrict
         fields = '__all__'
@@ -105,6 +110,13 @@ class EmployeeWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
         fields = '__all__'
+
+    def create(self, validated_data):
+        employee = super().create(validated_data)
+        user = self.context['request'].user
+        employee.added_by = user
+        employee.save()
+        return employee
 
 
 class ModeratorWriteSerializer(serializers.ModelSerializer):

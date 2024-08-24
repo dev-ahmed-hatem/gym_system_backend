@@ -12,10 +12,21 @@ import { usePermission } from "../../providers/PermissionProvider";
 
 const ClientSearch = () => {
     //////////////////////////////// providers ////////////////////////////////
-    const { has_permission } = usePermission();
+    const { set_page_permissions } = usePermission();
 
     //////////////////////////////// permissions ////////////////////////////////
-    const [app_label, model_name, perm_name] = ["clients", "client", "client"];
+    const permissions = set_page_permissions("clients", "client");
+    const subscription_permissions = set_page_permissions(
+        "subscriptions",
+        "subscription"
+    );
+    if (!permissions.change && !permissions.view) {
+        return (
+            <p className="text-lg text-center text-red-600 py-4">
+                ليس لديك صلاحيات هنا
+            </p>
+        );
+    }
 
     //////////////////////////////// list data ////////////////////////////////
     const [data, setData] = useState([]);
@@ -40,7 +51,7 @@ const ClientSearch = () => {
     };
 
     useEffect(() => {
-        if (has_permission(`${app_label}.${model_name}`, `view_${perm_name}`)) {
+        if (permissions.view) {
             get_current_clients();
         }
     }, [searchParam, pageNumber]);
@@ -52,7 +63,7 @@ const ClientSearch = () => {
         }
     }, [currentClient]);
 
-    if (!has_permission(`${app_label}.${model_name}`, `view_${perm_name}`))
+    if (!permissions.view)
         return (
             <ErrorGroup
                 title={"العملاء الحاليين"}
@@ -507,10 +518,7 @@ const ClientSearch = () => {
                         سجل الاشتراكات
                     </h1>
                     <hr className="h-px my-3 bg-gray-200 border-0"></hr>
-                    {has_permission(
-                        `subscriptions.subscription`,
-                        `view_subscription`
-                    ) ? (
+                    {subscription_permissions.view ? (
                         <>
                             {currentClient.subscriptions.length !== 0 ? (
                                 <div className="subscriptions-wrapper flex gap-6 flex-wrap">

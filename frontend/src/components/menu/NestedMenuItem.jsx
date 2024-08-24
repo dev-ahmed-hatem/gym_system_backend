@@ -16,10 +16,10 @@ const NestedMenuItem = ({ item, setMenuState }) => {
 
         if (active) {
             dropDown.style.height = dropDown.scrollHeight + "px";
-            dropDown.style.paddingBottom = "12px";
+            dropDown.style.marginBottom = "12px";
         } else {
             dropDown.style.height = "0px";
-            dropDown.style.paddingBottom = "0px";
+            dropDown.style.marginBottom = "0px";
         }
     };
 

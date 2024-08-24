@@ -16,10 +16,17 @@ import { useDrawer } from "../../providers/DrawerProvider";
 const AddClient = () => {
     //////////////////////////////// providers ////////////////////////////////
     const { showDrawer, closeDrawer } = useDrawer();
-    const { has_permission } = usePermission();
+    const { set_page_permissions } = usePermission();
 
     //////////////////////////////// permissions ////////////////////////////////
-    const [app_label, model_name, perm_name] = ["clients", "client", "client"];
+    const permissions = set_page_permissions("clients", "client");
+    if (!permissions.add && !permissions.view) {
+        return (
+            <p className="text-lg text-center text-red-600 py-4">
+                ليس لديك صلاحيات هنا
+            </p>
+        );
+    }
 
     //////////////////////////////// list data ////////////////////////////////
     const [data, setData] = useState([]);
@@ -79,7 +86,7 @@ const AddClient = () => {
     };
 
     useEffect(() => {
-        if (has_permission(`${app_label}.${model_name}`, `view_${perm_name}`)) {
+        if (permissions.view) {
             get_current_clients();
         }
     }, [searchParam, pageNumber]);
@@ -87,10 +94,7 @@ const AddClient = () => {
     return (
         <>
             {/* add form */}
-            {has_permission(
-                `${app_label}.${model_name}`,
-                `add_${perm_name}`
-            ) ? (
+            {permissions.add ? (
                 <AddClientForm
                     postURL={endpoints.client_list}
                     callBack={get_current_clients}
@@ -100,10 +104,7 @@ const AddClient = () => {
             )}
 
             {/* table data */}
-            {has_permission(
-                `${app_label}.${model_name}`,
-                `view_${perm_name}`
-            ) ? (
+            {permissions.view ? (
                 <ViewGroup title={"العملاء الحاليين"}>
                     {loading ? (
                         <Loading />
@@ -191,10 +192,7 @@ const AddClient = () => {
                                                         </Table.Cell>
                                                         <Table.Cell>
                                                             <span className="flex text-xl gap-x-3">
-                                                                {has_permission(
-                                                                    `${app_label}.${model_name}`,
-                                                                    `change_${perm_name}`
-                                                                ) && (
+                                                                {permissions.change && (
                                                                     <MdEdit
                                                                         className="text-accent cursor-pointer"
                                                                         onClick={() => {
@@ -205,10 +203,7 @@ const AddClient = () => {
                                                                         }}
                                                                     />
                                                                 )}
-                                                                {has_permission(
-                                                                    `${app_label}.${model_name}`,
-                                                                    `delete_${perm_name}`
-                                                                ) && (
+                                                                {permissions.delete && (
                                                                     <MdDelete
                                                                         className="text-secondary cursor-pointer"
                                                                         onClick={() => {

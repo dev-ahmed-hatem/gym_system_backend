@@ -136,7 +136,7 @@ class Employee(models.Model):
     address = models.TextField(blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     photo = models.ImageField(upload_to='photos/', blank=True, null=True)
-    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, default=1)
+    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     emp_type = models.ForeignKey(EmployeeType, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):

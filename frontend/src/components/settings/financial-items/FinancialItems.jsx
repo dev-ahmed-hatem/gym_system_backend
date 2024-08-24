@@ -16,14 +16,17 @@ import { useDrawer } from "../../../providers/DrawerProvider";
 const FinancialItems = () => {
     //////////////////////////////// providers ////////////////////////////////
     const { showDrawer, closeDrawer } = useDrawer();
-    const { has_permission } = usePermission();
+    const { set_page_permissions } = usePermission();
 
     //////////////////////////////// permissions ////////////////////////////////
-    const [app_label, model_name, perm_name] = [
-        "financials",
-        "financialitem",
-        "financialitem",
-    ];
+    const permissions = set_page_permissions("financials", "financialitem");
+    if (!permissions.add && !permissions.view) {
+        return (
+            <p className="text-lg text-center text-red-600 py-4">
+                ليس لديك صلاحيات هنا
+            </p>
+        );
+    }
 
     //////////////////////////////// list data ////////////////////////////////
     const [data, setData] = useState([]);
@@ -83,7 +86,7 @@ const FinancialItems = () => {
     };
 
     useEffect(() => {
-        if (has_permission(`${app_label}.${model_name}`, `view_${perm_name}`)) {
+        if (permissions.view) {
             get_current_items();
         }
     }, [searchParam, pageNumber]);
@@ -91,10 +94,7 @@ const FinancialItems = () => {
     return (
         <>
             {/* add form */}
-            {has_permission(
-                `${app_label}.${model_name}`,
-                `add_${perm_name}`
-            ) ? (
+            {permissions.add ? (
                 <FinancialItemsForm
                     postURL={endpoints.financial_item_list}
                     callBack={get_current_items}
@@ -104,10 +104,7 @@ const FinancialItems = () => {
             )}
 
             {/* table data */}
-            {has_permission(
-                `${app_label}.${model_name}`,
-                `view_${perm_name}`
-            ) ? (
+            {permissions.view ? (
                 <ViewGroup title={"البنود المالية الحالية"}>
                     {loading ? (
                         <Loading />
@@ -176,10 +173,7 @@ const FinancialItems = () => {
                                                         </Table.Cell>
                                                         <Table.Cell>
                                                             <span className="flex text-xl gap-x-3">
-                                                                {has_permission(
-                                                                    `${app_label}.${model_name}`,
-                                                                    `change_${perm_name}`
-                                                                ) && (
+                                                                {permissions.change && (
                                                                     <MdEdit
                                                                         className="text-accent cursor-pointer"
                                                                         onClick={() => {
@@ -190,10 +184,7 @@ const FinancialItems = () => {
                                                                         }}
                                                                     />
                                                                 )}
-                                                                {has_permission(
-                                                                    `${app_label}.${model_name}`,
-                                                                    `delete_${perm_name}`
-                                                                ) && (
+                                                                {permissions.delete && (
                                                                     <MdDelete
                                                                         className="text-secondary cursor-pointer"
                                                                         onClick={() => {
