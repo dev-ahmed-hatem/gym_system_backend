@@ -16,14 +16,17 @@ import ErrorGroup from "../../groups/ErrorGroup";
 const Employees = () => {
     //////////////////////////////// providers ////////////////////////////////
     const { showDrawer, closeDrawer } = useDrawer();
-    const { has_permission } = usePermission();
+    const { set_page_permissions } = usePermission();
 
     //////////////////////////////// permissions ////////////////////////////////
-    const [app_label, model_name, perm_name] = [
-        "users",
-        "employee",
-        "employee",
-    ];
+    const permissions = set_page_permissions("users", "employee");
+    if (!permissions.add && !permissions.view) {
+        return (
+            <p className="text-lg text-center text-red-600 py-4">
+                ليس لديك صلاحيات هنا
+            </p>
+        );
+    }
 
     //////////////////////////////// list data ////////////////////////////////
     const [data, setData] = useState([]);
@@ -83,7 +86,7 @@ const Employees = () => {
     };
 
     useEffect(() => {
-        if (has_permission(`${app_label}.${model_name}`, `view_${perm_name}`)) {
+        if (permissions.view) {
             get_current_employees();
         }
     }, [searchParam, pageNumber]);
@@ -91,10 +94,7 @@ const Employees = () => {
     return (
         <>
             {/* add form */}
-            {has_permission(
-                `${app_label}.${model_name}`,
-                `add_${perm_name}`
-            ) ? (
+            {permissions.add ? (
                 <EmployeesForm
                     postURL={endpoints.employee_list}
                     callBack={get_current_employees}
@@ -104,10 +104,7 @@ const Employees = () => {
             )}
 
             {/* table data */}
-            {has_permission(
-                `${app_label}.${model_name}`,
-                `view_${perm_name}`
-            ) ? (
+            {permissions.view ? (
                 <ViewGroup title={"الموظفين الحاليين"}>
                     {loading ? (
                         <Loading />
@@ -211,10 +208,7 @@ const Employees = () => {
                                                         </Table.Cell>
                                                         <Table.Cell>
                                                             <span className="flex text-xl gap-x-3">
-                                                                {has_permission(
-                                                                    `${app_label}.${model_name}`,
-                                                                    `change_${perm_name}`
-                                                                ) && (
+                                                                {permissions.change && (
                                                                     <MdEdit
                                                                         className="text-accent cursor-pointer"
                                                                         onClick={() => {
@@ -225,10 +219,7 @@ const Employees = () => {
                                                                         }}
                                                                     />
                                                                 )}
-                                                                {has_permission(
-                                                                    `${app_label}.${model_name}`,
-                                                                    `delete_${perm_name}`
-                                                                ) && (
+                                                                {permissions.delete && (
                                                                     <MdDelete
                                                                         className="text-secondary cursor-pointer"
                                                                         onClick={() => {

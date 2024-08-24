@@ -16,14 +16,17 @@ import { fetch_list_data } from "../../../config/actions";
 const Moderators = () => {
     //////////////////////////////// providers ////////////////////////////////
     const { showDrawer, closeDrawer } = useDrawer();
-    const { has_permission } = usePermission();
+    const { set_page_permissions } = usePermission();
 
     //////////////////////////////// permissions ////////////////////////////////
-    const [app_label, model_name, perm_name] = [
-        "users",
-        "moderator",
-        "moderator",
-    ];
+    const permissions = set_page_permissions("users", "moderator");
+    if (!permissions.add && !permissions.view) {
+        return (
+            <p className="text-lg text-center text-red-600 py-4">
+                ليس لديك صلاحيات هنا
+            </p>
+        );
+    }
 
     //////////////////////////////// list data ////////////////////////////////
     const [data, setData] = useState([]);
@@ -54,7 +57,7 @@ const Moderators = () => {
                     <ConfirmDelete
                         deleteURL={item.url}
                         deletePrompt={" هل أنت متأكد تريد حذف المشرف"}
-                        itemName={item.username}
+                        itemName={item.user.username}
                         closeDrawer={closeDrawer}
                         callBack={() => {
                             setSearchParam(null);
@@ -83,7 +86,7 @@ const Moderators = () => {
     };
 
     useEffect(() => {
-        if (has_permission(`${app_label}.${model_name}`, `view_${perm_name}`)) {
+        if (permissions.view) {
             get_current_moderators();
         }
     }, [searchParam, pageNumber]);
@@ -91,10 +94,7 @@ const Moderators = () => {
     return (
         <>
             {/* add form */}
-            {has_permission(
-                `${app_label}.${model_name}`,
-                `add_${perm_name}`
-            ) ? (
+            {permissions.add ? (
                 <ModeratorsForm
                     postURL={endpoints.moderator_list}
                     callBack={fetch_list_data}
@@ -104,10 +104,7 @@ const Moderators = () => {
             )}
 
             {/* table data */}
-            {has_permission(
-                `${app_label}.${model_name}`,
-                `view_${perm_name}`
-            ) ? (
+            {permissions.view ? (
                 <ViewGroup title={"المشرفين الحاليين"}>
                     {loading ? (
                         <Loading />
@@ -206,10 +203,7 @@ const Moderators = () => {
                                                         </Table.Cell>
                                                         <Table.Cell>
                                                             <span className="flex text-xl gap-x-3">
-                                                                {has_permission(
-                                                                    `${app_label}.${model_name}`,
-                                                                    `change_${perm_name}`
-                                                                ) && (
+                                                                {permissions.change && (
                                                                     <MdEdit
                                                                         className="text-accent cursor-pointer"
                                                                         onClick={() => {
@@ -220,10 +214,7 @@ const Moderators = () => {
                                                                         }}
                                                                     />
                                                                 )}
-                                                                {has_permission(
-                                                                    `${app_label}.${model_name}`,
-                                                                    `delete_${perm_name}`
-                                                                ) && (
+                                                                {permissions.delete && (
                                                                     <MdDelete
                                                                         className="text-secondary cursor-pointer"
                                                                         onClick={() => {

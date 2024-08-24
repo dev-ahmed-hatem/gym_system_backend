@@ -69,18 +69,22 @@ const Main = () => {
             ) : (
                 <ToastProvider>
                     <DrawerProvider>
-                        <PermissionProvider>
-                            <Navbar
-                                menuState={menuOpen}
-                                setMenuState={setMenuOpen}
-                            />
-                            <Menu
-                                menuOpen={menuOpen}
-                                setMenuState={setMenuOpen}
-                                ref={menuRef}
-                            />
-                            {isHome ? <Home /> : <Outlet />}
-                        </PermissionProvider>
+                        <Navbar
+                            menuState={menuOpen}
+                            setMenuState={setMenuOpen}
+                        />
+                        <Menu
+                            menuOpen={menuOpen}
+                            setMenuState={setMenuOpen}
+                            ref={menuRef}
+                        />
+                        {isHome ? (
+                            <Home />
+                        ) : (
+                            <PermissionProvider>
+                                <Outlet />
+                            </PermissionProvider>
+                        )}
                     </DrawerProvider>
                 </ToastProvider>
             )}
