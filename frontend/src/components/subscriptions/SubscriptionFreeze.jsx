@@ -3,11 +3,13 @@ import { Button } from "flowbite-react";
 import { AiOutlineLoading } from "react-icons/ai";
 import endpoints from "../../config/config";
 import axios from "../../config/axiosconfig";
+import { useToast } from "../../providers/ToastProvider";
 
-const SubscriptionFreeze = ({ sub, setToast, callBack }) => {
+const SubscriptionFreeze = ({ sub, callBack }) => {
     const [post, setPost] = useState(false);
     const [freezeError, setFreezeError] = useState(null);
-
+    const { showToast } = useToast();
+    
     const switchSubscriptionState = () => {
         setPost(true);
         const action = sub?.is_frozen ? "unfreeze" : "freeze";
@@ -16,7 +18,7 @@ const SubscriptionFreeze = ({ sub, setToast, callBack }) => {
         axios
             .get(url)
             .then((response) => {
-                setToast(
+                showToast(
                     `تم ${action === "freeze" ? "تعليق" : "استئناف"} الاشتراك`
                 );
                 if (callBack) callBack();

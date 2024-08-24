@@ -1,14 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
-import { Label, Table, Button, Datepicker } from "flowbite-react";
+import { Label, Button, Datepicker } from "flowbite-react";
 import Loading from "../groups/Loading";
-import axios from "../../config/axiosconfig";
-import ViewGroup from "../groups/ViewGroup";
 import { useForm, Controller } from "react-hook-form";
 import endpoints from "../../config/config";
 import SubscriptionCard from "./SubscriptionCard";
+import { fetch_list_data } from "../../config/actions";
+import { usePermission } from "../../providers/PermissionProvider";
 
 const SubscriptionFilterForm = ({ setLoading, setFetchError, setData }) => {
+    //////////////////////////////// permissions ////////////////////////////////
+    const { set_page_permissions } = usePermission();
+    const permissions = set_page_permissions("subscriptions", "subscription");
+    if (!permissions.view) {
+        return (
+            <p className="text-lg text-center text-red-600 py-4">
+                ليس لديك صلاحيات هنا
+            </p>
+        );
+    }
+
     const [post, setPost] = useState(false);
     const today = new Date().toLocaleDateString("en-CA");
     const {
@@ -41,27 +52,22 @@ const SubscriptionFilterForm = ({ setLoading, setFetchError, setData }) => {
             });
             return;
         }
-        setLoading(true);
 
+        setLoading(true);
         setPost(true);
         const url = `${endpoints.subscription_list}from=${data.from}&to=${data.to}&no_pagination=true`;
 
-        axios
-            .get(url)
-            .then((response) => {
-                setPost(false);
-                setData(response.data);
-            })
-            .catch((error) => {
-                console.log(error);
-                setFetchError(error);
-                setPost(false);
-            })
-            .finally(() => {
-                setPost(false);
-                setLoading(false);
-            });
+        fetch_list_data({
+            searchURL: url,
+            setData: setData,
+            setFetchError: setFetchError,
+            setLoading: (bool) => {
+                setPost(bool);
+                setLoading(bool);
+            },
+        });
     };
+
     return (
         <div
             className={`wrapper p-4 my-8 bg-white rounded border-t-4 border-primary shadow-lg`}

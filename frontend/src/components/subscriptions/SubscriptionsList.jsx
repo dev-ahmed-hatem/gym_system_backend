@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from "react";
 import endpoints from "../../config/config";
-import axios from "../../config/axiosconfig";
 import Loading from "../groups/Loading";
 import TablePagination from "../groups/TablePagination";
 import SubscriptionCard from "./SubscriptionCard";
+import { usePermission } from "../../providers/PermissionProvider";
+import { fetch_list_data } from "../../config/actions";
 
 const SubscriptionsList = ({ category }) => {
+    //////////////////////////////// permissions ////////////////////////////////
+    const { set_page_permissions } = usePermission();
+    const permissions = set_page_permissions("subscriptions", "subscription");
+    if (!permissions.view) {
+        return (
+            <p className="text-lg text-center text-red-600 py-4">
+                ليس لديك صلاحيات هنا
+            </p>
+        );
+    }
+
     let arabicCategory;
     switch (category) {
         case "active":
@@ -24,32 +36,25 @@ const SubscriptionsList = ({ category }) => {
     const [fetchError, setFetchError] = useState(null);
     const [pageNumber, setPageNumber] = useState(1);
 
-    const changePage = (page) => {
-        setPageNumber(page);
-    };
-
-    const fetchListData = () => {
+    const get_current_subscriptions = () => {
         setLoading(true);
         const searchURL = `${endpoints.subscription_base}${category}/?${
             pageNumber ? `&page=${pageNumber}` : ""
         }
         `;
 
-        axios
-            .get(searchURL)
-            .then((response) => {
-                setData(response.data);
-            })
-            .catch((fetchError) => {
-                setFetchError(fetchError);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        fetch_list_data({
+            searchURL: searchURL,
+            setData: setData,
+            setFetchError: setFetchError,
+            setLoading: setLoading,
+        });
     };
 
     useEffect(() => {
-        fetchListData();
+        if (permissions.view) {
+            get_current_subscriptions();
+        }
     }, [pageNumber, category]);
 
     return (
@@ -82,14 +87,14 @@ const SubscriptionsList = ({ category }) => {
                             </>
                         )}
                     </div>
-                    {data.total_pages > 1 ? (
+                    {data.total_pages > 1 && (
                         <TablePagination
                             totalPages={data.total_pages}
                             currentPage={data.current_page}
-                            onPageChange={changePage}
+                            onPageChange={(page) => {
+                                setPageNumber(page);
+                            }}
                         />
-                    ) : (
-                        <></>
                     )}
                     <div className="flex justify-center text-lg mt-5">
                         العدد : {data.count}{" "}

@@ -7,6 +7,8 @@ import Select from "react-select";
 import style from "../../assets/rect-select-style";
 import Loading from "../groups/Loading";
 import FormGroup from "../groups/FormGroup";
+import { useToast } from "../../providers/ToastProvider";
+import { defaultFormSubmission } from "../../config/actions";
 
 const transformValues = (defaultValues) => {
     if (defaultValues) {
@@ -62,16 +64,12 @@ const transformValues = (defaultValues) => {
     }
 };
 
-const SubscriptionAddForm = ({
-    setToast,
-    postURL,
-    defaultValues,
-    callBack,
-}) => {
+const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
     const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState(false);
     const [submitError, setSubmitError] = useState(false);
     const [post, setPost] = useState(false);
+    const { showToast } = useToast();
 
     const {
         handleSubmit,
@@ -189,40 +187,17 @@ const SubscriptionAddForm = ({
             }
         }
 
-        // console.log(data);
-        // return;
-        setPost(true);
-
-        requestMethod(postURL, data)
-            .then((response) => {
-                // console.log(response);
-                setPost(false);
-                setToast(
-                    formFunction == "add"
-                        ? "تم إضافة الاشتراك"
-                        : "تم تعديل الاشتراك"
-                );
-                reset();
-                clearErrors();
-                if (callBack) callBack();
-            })
-            .catch((error) => {
-                console.log(error);
-                setPost(false);
-                if (error.response && error.response.data) {
-                    const serverErrors = error.response.data;
-                    for (let field in serverErrors) {
-                        const message =
-                            serverErrors[field][0].search("exists") == -1
-                                ? "قيمة غير صالحة"
-                                : "القيمة موجودة سابقا";
-                        setError(field, {
-                            type: "server",
-                            message: message,
-                        });
-                    }
-                }
-            });
+        defaultFormSubmission({
+            url: postURL,
+            data: data,
+            formFunction: formFunction,
+            setPost: setPost,
+            showToast: showToast,
+            message: { add: "تم إضافة الاشتراك", edit: "تم تعديل الاشتراك" },
+            reset: reset,
+            callBack: callBack,
+            setError: setError,
+        });
     };
 
     return (
