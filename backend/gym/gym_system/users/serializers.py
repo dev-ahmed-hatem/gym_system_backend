@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'name', 'phone', 'national_id', 'is_superuser', 'is_moderator', 'password',
-                  'password2', 'url']
+                  'password2', 'url', 'is_root']
 
     def validate(self, data):
         if 'password' in data and 'password2' in data:

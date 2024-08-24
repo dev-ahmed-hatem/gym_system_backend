@@ -6,6 +6,18 @@ import endpoints from "../../config/config";
 import axios from "../../config/axiosconfig";
 
 const Permissions = () => {
+    const is_superuser = JSON.parse(localStorage.getItem("auth_user"))[
+        "is_superuser"
+    ];
+
+    if (!is_superuser) {
+        return (
+            <p className="text-lg text-center text-red-600 py-4">
+                وحدهم المديرين يمكنهم تخصيص الصلاحيات
+            </p>
+        );
+    }
+
     const [moderatorsList, setModeratorsList] = useState(null);
     const [currentModerator, setCurrentModerator] = useState(null);
     const defaultPermissions = [

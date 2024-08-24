@@ -9,6 +9,7 @@ import { HiCheck } from "react-icons/hi";
 import { Toast } from "flowbite-react";
 
 const ToastContext = createContext();
+let timeOut;
 
 const ToggleButton = forwardRef((props, ref) => (
     <div ref={ref} className="flex items-center">
@@ -16,25 +17,29 @@ const ToggleButton = forwardRef((props, ref) => (
     </div>
 ));
 
-export const ToastProvider = ({ children }) => {
+const ToastProvider = ({ children }) => {
     const toggle = useRef(null);
     const [toast, setToast] = useState(null);
     const [toastError, setToastError] = useState(false);
 
     const showToast = (message, isError = false) => {
+        if (timeOut) {
+            clearTimeout(timeOut);
+            timeOut = null;
+            setToast(null);
+        }
         setToast(message);
         setToastError(isError);
-        setTimeout(() => {
+        timeOut = setTimeout(() => {
             if (toggle.current) {
                 toggle.current.querySelector("button").click();
             }
-        }, 3000);
-        setTimeout(() => {
-            if (toast) {
+            setTimeout(() => {
                 setToast(null);
                 setToastError(false);
-            }
-        }, 4000);
+                timeOut = null;
+            }, 1000);
+        }, 3000);
     };
 
     return (
@@ -69,8 +74,6 @@ export const ToastProvider = ({ children }) => {
     );
 };
 
-const useToast = () => useContext(ToastContext);
+export const useToast = () => useContext(ToastContext);
 
-export default Notification = () => {
-    return <></>;
-};
+export default ToastProvider;

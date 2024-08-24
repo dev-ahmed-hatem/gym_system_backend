@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button } from "flowbite-react";
 import Loading from "../groups/Loading";
-import axios from "../../config/axiosconfig";
 import ViewGroup from "../groups/ViewGroup";
 import TableGroup from "../groups/TableGroup";
 import TablePagination from "../groups/TablePagination";
 import endpoints from "../../config/config";
 import SubscriptionCard from "../subscriptions/SubscriptionCard";
+import { fetch_list_data } from "../../config/actions";
+import ErrorGroup from "../groups/ErrorGroup";
+import { usePermission } from "../../providers/PermissionProvider";
 
 const ClientSearch = () => {
+    //////////////////////////////// providers ////////////////////////////////
+    const { has_permission } = usePermission();
+
+    //////////////////////////////// permissions ////////////////////////////////
+    const [app_label, model_name, perm_name] = ["clients", "client", "client"];
+
     //////////////////////////////// list data ////////////////////////////////
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -17,29 +25,24 @@ const ClientSearch = () => {
     const [pageNumber, setPageNumber] = useState(1);
     const [currentClient, setCurrentClient] = useState(null);
 
-    const changePage = (page) => {
-        setPageNumber(page);
-    };
-
-    const fetchListData = () => {
+    const get_current_clients = () => {
         const searchURL = `${endpoints.client_list}${
             searchParam ? `&search=${searchParam}` : ""
         }${pageNumber ? `&page=${pageNumber}` : ""}
         `;
-        axios
-            .get(searchURL)
-            .then((response) => {
-                setData(response.data);
-                setLoading(false);
-            })
-            .catch((fetchError) => {
-                setFetchError(fetchError);
-                setLoading(false);
-            });
+
+        fetch_list_data({
+            searchURL: searchURL,
+            setData: setData,
+            setFetchError: setFetchError,
+            setLoading: setLoading,
+        });
     };
 
     useEffect(() => {
-        fetchListData();
+        if (has_permission(`${app_label}.${model_name}`, `view_${perm_name}`)) {
+            get_current_clients();
+        }
     }, [searchParam, pageNumber]);
 
     useEffect(() => {
@@ -48,6 +51,14 @@ const ClientSearch = () => {
             clientData.scrollIntoView({ behavior: "smooth" });
         }
     }, [currentClient]);
+
+    if (!has_permission(`${app_label}.${model_name}`, `view_${perm_name}`))
+        return (
+            <ErrorGroup
+                title={"العملاء الحاليين"}
+                message={"ليس لديك صلاحية"}
+            />
+        );
 
     return (
         <>
@@ -79,7 +90,7 @@ const ClientSearch = () => {
                                         <Table.HeadCell>
                                             اسم العميل
                                         </Table.HeadCell>
-                                        <Table.HeadCell>
+                                        <Table.HeadCell className="text-center">
                                             كود العميل
                                         </Table.HeadCell>
                                         <Table.HeadCell></Table.HeadCell>
@@ -100,7 +111,7 @@ const ClientSearch = () => {
                                                             </span>
                                                         )}
                                                     </Table.Cell>
-                                                    <Table.Cell>
+                                                    <Table.Cell className="text-center">
                                                         {client.id ? (
                                                             client.id
                                                         ) : (
@@ -132,14 +143,14 @@ const ClientSearch = () => {
                             )}
                         </TableGroup>
 
-                        {data.total_pages > 1 ? (
+                        {data.total_pages > 1 && (
                             <TablePagination
                                 totalPages={data.total_pages}
                                 currentPage={data.current_page}
-                                onPageChange={changePage}
+                                onPageChange={(page) => {
+                                    setPageNumber(page);
+                                }}
                             />
-                        ) : (
-                            <></>
                         )}
                         <div className="flex justify-center text-lg">
                             العدد : {data.count} عميل
@@ -496,14 +507,28 @@ const ClientSearch = () => {
                         سجل الاشتراكات
                     </h1>
                     <hr className="h-px my-3 bg-gray-200 border-0"></hr>
-                    {currentClient.subscriptions.length !== 0 ? (
-                        <div className="subscriptions-wrapper flex gap-6 flex-wrap">
-                            {currentClient.subscriptions.map((sub) => (
-                                <SubscriptionCard key={sub?.id} sub={sub} />
-                            ))}
-                        </div>
+                    {has_permission(
+                        `subscriptions.subscription`,
+                        `view_subscription`
+                    ) ? (
+                        <>
+                            {currentClient.subscriptions.length !== 0 ? (
+                                <div className="subscriptions-wrapper flex gap-6 flex-wrap">
+                                    {currentClient.subscriptions.map((sub) => (
+                                        <SubscriptionCard
+                                            key={sub?.id}
+                                            sub={sub}
+                                        />
+                                    ))}
+                                </div>
+                            ) : (
+                                <p>هذا العميل ليس لديه اشتراكات بعد </p>
+                            )}
+                        </>
                     ) : (
-                        <div>هذا العميل ليس لديه اشتراكات بعد </div>
+                        <p className="text-lg text-center text-red-600 py-4">
+                            ليس لديك صلاحية
+                        </p>
                     )}
                 </div>
             )}

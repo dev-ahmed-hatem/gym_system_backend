@@ -1,0 +1,28 @@
+if logged forward to home
+
+managers:
+    - there is only one manager that is a superuser
+    - all other have full permissions without editing other managrs
+
+subscriptions:
+    - client can only freeze one time
+    - the freeze can be resumed before the duration
+    - the freeze resumes automatically after the allowed duration
+    - in both cases it calculates the frozen days then add them to the subscription duration
+
+subscription and training percent:
+    - only estimated one time and added to referrer salary at the end of the current month     
+
+salaries:
+    - only managers can edit previous months salaries
+    - modify the entire advance payment process   
+
+barcode record for each client:
+    - within a duration: displays all client's barcode record among all their subscriptions
+
+shop:
+    - incoming products
+    - product's two salaries (buy | repay)
+    - products reports
+    - 
+

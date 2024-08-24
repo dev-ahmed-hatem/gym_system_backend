@@ -21,6 +21,14 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    class Meta:
+        permissions = [
+            ("add_manager", "Can add manager"),
+            ("change_manager", "Can change manager"),
+            ("delete_manager", "Can delete manager"),
+            ("view_manager", "Can view manager"),
+        ]
+
     name = models.CharField(max_length=100, default="")
     username = models.CharField(max_length=20, unique=True)
     phone = models.CharField(unique=True, max_length=20, null=True, blank=True)
@@ -30,6 +38,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     is_moderator = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    is_root = models.BooleanField(default=False)
 
     objects = UserManager()
 
@@ -61,36 +70,39 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 # Employee Settings
-class Nationality(models.Model):
+class EmployeeSettings(models.Model):
     name = models.CharField(max_length=20)
+
+    class Meta:
+        abstract = True
+        permissions = [
+            ("add_employeesettings", "Can add employee settings"),
+            ("change_employeesettings", "Can change employee settings"),
+            ("delete_employeesettings", "Can delete employee settings"),
+            ("view_employeesettings", "Can view employee settings"),
+        ]
 
     def __str__(self):
         return self.name
 
 
-class MaritalStatus(models.Model):
-    name = models.CharField(max_length=20)
-
-    def __str__(self):
-        return self.name
+class Nationality(EmployeeSettings):
+    pass
 
 
-class EmployeeType(models.Model):
-    name = models.CharField(max_length=20)
-
-    def __str__(self):
-        return self.name
+class MaritalStatus(EmployeeSettings):
+    pass
 
 
-class City(models.Model):
-    name = models.CharField(max_length=20)
-
-    def __str__(self):
-        return self.name
+class EmployeeType(EmployeeSettings):
+    pass
 
 
-class CityDistrict(models.Model):
-    name = models.CharField(max_length=20)
+class City(EmployeeSettings):
+    pass
+
+
+class CityDistrict(EmployeeSettings):
     city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):

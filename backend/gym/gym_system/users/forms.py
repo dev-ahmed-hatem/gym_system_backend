@@ -10,7 +10,7 @@ class UserAdminForm(UserAdmin):
     fieldsets = [
         ("Personal Information", {'fields': ['name', 'phone', 'national_id']}),
         ("Authentication", {'fields': ['username', 'password']}),
-        ("Permissions", {'fields': ['is_active', 'is_moderator', 'is_superuser', 'user_permissions']}),
+        ("Permissions", {'fields': ['is_active', 'is_moderator', 'is_superuser', 'is_root', 'user_permissions']}),
     ]
     add_fieldsets = [
         (None, {'fields': ['username', 'password1', 'password2', 'name', 'phone', 'national_id', 'is_active',

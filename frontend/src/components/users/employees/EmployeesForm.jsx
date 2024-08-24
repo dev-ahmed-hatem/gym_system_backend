@@ -1,30 +1,21 @@
 import React, { useState, useEffect } from "react";
-import FormGroup from "../groups/FormGroup";
-import {
-    TextInput,
-    Label,
-    Table,
-    Button,
-    Select,
-    Datepicker,
-} from "flowbite-react";
+import FormGroup from "../../groups/FormGroup";
+import { TextInput, Label, Select, Datepicker } from "flowbite-react";
 import { HiDeviceMobile, HiUser } from "react-icons/hi";
 import { SlCalender } from "react-icons/sl";
-import Loading from "../groups/Loading";
+import Loading from "../../groups/Loading";
 import { HiMiniIdentification } from "react-icons/hi2";
-import axios from "../../config/axiosconfig";
-import ViewGroup from "../groups/ViewGroup";
-import TableGroup from "../groups/TableGroup";
+import axios from "../../../config/axiosconfig";
 import { useForm, Controller } from "react-hook-form";
-import Notification from "../groups/Notification";
-import { MdEdit, MdDelete, MdEmail } from "react-icons/md";
-import DrawerHeader from "../groups/DrawerHeader";
-import TablePagination from "../groups/TablePagination";
-import endpoints from "../../config/config";
+import { MdEmail } from "react-icons/md";
+import endpoints from "../../../config/config";
 import { FaAddressCard } from "react-icons/fa";
-import CustomFileInput from "../groups/CustomFileInput";
+import CustomFileInput from "../../groups/CustomFileInput";
+import { transformValues, calculateAge } from "../../../utils";
+import { useToast } from "../../../providers/ToastProvider";
+import { defaultFormSubmission } from "../../../config/actions";
 
-const EmployeesForm = ({ setToast, postURL, defaultValues, callBack }) => {
+const EmployeesForm = ({ postURL, defaultValues, callBack }) => {
     const [post, setPost] = useState(false);
     const [age, setAge] = useState(defaultValues?.age);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -35,28 +26,7 @@ const EmployeesForm = ({ setToast, postURL, defaultValues, callBack }) => {
     const [currentDistrict, setCurrentDistrict] = useState(
         defaultValues?.district?.id
     );
-
-    const transformValues = (defaultValue) => {
-        if (defaultValue) {
-            const transformed_values = { ...defaultValue };
-            const nested_fields = [
-                "gander",
-                "emp_type",
-                "nationality",
-                "religion",
-                "marital_status",
-                "city",
-                "district",
-            ];
-
-            nested_fields.forEach((field) => {
-                if (transformed_values[field] && transformed_values[field].id) {
-                    transformed_values[field] = transformed_values[field].id;
-                }
-            });
-            return transformed_values;
-        }
-    };
+    const { showToast } = useToast();
 
     const {
         register,
@@ -69,62 +39,49 @@ const EmployeesForm = ({ setToast, postURL, defaultValues, callBack }) => {
         control,
     } = useForm({ defaultValues: transformValues(defaultValues) });
     const formFunction = defaultValues ? "edit" : "add";
-    const requestMethod = formFunction == "add" ? axios.post : axios.patch;
-
-    const calculateAge = (birth) => {
-        const date = new Date(birth);
-        const today = new Date();
-        let employeeAge = today.getFullYear() - date.getFullYear();
-
-        // Check if the birthday has occurred this year
-        const monthDifference = today.getMonth() - date.getMonth();
-        const dayDifference = today.getDate() - date.getDate();
-
-        // Adjust age if the birthday has not occurred yet this year
-        if (
-            monthDifference < 0 ||
-            (monthDifference === 0 && dayDifference < 0)
-        ) {
-            employeeAge--;
-        }
-
-        setAge(employeeAge);
-    };
-
-    const fetchEmployeeOptions = async () => {
-        try {
-            const [
-                nationalityResponse,
-                maritalStatusResponse,
-                employeeTypeResponse,
-                cityResponse,
-                cityDistrictResponse,
-            ] = await Promise.all([
-                axios.get(`${endpoints.nationality_list}no_pagination=true`),
-                axios.get(`${endpoints.marital_status_list}no_pagination=true`),
-                axios.get(`${endpoints.employee_type_list}no_pagination=true`),
-                axios.get(`${endpoints.city_list}no_pagination=true`),
-                axios.get(`${endpoints.city_district_list}no_pagination=true`),
-            ]);
-
-            const employee_options = {
-                nationality_list: nationalityResponse.data,
-                marital_status_list: maritalStatusResponse.data,
-                employee_type_list: employeeTypeResponse.data,
-                city_list: cityResponse.data,
-                city_district_list: cityDistrictResponse.data,
-            };
-
-            setEmployeeOptions(employee_options);
-        } catch (error) {
-            console.log(error);
-            setFetchError(error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     useEffect(() => {
+        // get the data of the relationship fields of employee
+        const fetchEmployeeOptions = async () => {
+            try {
+                const [
+                    nationalityResponse,
+                    maritalStatusResponse,
+                    employeeTypeResponse,
+                    cityResponse,
+                    cityDistrictResponse,
+                ] = await Promise.all([
+                    axios.get(
+                        `${endpoints.nationality_list}no_pagination=true`
+                    ),
+                    axios.get(
+                        `${endpoints.marital_status_list}no_pagination=true`
+                    ),
+                    axios.get(
+                        `${endpoints.employee_type_list}no_pagination=true`
+                    ),
+                    axios.get(`${endpoints.city_list}no_pagination=true`),
+                    axios.get(
+                        `${endpoints.city_district_list}no_pagination=true`
+                    ),
+                ]);
+
+                const employee_options = {
+                    nationality_list: nationalityResponse.data,
+                    marital_status_list: maritalStatusResponse.data,
+                    employee_type_list: employeeTypeResponse.data,
+                    city_list: cityResponse.data,
+                    city_district_list: cityDistrictResponse.data,
+                };
+
+                setEmployeeOptions(employee_options);
+            } catch (error) {
+                console.log(error);
+                setFetchError(error);
+            } finally {
+                setLoading(false);
+            }
+        };
         fetchEmployeeOptions();
     }, []);
 
@@ -141,38 +98,20 @@ const EmployeesForm = ({ setToast, postURL, defaultValues, callBack }) => {
 
         if (age) data["age"] = age;
 
-        requestMethod(postURL, data, {
+        defaultFormSubmission({
+            url: postURL,
+            data: data,
             headers: {
                 "Content-Type": "multipart/form-data",
             },
-        })
-            .then((response) => {
-                setPost(false);
-                setToast(
-                    formFunction == "add"
-                        ? "تم إضافة موظف جديد"
-                        : "تم تعديل الموظف"
-                );
-                reset();
-                callBack();
-            })
-            .catch((error) => {
-                console.log(error);
-                setPost(false);
-                if (error.response && error.response.data) {
-                    const serverErrors = error.response.data;
-                    for (let field in serverErrors) {
-                        const message =
-                            serverErrors[field][0].search("exists") == -1
-                                ? "قيمة غير صالحة"
-                                : "القيمة موجودة سابقا";
-                        setError(field, {
-                            type: "server",
-                            message: message,
-                        });
-                    }
-                }
-            });
+            formFunction: formFunction,
+            setPost: setPost,
+            showToast: showToast,
+            message: { add: "تم إضافة موظف جديد", edit: "تم تعديل الموظف" },
+            reset: reset,
+            callBack: callBack,
+            setError: setError,
+        });
     };
 
     return (
@@ -341,7 +280,10 @@ const EmployeesForm = ({ setToast, postURL, defaultValues, callBack }) => {
                                         placeholder="تاريخ الميلاد"
                                         color={"primary"}
                                         onSelectedDateChanged={(date) => {
-                                            calculateAge(date);
+                                            calculateAge({
+                                                birth: date,
+                                                setAge: setAge,
+                                            });
                                             field.onChange(
                                                 date.toLocaleDateString("en-CA")
                                             );
@@ -636,302 +578,4 @@ const EmployeesForm = ({ setToast, postURL, defaultValues, callBack }) => {
     );
 };
 
-const ConfirmDelete = ({ user, closeDrawer, setToast, callBack }) => {
-    const [post, setPost] = useState(false);
-
-    const deleteManager = () => {
-        setPost(true);
-        axios
-            .delete(user.url)
-            .then(() => {
-                setToast("تم حذف الموظف بنجاح");
-                callBack();
-                closeDrawer();
-            })
-            .catch((error) => {
-                setPost(false);
-            });
-    };
-
-    return (
-        <div
-            className={`wrapper p-4 my-2 bg-white rounded border-t-4 border-primary shadow-lg`}
-        >
-            <p className="text-base">
-                هل أنت متأكد تريد حذف الموظف:{" "}
-                <span className="font-bold text-red-600">{user.name}</span>
-            </p>
-            <hr className="h-px my-3 bg-gray-200 border-0"></hr>
-            <div className="flex flex-wrap max-h-12 min-w-full justify-center">
-                <Button
-                    type="button"
-                    color={"blue"}
-                    className="me-4"
-                    disabled={post}
-                    onClick={closeDrawer}
-                >
-                    إلغاء
-                </Button>
-                <Button
-                    type="button"
-                    color={"failure"}
-                    disabled={post}
-                    onClick={deleteManager}
-                >
-                    حذف
-                </Button>
-            </div>
-        </div>
-    );
-};
-
-const Employees = () => {
-    //////////////////////////////// form settings ////////////////////////////////
-
-    //////////////////////////////// drawer settings ////////////////////////////////
-    const [drawerOpen, setDrawerOpen] = useState(false);
-    const [drawerData, setDrawerData] = useState(null);
-
-    //////////////////////////////// list data ////////////////////////////////
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [fetchError, setFetchError] = useState(null);
-    const [toast, setToast] = useState(null);
-    const [searchParam, setSearchParam] = useState(null);
-    const [pageNumber, setPageNumber] = useState(1);
-
-    const showDrawer = (drawerFunction, userdata) => {
-        if (drawerFunction == "edit") {
-            setDrawerData({
-                title: "تعديل موظف",
-                icon: MdEdit,
-                content: (
-                    <EmployeesForm
-                        setToast={setToast}
-                        postURL={userdata.url}
-                        defaultValues={userdata}
-                        callBack={() => {
-                            fetchListData();
-                            closeDrawer();
-                        }}
-                    />
-                ),
-            });
-        } else {
-            setDrawerData({
-                title: "حذف موظف",
-                icon: MdDelete,
-                content: (
-                    <ConfirmDelete
-                        user={userdata}
-                        closeDrawer={closeDrawer}
-                        setToast={setToast}
-                        callBack={() => {
-                            setSearchParam(null);
-                            setPageNumber(null);
-                            fetchListData();
-                        }}
-                    />
-                ),
-            });
-        }
-        setDrawerOpen(true);
-    };
-
-    const closeDrawer = () => {
-        setDrawerData(null);
-        setDrawerOpen(false);
-    };
-
-    const changePage = (page) => {
-        setPageNumber(page);
-    };
-
-    const fetchListData = () => {
-        const searchURL = `${endpoints.employee_list}${
-            searchParam ? `&search=${searchParam}` : ""
-        }${pageNumber ? `&page=${pageNumber}` : ""}
-        `;
-        axios
-            .get(searchURL)
-            .then((response) => {
-                setData(response.data);
-            })
-            .catch((fetchError) => {
-                setFetchError(fetchError);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    };
-
-    useEffect(() => {
-        fetchListData();
-    }, [searchParam, pageNumber]);
-
-    return (
-        <>
-            {/*  notification */}
-            {toast && <Notification setToast={setToast} title={toast} />}
-
-            {/* drawer */}
-            {{ drawerOpen } && (
-                <DrawerHeader
-                    title={drawerData?.title}
-                    openState={drawerOpen}
-                    setOpenState={setDrawerOpen}
-                    icon={drawerData?.icon}
-                    handleClose={closeDrawer}
-                >
-                    {drawerData?.content}
-                </DrawerHeader>
-            )}
-
-            {/* add form */}
-            <EmployeesForm
-                setToast={setToast}
-                postURL={endpoints.employee_list}
-                callBack={fetchListData}
-            />
-
-            {/* table data */}
-            <ViewGroup title={"الموظفين الحاليين"}>
-                {loading ? (
-                    <Loading />
-                ) : fetchError ? (
-                    <p className="text-lg text-center text-red-600 py-4">
-                        خطأ في تحميل البيانات
-                    </p>
-                ) : (
-                    <>
-                        <TableGroup
-                            onChange={(event) => {
-                                setPageNumber(1);
-                                setSearchParam(event.target.value);
-                            }}
-                        >
-                            {data.count == 0 ? (
-                                <Table.Body>
-                                    <Table.Row className="text-lg text-center text-gray-800 py-3 font-bold bg-red-500">
-                                        <Table.Cell>لا توجد بيانات</Table.Cell>
-                                    </Table.Row>
-                                </Table.Body>
-                            ) : (
-                                <>
-                                    <Table.Head>
-                                        <Table.HeadCell>
-                                            اسم الموظف
-                                        </Table.HeadCell>
-                                        <Table.HeadCell>
-                                            نوع الموظف
-                                        </Table.HeadCell>
-                                        <Table.HeadCell>
-                                            رقم الهوية
-                                        </Table.HeadCell>
-                                        <Table.HeadCell>
-                                            رقم الهاتف
-                                        </Table.HeadCell>
-                                        <Table.HeadCell>الجنسية</Table.HeadCell>
-                                        <Table.HeadCell>إجراءات</Table.HeadCell>
-                                    </Table.Head>
-                                    <Table.Body>
-                                        {data.results.map((employee) => {
-                                            return (
-                                                <Table.Row
-                                                    key={employee.id}
-                                                    className="bg-white font-medium text-gray-900"
-                                                >
-                                                    <Table.Cell>
-                                                        {employee.name ? (
-                                                            employee.name
-                                                        ) : (
-                                                            <span className="text-red-600">
-                                                                غير مسجل
-                                                            </span>
-                                                        )}
-                                                    </Table.Cell>
-                                                    <Table.Cell>
-                                                        {employee.emp_type ? (
-                                                            employee.emp_type
-                                                                .name
-                                                        ) : (
-                                                            <span className="text-red-600">
-                                                                غير مسجل
-                                                            </span>
-                                                        )}
-                                                    </Table.Cell>
-                                                    <Table.Cell>
-                                                        {employee.national_id ? (
-                                                            employee.national_id
-                                                        ) : (
-                                                            <span className="text-red-600">
-                                                                غير مسجل
-                                                            </span>
-                                                        )}
-                                                    </Table.Cell>
-                                                    <Table.Cell>
-                                                        {employee.phone ? (
-                                                            employee.phone
-                                                        ) : (
-                                                            <span className="text-red-600">
-                                                                غير مسجل
-                                                            </span>
-                                                        )}
-                                                    </Table.Cell>
-                                                    <Table.Cell>
-                                                        {employee.nationality ? (
-                                                            employee.nationality
-                                                                .name
-                                                        ) : (
-                                                            <span className="text-red-600">
-                                                                غير مسجل
-                                                            </span>
-                                                        )}
-                                                    </Table.Cell>
-                                                    <Table.Cell>
-                                                        <span className="flex text-xl gap-x-3">
-                                                            <MdEdit
-                                                                className="text-accent cursor-pointer"
-                                                                onClick={() => {
-                                                                    showDrawer(
-                                                                        "edit",
-                                                                        employee
-                                                                    );
-                                                                }}
-                                                            />
-                                                            <MdDelete
-                                                                className="text-secondary cursor-pointer"
-                                                                onClick={() => {
-                                                                    showDrawer(
-                                                                        "delete",
-                                                                        employee
-                                                                    );
-                                                                }}
-                                                            />
-                                                        </span>
-                                                    </Table.Cell>
-                                                </Table.Row>
-                                            );
-                                        })}
-                                    </Table.Body>
-                                </>
-                            )}
-                        </TableGroup>
-
-                        {data.total_pages > 1 ? (
-                            <TablePagination
-                                totalPages={data.total_pages}
-                                currentPage={data.current_page}
-                                onPageChange={changePage}
-                            />
-                        ) : (
-                            <></>
-                        )}
-                    </>
-                )}
-            </ViewGroup>
-        </>
-    );
-};
-
-export default Employees;
+export default EmployeesForm;

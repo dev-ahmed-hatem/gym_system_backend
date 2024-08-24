@@ -89,6 +89,7 @@ const Login = () => {
                                     required: "أدخل اسم المستخدم",
                                 })}
                                 onBlur={() => trigger("username")}
+                                autoFocus
                             />
                             {errors.username && (
                                 <p className="error-message">

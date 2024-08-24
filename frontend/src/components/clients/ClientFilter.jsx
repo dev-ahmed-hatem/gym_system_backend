@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import { Label, Table, Button, Datepicker } from "flowbite-react";
 import Loading from "../groups/Loading";
-import axios from "../../config/axiosconfig";
 import ViewGroup from "../groups/ViewGroup";
 import { useForm, Controller } from "react-hook-form";
 import endpoints from "../../config/config";
+import { fetch_list_data } from "../../config/actions";
+import { usePermission } from "../../providers/PermissionProvider";
+import ErrorGroup from "../groups/ErrorGroup";
 
 const ClientFilterForm = ({ setLoading, setFetchError, setData }) => {
     const [post, setPost] = useState(false);
@@ -40,27 +42,22 @@ const ClientFilterForm = ({ setLoading, setFetchError, setData }) => {
             });
             return;
         }
+
+        const url = `${endpoints.client_list}from=${data.from}&to=${data.to}&no_pagination=true`;
+        setPost(true);
         setLoading(true);
 
-        setPost(true);
-        const url = `${endpoints.client_list}from=${data.from}&to=${data.to}&no_pagination=true`;
-
-        axios
-            .get(url)
-            .then((response) => {
-                setPost(false);
-                setData(response.data);
-            })
-            .catch((error) => {
-                console.log(error);
-                setFetchError(error);
-                setPost(false);
-            })
-            .finally(() => {
+        fetch_list_data({
+            searchURL: url,
+            setData: setData,
+            setFetchError: setFetchError,
+            setLoading: () => {
                 setPost(false);
                 setLoading(false);
-            });
+            },
+        });
     };
+
     return (
         <div
             className={`wrapper p-4 my-8 bg-white rounded border-t-4 border-primary shadow-lg`}
@@ -160,6 +157,16 @@ const ClientFilter = () => {
     const [fetchError, setFetchError] = useState(null);
     const [data, setData] = useState(null);
 
+    const { has_permission } = usePermission();
+
+    if (!has_permission("clients.client", "view_client"))
+        return (
+            <ErrorGroup
+                title={"العملاء الحاليين"}
+                message={"ليس لديك صلاحية"}
+            />
+        );
+
     return (
         <>
             {/* search form */}
@@ -196,7 +203,7 @@ const ClientFilter = () => {
                                                 <Table.HeadCell>
                                                     اسم العميل
                                                 </Table.HeadCell>
-                                                <Table.HeadCell>
+                                                <Table.HeadCell className="text-center">
                                                     الكود
                                                 </Table.HeadCell>
                                                 <Table.HeadCell>
@@ -219,7 +226,7 @@ const ClientFilter = () => {
                                                                     </span>
                                                                 )}
                                                             </Table.Cell>
-                                                            <Table.Cell>
+                                                            <Table.Cell className="text-center">
                                                                 {client?.id ? (
                                                                     client.id
                                                                 ) : (

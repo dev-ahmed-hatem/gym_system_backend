@@ -3,9 +3,8 @@ from rest_framework import permissions
 
 class CanAdd(permissions.BasePermission):
     def has_permission(self, request, view):
-        def has_permission(request):
-            return request.user.has_perm(
-                f'{view.queryset.model._meta.app_label}.add_{view.queryset.model._meta.model_name}')
+        return request.user.has_perm(
+            f'{view.queryset.model._meta.app_label}.add_{view.queryset.model._meta.model_name}')
 
 
 class CanEdit(permissions.BasePermission):

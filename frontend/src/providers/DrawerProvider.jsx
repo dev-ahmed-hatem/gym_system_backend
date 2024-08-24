@@ -3,7 +3,7 @@ import { useState, useEffect, useContext, createContext } from "react";
 
 const DrawerContext = createContext();
 
-export const DrawerProvider = ({ children }) => {
+const DrawerProvider = ({ children }) => {
     const [drawerState, setDrawerState] = useState({
         open: false,
         title: null,
@@ -41,7 +41,10 @@ export const DrawerProvider = ({ children }) => {
                     position="top"
                     className="max-h-[80vh]"
                 >
-                    <Drawer.Header title={drawerState.title} titleIcon={drawerState.icon} />
+                    <Drawer.Header
+                        title={drawerState.title}
+                        titleIcon={drawerState.icon}
+                    />
                     <Drawer.Items>{drawerState.content}</Drawer.Items>
                 </Drawer>
             )}
@@ -50,9 +53,6 @@ export const DrawerProvider = ({ children }) => {
     );
 };
 
+export const useDrawer = () => useContext(DrawerContext);
 
-const DrawerHeader = () => {
-    return <></>;
-};
-
-export default DrawerHeader;
+export default DrawerProvider;

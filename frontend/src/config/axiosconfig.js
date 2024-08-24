@@ -20,37 +20,53 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        return response;
+    },
     async (error) => {
         const originalRequest = error.config;
+        console.log(error);
 
         // check if the token expired and perform refresh
-        if (
-            false /* error.response.status == 401 && !originalRequest._retry */
-        ) {
+        if (error.response.status == 401 && !originalRequest._retry) {
             // ensure that the refresh has not been used before
             originalRequest._retry = true;
+            console.log(originalRequest);
+
             const refresh_token = localStorage.getItem("refresh_token");
+            if (refresh_token) {
+                // refresh the token
+                try {
+                    const response = await axios.post(endpoints.token_refresh, {
+                        refresh: refresh_token,
+                    });
+                    // set the new access token
+                    localStorage.setItem("access_token", response.data.access);
+                    axiosInstance.defaults.headers.common[
+                        "Authorization"
+                    ] = `Bearer ${response.data.access}`;
 
-            // refresh the token
-            try {
-                const response = await axiosInstance.post(
-                    endpoints.token_refresh,
-                    { refresh: refresh_token }
-                );
-                // set the new access token
-                localStorage.setItem("access_token", response.data.access);
-                axiosInstance.defaults.headers.common[
-                    "Authorization"
-                ] = `Bearer ${response.data.access}`;
-
-                return axiosInstance(originalRequest);
-            } catch (response_error) {
-                console.log("Session expired");
-                localStorage.removeItem("access_token");
-                localStorage.removeItem("refresh_token");
-                const next = encodeURI(location.pathname);
-                window.location.href = `/login?next=${next}`;
+                    return axiosInstance(originalRequest);
+                } catch (response_error) {
+                    if (
+                        response_error.response &&
+                        response_error.response.status === 401
+                    ) {
+                        console.log("Session expired");
+                        localStorage.removeItem("access_token");
+                        localStorage.removeItem("refresh_token");
+                        const next = encodeURI(location.pathname);
+                        window.location.href = `/login?next=${next}`;
+                    } else {
+                        console.error(
+                            "Error refreshing token:",
+                            response_error
+                        );
+                    }
+                    return Promise.reject(response_error);
+                }
+            } else {
+                window.location.href = `/login`;
             }
         }
         return Promise.reject(error);

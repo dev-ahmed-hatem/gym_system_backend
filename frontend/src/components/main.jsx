@@ -6,6 +6,9 @@ import Menu from "./menu/Menu.jsx";
 import Home from "./home/Home.jsx";
 import { verifyToken } from "../config/axiosconfig.js";
 import Loading from "./groups/Loading.jsx";
+import DrawerProvider from "../providers/DrawerProvider.jsx";
+import ToastProvider from "../providers/ToastProvider.jsx";
+import PermissionProvider from "../providers/PermissionProvider.jsx";
 
 const Main = () => {
     const navigate = useNavigate();
@@ -55,7 +58,7 @@ const Main = () => {
         };
 
         checkToken();
-    }, [navigate]);
+    }, [navigate, location.pathname]);
 
     return (
         <>
@@ -64,36 +67,25 @@ const Main = () => {
                     <Loading />
                 </div>
             ) : (
-                <>
-                        <Navbar
-                            menuState={menuOpen}
-                            setMenuState={setMenuOpen}
-                        />
-                        <Menu
-                            menuOpen={menuOpen}
-                            setMenuState={setMenuOpen}
-                            ref={menuRef}
-                        />
-                        {isHome ? <Home /> : <Outlet />}
-                </>
+                <ToastProvider>
+                    <DrawerProvider>
+                        <PermissionProvider>
+                            <Navbar
+                                menuState={menuOpen}
+                                setMenuState={setMenuOpen}
+                            />
+                            <Menu
+                                menuOpen={menuOpen}
+                                setMenuState={setMenuOpen}
+                                ref={menuRef}
+                            />
+                            {isHome ? <Home /> : <Outlet />}
+                        </PermissionProvider>
+                    </DrawerProvider>
+                </ToastProvider>
             )}
         </>
     );
-
-    // isAuth ? (
-    //     <>
-    //         <Navbar menuState={menuOpen} setMenuState={setMenuOpen} />
-    //         <Menu
-    //             menuOpen={menuOpen}
-    //             setMenuState={setMenuOpen}
-    //             ref={menuRef}
-    //         />
-    //         {isHome ? <Home /> : <Outlet />}
-    //     </>
-    // ) : (
-    //     <></>
-    //     // <Login />
-    // );
 };
 
 export default Main;

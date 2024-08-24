@@ -1,11 +1,17 @@
 from rest_framework import status
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.viewsets import ModelViewSet
 from django.db.models import Q
 from .serializers import *
 from .models import *
 from rest_framework.decorators import action
+
+# for getting models permissions
+from django.apps import apps
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import Permission
 
 
 class UserViewSet(ModelViewSet):
@@ -32,11 +38,41 @@ class UserViewSet(ModelViewSet):
 
         return queryset
 
-    @action(detail=False, methods=['GET'])
-    def get_authenticated_user(self, request):
-        user = request.user
-        serializer = UserSerializer(user, context={'request': request})
-        return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_authenticated_user(request):
+    user = request.user
+    serializer = UserSerializer(user, context={"request": request})
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_permissions(request):
+    user_permissions = {}
+    user = request.user
+    permissions = user.get_user_permissions()
+    return Response(data=permissions, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_models_permissions(request):
+    user_permissions = {}
+    user = request.user
+    data = request.data
+    models = [apps.get_model(app_label, model_name) for app_label, model_name in
+              (model.split(".") for model in data["models"])]
+    for model in models:
+        content_type = ContentType.objects.get_for_model(model)
+        model_permissions = Permission.objects.filter(content_type=content_type)
+        permissions = user.user_permissions.filter(id__in=model_permissions)
+        user_permissions[f"{model._meta.app_label}.{model._meta.model_name}"] = [permission.codename for permission in
+                                                                                 permissions]
+
+    # model = apps.get_model('users', user.username)
+    return Response(data=user_permissions, status=status.HTTP_200_OK)
 
 
 class EmployeeViewSet(ModelViewSet):

@@ -1,56 +1,3 @@
-import {
-    FaUsers,
-    FaCog,
-    FaUserPlus,
-    FaUserSlash,
-    FaSearch,
-    FaFilter,
-    FaBarcode,
-    FaMoneyBill,
-    FaFileAlt,
-    FaRegFileAlt,
-    FaBirthdayCake,
-    FaUserTie,
-    FaTools,
-    FaRegStopCircle,
-} from "react-icons/fa";
-import {
-    MdSupervisorAccount,
-    MdPerson,
-    MdSecurity,
-    MdSubscriptions,
-    MdAssignment,
-    MdOutlineTimerOff,
-} from "react-icons/md";
-import { FaShop } from "react-icons/fa6";
-import { RiShoppingBag3Fill } from "react-icons/ri";
-import { IoBagCheck } from "react-icons/io5";
-import Managers from "../components/users/managers/Managers";
-import Employees from "../components/users/employees/Employees";
-import Moderators from "../components/users/moderators/Moderators";
-import Permissions from "../components/users/Permissions";
-import Subscriptions from "../components/settings/subscriptions/Subscriptions";
-import EmployeeSettings from "../components/settings/employee-settings/EmployeeSettings";
-import ProductCategories from "../components/settings/product-categories/ProductCategories";
-import FinancialItems from "../components/settings/financial-items/FinancialItems";
-import AddClient from "../components/clients/AddClient";
-import { GiMoneyStack, GiPayMoney, GiReceiveMoney } from "react-icons/gi";
-import Blocklist from "../components/clients/Blocklist";
-import ClientSearch from "../components/clients/ClientSearch";
-import { BiSolidCategory, BiSolidOffer } from "react-icons/bi";
-import Products from "../components/shop/Products";
-import Transaction from "../components/financials/Transaction";
-import Salaries from "../components/financials/Salaries";
-import { TbReport } from "react-icons/tb";
-import { IoIosFitness } from "react-icons/io";
-import { VscRunAll } from "react-icons/vsc";
-import { SlCalender } from "react-icons/sl";
-import SubscriptionAdd from "../components/subscriptions/SubscriptionAdd";
-import ClientFilter from "../components/clients/ClientFilter";
-import SubscriptionEdit from "../components/subscriptions/SubscriptionEdit";
-import SubscriptionsList from "../components/subscriptions/SubscriptionsList";
-import SubscriptionFilter from "../components/subscriptions/SubscriptionFilter";
-
 export const routes = [
     {
         id: 1,
@@ -164,7 +111,7 @@ export const routes = [
                 name: "add-client",
                 url: "/clients/add",
                 icon: <FaUserPlus />,
-                element: <AddClient />,
+                element: <Clients />,
             },
             {
                 id: 2,

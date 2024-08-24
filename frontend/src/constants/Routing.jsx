@@ -1,7 +1,7 @@
 import Section from "../components/sections/Section";
 import Subsection from "../components/sections/Subsection";
 import NotFound from "../NotFound";
-import Main from "../components/main";
+import Main from "../components/Main";
 import { routes } from "./Index";
 import Login from "../components/login/Login";
 
