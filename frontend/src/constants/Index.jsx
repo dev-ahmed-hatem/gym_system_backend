@@ -75,6 +75,8 @@ export const routes = [
                 url: "/users/employees",
                 icon: <MdPerson />,
                 element: <Employees />,
+                app_label: "users",
+                model_name: "employee",
             },
             {
                 id: 3,
@@ -83,6 +85,8 @@ export const routes = [
                 url: "/users/moderators",
                 icon: <MdSupervisorAccount />,
                 element: <Moderators />,
+                app_label: "users",
+                model_name: "moderator",
             },
             {
                 id: 4,
@@ -91,9 +95,10 @@ export const routes = [
                 url: "/users/permissions",
                 icon: <MdSecurity />,
                 element: <Permissions />,
-                permissions: [
-                    { id: 1, value: "تعديل الصلاحيات", name: "permissions" },
-                ],
+                permissions: "unadjustable",
+                // [
+                //     { id: 1, value: "تعديل الصلاحيات", name: "permissions" },
+                // ],
             },
         ],
     },
@@ -118,6 +123,8 @@ export const routes = [
                 url: "/settings/staff",
                 icon: <MdPerson />,
                 element: <EmployeeSettings />,
+                app_label: "users",
+                model_name: "employeesettings",
             },
             {
                 id: 3,
@@ -126,6 +133,8 @@ export const routes = [
                 url: "/settings/plans",
                 icon: <MdSubscriptions />,
                 element: <Subscriptions />,
+                app_label: "subscriptions",
+                model_name: "subscriptionplan",
             },
             {
                 id: 4,
@@ -133,6 +142,8 @@ export const routes = [
                 url: "/settings/product-categories",
                 icon: <BiSolidCategory />,
                 element: <ProductCategories />,
+                app_label: "shop",
+                model_name: "productcategory",
             },
             {
                 id: 5,
@@ -148,6 +159,8 @@ export const routes = [
                 url: "/settings/expenses",
                 icon: <FaMoneyBill />,
                 element: <FinancialItems />,
+                app_label: "financials",
+                model_name: "financialitem",
             },
         ],
     },
@@ -165,6 +178,8 @@ export const routes = [
                 url: "/clients/add",
                 icon: <FaUserPlus />,
                 element: <AddClient />,
+                app_label: "clients",
+                model_name: "client",
             },
             {
                 id: 2,
@@ -209,6 +224,8 @@ export const routes = [
                 url: "/subscriptions/add",
                 icon: <MdSubscriptions />,
                 element: <SubscriptionAdd />,
+                app_label: "subscriptions",
+                model_name: "subscription",
             },
             {
                 id: 2,
@@ -295,6 +312,8 @@ export const routes = [
                 url: "/store/products",
                 icon: <RiShoppingBag3Fill />,
                 element: <Products />,
+                app_label: "shop",
+                model_name: "product",
             },
             {
                 id: 2,
@@ -321,6 +340,8 @@ export const routes = [
                 icon: <GiReceiveMoney />,
                 element: <Transaction type={"incomes"} />,
                 permission_name: "الإيرادات والمصروفات",
+                app_label: "financials",
+                model_name: "transaction",
             },
             {
                 id: 2,
@@ -339,7 +360,7 @@ export const routes = [
                 icon: <GiMoneyStack />,
                 element: <Salaries />,
                 permissions: [
-                    { id: 1, value: "تخصيص المرتبات", name: "permissions" },
+                    { id: 1, value: "تخصيص المرتبات", name: "financials.change_salary" },
                 ],
             },
         ],

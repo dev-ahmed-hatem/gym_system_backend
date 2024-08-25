@@ -51,7 +51,14 @@ def get_authenticated_user(request):
 @permission_classes([IsAuthenticated])
 def get_user_permissions(request):
     user_permissions = {}
-    user = request.user
+    username = request.GET.get('username', None)
+    if username is not None:
+        try:
+            user = User.objects.get(username=username)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+    else:
+        user = request.user
     permissions = user.get_user_permissions()
     return Response(data=permissions, status=status.HTTP_200_OK)
 
@@ -73,6 +80,28 @@ def get_models_permissions(request):
 
     # model = apps.get_model('users', user.username)
     return Response(data=user_permissions, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def set_user_permissions(request):
+    try:
+        permission_list = request.data.get("permissions", [])
+        username = request.data.get("username", None)
+        print(permission_list)
+        print(username)
+        user = User.objects.get(username=username)
+        user.user_permissions.clear()
+        for permission in permission_list:
+            print(permission)
+            permission = permission.split(".")[-1]
+            perm = Permission.objects.filter(codename=permission).first()
+            if perm:
+                user.user_permissions.add(perm)
+        user.save()
+        return Response(status=status.HTTP_200_OK)
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class EmployeeViewSet(ModelViewSet):

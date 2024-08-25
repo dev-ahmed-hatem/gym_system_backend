@@ -19,8 +19,6 @@ const Login = () => {
     useEffect(() => {
         const check_authenticated = async () => {
             const token = localStorage.getItem("access_token");
-            console.log(token);
-            
             if (token) {
                 const isValid = await verifyToken(token);
                 if (isValid) {
