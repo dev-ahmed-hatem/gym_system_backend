@@ -38,7 +38,7 @@ import { GiMoneyStack, GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import Blocklist from "../components/clients/Blocklist";
 import ClientSearch from "../components/clients/ClientSearch";
 import { BiSolidCategory, BiSolidOffer } from "react-icons/bi";
-import Products from "../components/shop/Products";
+import Products from "../components/shop/products/Products";
 import Transaction from "../components/financials/Transaction";
 import Salaries from "../components/financials/Salaries";
 import { TbReport } from "react-icons/tb";
