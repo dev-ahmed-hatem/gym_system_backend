@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Label, TextInput, Button } from "flowbite-react";
 import { HiUser, HiLockClosed } from "react-icons/hi";
 import { useForm } from "react-hook-form";
@@ -13,6 +13,14 @@ const Login = () => {
     const navigate = useNavigate();
     const params = new URLSearchParams(location.search);
     const next = params.get("next") || null;
+
+    // forward to home if logged in
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("auth_user"));
+        if (user) {
+            navigate("/");
+        }
+    }, [navigate]);
 
     // form configurations
     const [post, setPost] = useState(false);
