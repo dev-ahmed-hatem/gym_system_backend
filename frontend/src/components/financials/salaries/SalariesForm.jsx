@@ -6,22 +6,75 @@ import {
     Select as FlowbiteSelect,
 } from "flowbite-react";
 import Select from "react-select";
-import Loading from "../groups/Loading";
-import axios from "../../config/axiosconfig";
+import Loading from "../../groups/Loading";
+import axios from "../../../config/axiosconfig";
 import { useForm } from "react-hook-form";
 import {
     MdOutlineHolidayVillage,
     MdOutlineMoreTime,
     MdOutlineTimer,
 } from "react-icons/md";
-import endpoints from "../../config/config";
+import endpoints from "../../../config/config";
 import { FaInfoCircle, FaMoneyBill, FaPercentage } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
 import { GrMoney } from "react-icons/gr";
 import { LuCalendarDays, LuClock2 } from "react-icons/lu";
 import { GiTakeMyMoney } from "react-icons/gi";
+import { useToast } from "../../../providers/ToastProvider";
+import { useDrawer } from "../../../providers/DrawerProvider";
+import { defaultFormSubmission } from "../../../config/actions";
 
-const SalariesForm = ({ setToast, setDrawerData, setDrawerOpen }) => {
+const ConfirmUpdate = ({ postData, setPostData, callBack, closeDrawer }) => {
+    return (
+        <div
+            className={`wrapper p-4 my-2 bg-white rounded border-t-4 border-primary shadow-lg`}
+        >
+            <p className="text-base">تأكيد تحديث البيانات ؟</p>
+            {Number(postData.advance_payment) !== 0 &&
+                !postData.got_advance && (
+                    <p className="mt-2">
+                        <span className="text-secondary font-bold pe-1">
+                            ملحوظة :{" "}
+                        </span>
+                        سيتم تسجيل سلفة قدرها{" "}
+                        <span className="text-primary font-bold">
+                            {postData.advance_payment}
+                        </span>{" "}
+                        بتاريخ اليوم
+                    </p>
+                )}
+            <hr className="h-px my-3 bg-gray-200 border-0"></hr>
+            <div className="flex flex-wrap max-h-12 min-w-full justify-center">
+                <Button
+                    type="button"
+                    color={"failure"}
+                    className="me-4"
+                    onClick={closeDrawer}
+                >
+                    إلغاء
+                </Button>
+                <Button
+                    type="button"
+                    color={"primary"}
+                    onClick={() => {
+                        closeDrawer();
+                        setPostData(postData);
+                        callBack();
+                    }}
+                >
+                    حفظ
+                </Button>
+            </div>
+        </div>
+    );
+};
+
+const SalariesForm = () => {
+    //////////////////////////////// providers ////////////////////////////////
+    const { showDrawer, closeDrawer } = useDrawer();
+    const { showToast } = useToast();
+
+    //////////////////////////////// form data ////////////////////////////////
     const [post, setPost] = useState(false);
     const [employeesList, setEmployeesList] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -67,31 +120,21 @@ const SalariesForm = ({ setToast, setDrawerData, setDrawerOpen }) => {
             submitData[i] = Number(postData[i]).toFixed(2);
         }
 
-        axios
-            .patch(url, submitData)
-            .then((response) => {
-                setPost(false);
-                setToast("تم حفظ بيانات الموظف");
+        defaultFormSubmission({
+            url: url,
+            data: submitData,
+            formFunction: "edit",
+            setPost: setPost,
+            showToast: showToast,
+            message: {
+                edit: "تم حفظ بيانات الموظف",
+            },
+            reset: reset,
+            callBack: () => {
                 setPostData(null);
-                reset();
-            })
-            .catch((error) => {
-                console.log(error);
-                setPost(false);
-                if (error.response && error.response.data) {
-                    const serverErrors = error.response.data;
-                    for (let field in serverErrors) {
-                        const message =
-                            serverErrors[field][0].search("exists") == -1
-                                ? "قيمة غير صالحة"
-                                : "القيمة موجودة سابقا";
-                        setError(field, {
-                            type: "server",
-                            message: message,
-                        });
-                    }
-                }
-            });
+            },
+            setError: setError,
+        });
     };
 
     useEffect(() => {
@@ -100,31 +143,24 @@ const SalariesForm = ({ setToast, setDrawerData, setDrawerOpen }) => {
         }
     }, [postData]);
 
-    //// Handle Drawer
-
-    const showDrawer = (data) => {
-        setDrawerData({
-            title: "تأكيد ",
-            icon: FaInfoCircle,
-            content: (
-                <ConfirmUpdate
-                    postData={data}
-                    setPostData={setPostData}
-                    callBack={() => {
-                        setSalaryParams({ ...salaryParams, employee: null });
-                    }}
-                    closeDrawer={() => {
-                        setDrawerData(null);
-                        setDrawerOpen(false);
-                    }}
-                />
-            ),
-        });
-        setDrawerOpen(true);
+    ///// Handle Drawer
+    const handleDrawer = (data) => {
+        showDrawer(
+            "تأكيد ",
+            FaInfoCircle,
+            <ConfirmUpdate
+                postData={data}
+                setPostData={setPostData}
+                callBack={() => {
+                    setSalaryParams({ ...salaryParams, employee: null });
+                }}
+                closeDrawer={closeDrawer}
+            />
+        );
     };
 
     const onSubmit = (data) => {
-        showDrawer(data);
+        handleDrawer(data);
     };
 
     const fetchCurrentSalary = () => {
@@ -869,73 +905,4 @@ const SalariesForm = ({ setToast, setDrawerData, setDrawerOpen }) => {
     );
 };
 
-const ConfirmUpdate = ({ postData, setPostData, callBack, closeDrawer }) => {
-    return (
-        <div
-            className={`wrapper p-4 my-2 bg-white rounded border-t-4 border-primary shadow-lg`}
-        >
-            <p className="text-base">تأكيد تحديث البيانات ؟</p>
-            {Number(postData.advance_payment) !== 0 &&
-                !postData.got_advance && (
-                    <p className="mt-2">
-                        <span className="text-secondary font-bold pe-1">
-                            ملحوظة :{" "}
-                        </span>
-                        سيتم تسجيل سلفة قدرها{" "}
-                        <span className="text-primary font-bold">
-                            {postData.advance_payment}
-                        </span>{" "}
-                        بتاريخ اليوم
-                    </p>
-                )}
-            <hr className="h-px my-3 bg-gray-200 border-0"></hr>
-            <div className="flex flex-wrap max-h-12 min-w-full justify-center">
-                <Button
-                    type="button"
-                    color={"failure"}
-                    className="me-4"
-                    onClick={closeDrawer}
-                >
-                    إلغاء
-                </Button>
-                <Button
-                    type="button"
-                    color={"primary"}
-                    onClick={() => {
-                        closeDrawer();
-                        setPostData(postData);
-                        callBack();
-                    }}
-                >
-                    حفظ
-                </Button>
-            </div>
-        </div>
-    );
-};
-
-const Salaries = () => {
-    const [drawerOpen, setDrawerOpen] = useState(false);
-    const [drawerData, setDrawerData] = useState(null);
-    const [toast, setToast] = useState(null);
-
-    const closeDrawer = () => {
-        setDrawerData(null);
-        setDrawerOpen(false);
-    };
-
-    return (
-        <>
-            {/* add form */}
-            <SalariesForm
-                setToast={setToast}
-                drawerData={drawerData}
-                drawerOpen={drawerOpen}
-                setDrawerData={setDrawerData}
-                setDrawerOpen={setDrawerOpen}
-            />
-        </>
-    );
-};
-
-export default Salaries;
+export default SalariesForm;

@@ -39,8 +39,8 @@ import Blocklist from "../components/clients/Blocklist";
 import ClientSearch from "../components/clients/ClientSearch";
 import { BiSolidCategory, BiSolidOffer } from "react-icons/bi";
 import Products from "../components/shop/products/Products";
-import Transaction from "../components/financials/Transaction";
-import Salaries from "../components/financials/Salaries";
+import Transaction from "../components/financials/transaction/Transaction";
+import Salaries from "../components/financials/salaries/Salaries";
 import { TbReport } from "react-icons/tb";
 import { IoIosFitness } from "react-icons/io";
 import { VscRunAll } from "react-icons/vsc";
@@ -320,6 +320,7 @@ export const routes = [
                 url: "/financials/incomes",
                 icon: <GiReceiveMoney />,
                 element: <Transaction type={"incomes"} />,
+                permission_name: "الإيرادات والمصروفات",
             },
             {
                 id: 2,
@@ -328,6 +329,7 @@ export const routes = [
                 url: "/financials/expenses",
                 icon: <GiPayMoney />,
                 element: <Transaction type={"expenses"} />,
+                permissions: "unadjustable",
             },
             {
                 id: 3,
@@ -336,6 +338,9 @@ export const routes = [
                 url: "/financials/salaries",
                 icon: <GiMoneyStack />,
                 element: <Salaries />,
+                permissions: [
+                    { id: 1, value: "تخصيص المرتبات", name: "permissions" },
+                ],
             },
         ],
     },

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { routes } from "../../constants/Index";
-import { Checkbox, Label } from "flowbite-react";
+import { Checkbox, Label, Button } from "flowbite-react";
 import Select from "react-select";
 import endpoints from "../../config/config";
 import axios from "../../config/axiosconfig";
+import { AiOutlineLoading } from "react-icons/ai";
 
 const Permissions = () => {
     const is_superuser = JSON.parse(localStorage.getItem("auth_user"))[
@@ -139,7 +140,8 @@ const Permissions = () => {
                                                         key={subRoute.id}
                                                     >
                                                         <div className="font-bold mb-2">
-                                                            {subRoute.title}
+                                                            {subRoute.permission_name ??
+                                                                subRoute.title}
                                                         </div>
                                                         {subRoute.permissions !=
                                                         null ? (
@@ -214,6 +216,21 @@ const Permissions = () => {
                             </div>
                         );
                     })}
+                    <div className="flex flex-wrap max-h-12 min-w-full justify-center">
+                        <Button
+                            // onClick={switchSubscriptionState}
+                            color={"primary"}
+                            // disabled={post}
+                            className="w-32 h-10 flex justify-center items-center"
+                            size={"xl"}
+                            // isProcessing={post}
+                            processingSpinner={
+                                <AiOutlineLoading className="h-6 w-6 animate-spin" />
+                            }
+                        >
+                            حفظ
+                        </Button>
+                    </div>
                 </>
             )}
         </div>
