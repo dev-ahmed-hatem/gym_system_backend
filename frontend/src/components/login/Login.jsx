@@ -7,6 +7,7 @@ import endpoints from "../../config/config";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { fetchUserData } from "../../config/actions";
+import { verifyToken } from "../../config/axiosconfig";
 
 const Login = () => {
     // url configurations
@@ -16,10 +17,19 @@ const Login = () => {
 
     // forward to home if logged in
     useEffect(() => {
-        const user = JSON.parse(localStorage.getItem("auth_user"));
-        if (user) {
-            navigate("/");
-        }
+        const check_authenticated = async () => {
+            const token = localStorage.getItem("access_token");
+            console.log(token);
+            
+            if (token) {
+                const isValid = await verifyToken(token);
+                if (isValid) {
+                    navigate("/");
+                }
+            }
+        };
+
+        check_authenticated();
     }, [navigate]);
 
     // form configurations
