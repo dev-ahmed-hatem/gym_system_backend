@@ -1,13 +1,15 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { FaHome } from "react-icons/fa";
+import PermissionProvider from "../../providers/PermissionProvider";
 
 const Section = ({ item }) => {
     return (
         <div className="wrapper py-6 lg:py-8 px-2 lg:px-12">
-
             {/* Section Title */}
-            <h1 className="font-bold text-2xl text-gray-600 mb-6">{item.title}:</h1>
+            <h1 className="font-bold text-2xl text-gray-600 mb-6">
+                {item.title}:
+            </h1>
 
             {/* Tab Navigation */}
             <div className="border-b border-gray-400 bg-white rounded-t shadow-md">
@@ -51,7 +53,9 @@ const Section = ({ item }) => {
             </div>
 
             {/* Page Content */}
-            <Outlet />
+            <PermissionProvider>
+                <Outlet />
+            </PermissionProvider>
         </div>
     );
 };
