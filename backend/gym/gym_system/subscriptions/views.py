@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from django.utils.timezone import datetime, make_aware
+from django.utils.timezone import datetime, make_aware, localtime
 
 
 class SubscriptionPlanViewSet(ModelViewSet):
@@ -44,9 +44,12 @@ class SubscriptionViewSet(ModelViewSet):
         if from_date and to_date:
             from_date = datetime.strptime(from_date, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0)
             to_date = datetime.strptime(to_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=999999)
+
+            local_from = localtime(make_aware(from_date))
+            local_to = localtime(make_aware(to_date))
             queryset = queryset.filter(
-                Q(start_date__gte=make_aware(from_date)) &
-                Q(start_date__lte=make_aware(to_date))
+                Q(start_date__gte=local_from) &
+                Q(start_date__lte=local_to)
             )
         return queryset
 

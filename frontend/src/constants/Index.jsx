@@ -50,6 +50,7 @@ import ClientFilter from "../components/clients/ClientFilter";
 import SubscriptionEdit from "../components/subscriptions/SubscriptionEdit";
 import SubscriptionsList from "../components/subscriptions/SubscriptionsList";
 import SubscriptionFilter from "../components/subscriptions/SubscriptionFilter";
+import Scanner from "../components/barcode/Scanner";
 
 export const routes = [
     {
@@ -288,6 +289,7 @@ export const routes = [
                 name: "today-barcode",
                 url: "/barcode/today",
                 icon: <FaBarcode />,
+                element: <Scanner />,
             },
             {
                 id: 2,
@@ -360,7 +362,11 @@ export const routes = [
                 icon: <GiMoneyStack />,
                 element: <Salaries />,
                 permissions: [
-                    { id: 1, value: "تخصيص المرتبات", name: "financials.change_salary" },
+                    {
+                        id: 1,
+                        value: "تخصيص المرتبات",
+                        name: "financials.change_salary",
+                    },
                 ],
             },
         ],

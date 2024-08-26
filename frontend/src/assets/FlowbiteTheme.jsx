@@ -40,11 +40,17 @@ theme.button.color = {
 };
 
 // ToggleSwitch
-theme.toggleSwitch.toggle.base = "relative rounded-full border after:absolute after:rounded-full after:bg-white after:transition-all group-focus:ring-4 group-focus:ring-primary-300"
-theme.toggleSwitch.toggle.checked.color.primary = "border-brimary-400 bg-primary"
+theme.toggleSwitch.toggle.base =
+    "relative rounded-full border after:absolute after:rounded-full after:bg-white after:transition-all group-focus:ring-4 group-focus:ring-primary-300";
+theme.toggleSwitch.toggle.checked.color.primary =
+    "border-brimary-400 bg-primary";
+
+theme.radio.root.base =
+    "h-4 w-4 border border-primary-300 text-primary-600 focus:ring-2 focus:ring-primary-500";
 
 // Checkbox
-theme.checkbox.root.base = "h-5 w-5 rounded border border-gray-300 bg-gray-100 focus:ring-2 dark:border-gray-600 dark:bg-gray-700"
+theme.checkbox.root.base =
+    "h-5 w-5 rounded border border-gray-300 bg-gray-100 focus:ring-2 dark:border-gray-600 dark:bg-gray-700";
 
 // DatePicker
 theme.datepicker = {

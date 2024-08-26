@@ -33,7 +33,7 @@ const DrawerProvider = ({ children }) => {
     };
 
     return (
-        <DrawerContext.Provider value={{ showDrawer, closeDrawer }}>
+        <DrawerContext.Provider value={{ showDrawer, closeDrawer, drawerState }}>
             {drawerState.open && (
                 <Drawer
                     open={drawerState.open}

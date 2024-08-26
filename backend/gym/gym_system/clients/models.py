@@ -7,7 +7,7 @@ from barcode import get_barcode_class, writer
 from io import BytesIO
 from django.core.files.base import File
 from cryptography.fernet import Fernet
-import os
+from subscriptions.models import Subscription
 
 
 class Client(models.Model):
@@ -83,3 +83,9 @@ class Client(models.Model):
         fernet = Fernet(settings.FERNET_KEY.encode())
         decrypted_data = fernet.decrypt(self.encrypt_id.encode())
         return decrypted_data.decode()
+
+
+class Attendance(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)

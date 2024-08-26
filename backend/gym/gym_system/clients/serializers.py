@@ -78,3 +78,19 @@ class ClientWriteSerializer(serializers.ModelSerializer):
         client.save()
 
         return client
+
+
+class AttendanceReadSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='attendance-detail')
+    subscription = SubscriptionReadSerializer(read_only=True)
+    client = ClientReadSerializer(read_only=True)
+
+    class Meta:
+        model = Attendance
+        fields = '__all__'
+
+
+class AttendanceWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attendance
+        fields = '__all__'

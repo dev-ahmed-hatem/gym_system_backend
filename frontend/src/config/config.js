@@ -32,6 +32,8 @@ const endpoints = {
 
     // clients routing
     client_list: `${api_base_url}api/clients/client/?`,
+    scanner_code: `${api_base_url}api/clients/scanner-code/?`,
+    attendance: `${api_base_url}api/clients/attendance/?`,
 
     // shop routing
     product_category_list: `${api_base_url}api/shop/product-category/?`,

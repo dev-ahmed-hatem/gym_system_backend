@@ -5,7 +5,9 @@ from .views import *
 
 router = DefaultRouter()
 router.register('client', ClientViewSet, basename='client')
+router.register("attendance", AttendanceViewSet, basename="attendance")
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('scanner-code/', scanner_code, name='scanner-code'),
 ]
