@@ -47,6 +47,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'gym_system.middleware.GlobalTimezoneMiddleware',
 ]
 
 ROOT_URLCONF = 'gym_system.urls'
