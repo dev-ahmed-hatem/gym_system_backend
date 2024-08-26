@@ -21,7 +21,6 @@ class ClientViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        search = self.request.query_params.get('search', None)
         from_date = self.request.query_params.get('from', None)
         to_date = self.request.query_params.get('to', None)
 
@@ -35,13 +34,37 @@ class ClientViewSet(ModelViewSet):
                 Q(created_at__gte=local_from) &
                 Q(created_at__lte=local_to)
             )
-        if search:
+        return queryset
+
+
+class AttendanceViewSet(ModelViewSet):
+    queryset = Attendance.objects.all()
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return AttendanceWriteSerializer
+        return AttendanceReadSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        from_date = self.request.query_params.get('from', None)
+        to_date = self.request.query_params.get('to', None)
+        client = self.request.query_params.get('client', None)
+
+        if client is not None:
+            print(client, type(client))
+            queryset = queryset.filter(client=int(client))
+
+        if from_date and to_date:
+            from_date = datetime.strptime(from_date, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0)
+            to_date = datetime.strptime(to_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=999999)
+
+            local_from = localtime(make_aware(from_date))
+            local_to = localtime(make_aware(to_date))
             queryset = queryset.filter(
-                Q(id__icontains=search) |
-                Q(name__icontains=search) |
-                Q(national_id__icontains=search) |
-                Q(phone__icontains=search) |
-                Q(phone2__icontains=search))
+                Q(timestamp__gte=local_from) &
+                Q(timestamp__lte=local_to)
+            )
         return queryset
 
 
@@ -68,12 +91,3 @@ def scanner_code(request):
         return Response({'error': 'كود عميل غير موجود'}, status=status.HTTP_404_NOT_FOUND)
 
     return Response({'code': code, "client": serialized_client, "subscriptions": serilized_subscriptions})
-
-
-class AttendanceViewSet(ModelViewSet):
-    queryset = Attendance.objects.all()
-
-    def get_serializer_class(self):
-        if self.action in ['create', 'update', 'partial_update']:
-            return AttendanceWriteSerializer
-        return AttendanceReadSerializer

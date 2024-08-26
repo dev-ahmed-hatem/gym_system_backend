@@ -76,6 +76,10 @@ const Scanner = () => {
                 })
                 .catch((error) => {
                     showToast(error.response.data.error, true);
+                    setTimeout(() => {
+                        resumeScanning();
+                    }, 2000);
+                    resumeScanning();
                 });
         };
         if (scanResult) {

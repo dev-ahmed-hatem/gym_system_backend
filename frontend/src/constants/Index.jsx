@@ -41,7 +41,7 @@ import { BiSolidCategory, BiSolidOffer } from "react-icons/bi";
 import Products from "../components/shop/products/Products";
 import Transaction from "../components/financials/transaction/Transaction";
 import Salaries from "../components/financials/salaries/Salaries";
-import { TbReport } from "react-icons/tb";
+import { TbReport, TbUserScan } from "react-icons/tb";
 import { IoIosFitness } from "react-icons/io";
 import { VscRunAll } from "react-icons/vsc";
 import { SlCalender } from "react-icons/sl";
@@ -51,6 +51,8 @@ import SubscriptionEdit from "../components/subscriptions/SubscriptionEdit";
 import SubscriptionsList from "../components/subscriptions/SubscriptionsList";
 import SubscriptionFilter from "../components/subscriptions/SubscriptionFilter";
 import Scanner from "../components/barcode/Scanner";
+import { LuFileScan, LuScanLine } from "react-icons/lu";
+import BarcodeReport from "../components/barcode/AttendanceReport";
 
 export const routes = [
     {
@@ -288,7 +290,7 @@ export const routes = [
                 title: "الباركود اليومي",
                 name: "today-barcode",
                 url: "/barcode/today",
-                icon: <FaBarcode />,
+                icon: <LuScanLine />,
                 element: <Scanner />,
             },
             {
@@ -296,7 +298,16 @@ export const routes = [
                 title: "سجل الباركود",
                 name: "barcode-attendance",
                 url: "/barcode/attendance",
-                icon: <FaBarcode />,
+                icon: <LuFileScan />,
+                element: <BarcodeReport key={"attendance-report"} />,
+            },
+            {
+                id: 3,
+                title: "سجل الباركود لعميل",
+                name: "barcode-client-attendance",
+                url: "/barcode/client-attendance",
+                icon: <TbUserScan />,
+                element: <BarcodeReport client={true} key={"attendance-client-report"} />,
             },
         ],
     },

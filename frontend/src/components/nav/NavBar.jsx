@@ -1,10 +1,10 @@
 import React from "react";
 import { FaHome } from "react-icons/fa";
-import { BiQrScan } from "react-icons/bi";
 import "./nav.css";
 import MenuBtn from "./Menubtn";
 import UserIcon from "./UserIcon";
 import { Link } from "react-router-dom";
+import { LuScanLine } from "react-icons/lu";
 
 const Navbar = ({ menuState, setMenuState }) => {
     const iconStyle = `text-[29px] text-white cursor-pointer`;
@@ -25,7 +25,7 @@ const Navbar = ({ menuState, setMenuState }) => {
                     />
                 </Link>
                 <Link to={"/barcode/today"}>
-                    <BiQrScan className={`${iconStyle} hover:text-text`} />
+                    <LuScanLine className={`${iconStyle} hover:text-text`} />
                 </Link>
             </div>
 
