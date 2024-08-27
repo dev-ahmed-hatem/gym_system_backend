@@ -12,8 +12,9 @@ import ConfirmDelete from "../../groups/ConfirmDelete";
 import ErrorGroup from "../../groups/ErrorGroup";
 import { usePermission } from "../../../providers/PermissionProvider";
 import { useDrawer } from "../../../providers/DrawerProvider";
+import StockForm from "./StockForm";
 
-const Products = () => {
+const Products = ({ stock }) => {
     //////////////////////////////// providers ////////////////////////////////
     const { showDrawer, closeDrawer } = useDrawer();
     const { set_page_permissions } = usePermission();
@@ -62,7 +63,7 @@ const Products = () => {
                         callBack={() => {
                             setSearchParam(null);
                             setPageNumber(null);
-                            get_current_managers();
+                            get_current_products();
                         }}
                         toastMessage={"تم حذف المنتج بنجاح"}
                     />
@@ -94,13 +95,33 @@ const Products = () => {
     return (
         <>
             {/* add form */}
-            {permissions.add ? (
-                <ProductsForm
-                    postURL={endpoints.product_list}
-                    callBack={get_current_products}
-                />
-            ) : (
-                <ErrorGroup title={"إضافة منتج"} message={"ليس لديك صلاحية"} />
+            {!stock && (
+                <>
+                    {permissions.add ? (
+                        <ProductsForm
+                            postURL={endpoints.product_list}
+                            callBack={get_current_products}
+                        />
+                    ) : (
+                        <ErrorGroup
+                            title={"إضافة منتج"}
+                            message={"ليس لديك صلاحية"}
+                        />
+                    )}
+                </>
+            )}
+
+            {stock && (
+                <>
+                    {permissions.change ? (
+                        <StockForm callBack={get_current_products} />
+                    ) : (
+                        <ErrorGroup
+                            title={"إضافة منتج"}
+                            message={"ليس لديك صلاحية"}
+                        />
+                    )}
+                </>
             )}
 
             {/* table data */}
@@ -135,7 +156,7 @@ const Products = () => {
                                                 اسم المنتج
                                             </Table.HeadCell>
                                             <Table.HeadCell>
-                                                السعر
+                                                سعر البيع
                                             </Table.HeadCell>
                                             <Table.HeadCell>
                                                 الفئة
@@ -164,8 +185,8 @@ const Products = () => {
                                                             )}
                                                         </Table.Cell>
                                                         <Table.Cell>
-                                                            {product.price ? (
-                                                                product.price
+                                                            {product.sell_price ? (
+                                                                product.sell_price
                                                             ) : (
                                                                 <span className="text-red-600">
                                                                     غير مسجل
@@ -188,7 +209,8 @@ const Products = () => {
                                                             )}
                                                         </Table.Cell>
                                                         <Table.Cell>
-                                                            {product.stock ? (
+                                                            {product.stock !==
+                                                            undefined ? (
                                                                 <span className="text-sm">
                                                                     {
                                                                         product.stock

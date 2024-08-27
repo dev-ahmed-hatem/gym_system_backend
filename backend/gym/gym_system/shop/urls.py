@@ -10,4 +10,5 @@ router.register('sale-item', SaleItemViewSet, basename='sale-item')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('add-stock/', add_stock, name='add-stock'),
 ]

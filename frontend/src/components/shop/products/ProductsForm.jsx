@@ -3,7 +3,7 @@ import FormGroup from "../../groups/FormGroup";
 import { TextInput, Label, Select, Textarea } from "flowbite-react";
 import Loading from "../../groups/Loading";
 import { useForm } from "react-hook-form";
-import { MdOutlineDriveFileRenameOutline, MdInventory } from "react-icons/md";
+import { MdOutlineDriveFileRenameOutline } from "react-icons/md";
 import CustomFileInput from "../../groups/CustomFileInput";
 import endpoints from "../../../config/config";
 import { FaMoneyBill } from "react-icons/fa";
@@ -60,9 +60,9 @@ const ProductsForm = ({ postURL, defaultValues, callBack }) => {
 
         data = {
             ...data,
-            price: Number(data.price),
+            cost_price: Number(data.cost_price),
+            sell_price: Number(data.sell_price),
             category: Number(data.category),
-            stock: Number(data.stock),
         };
 
         defaultFormSubmission({
@@ -119,44 +119,53 @@ const ProductsForm = ({ postURL, defaultValues, callBack }) => {
                     </div>
                     <div className="w-full lg:max-w-md lg:w-[30%]">
                         <div className="mb-2 block">
-                            <Label htmlFor="price" value="السعر :" />
+                            <Label htmlFor="cost_price" value="سعر الشراء :" />
                         </div>
                         <TextInput
-                            id="price"
+                            id="cost_price"
                             type="number"
                             rightIcon={FaMoneyBill}
-                            placeholder="السعر"
-                            color={errors.price ? "failure" : "primary"}
-                            {...register("price", {
+                            placeholder="سعر الشراء"
+                            color={errors.cost_price ? "failure" : "primary"}
+                            {...register("cost_price", {
                                 required: "هذا الحقل مطلوب",
+                                pattern: {
+                                    value: /^[1-9]\d*$/,
+                                    message: "أدخل رقم صحيح موجب",
+                                },
                             })}
-                            onBlur={() => trigger("price")}
+                            min={0}
+                            onBlur={() => trigger("cost_price")}
                         />
-                        {errors.price && (
+                        {errors.cost_price && (
                             <p className="error-message">
-                                {errors.price.message}
+                                {errors.cost_price.message}
                             </p>
                         )}
                     </div>
                     <div className="w-full lg:max-w-md lg:w-[30%]">
                         <div className="mb-2 block">
-                            <Label htmlFor="stock" value="المخزون :" />
+                            <Label htmlFor="sell_price" value="سعر البيع :" />
                         </div>
                         <TextInput
-                            id="stock"
+                            id="sell_price"
                             type="number"
-                            rightIcon={MdInventory}
-                            placeholder="المخزون"
-                            color={errors.stock ? "failure" : "primary"}
-                            defaultValue={0}
-                            {...register("stock", {
+                            rightIcon={FaMoneyBill}
+                            placeholder="سعر البيع"
+                            color={errors.sell_price ? "failure" : "primary"}
+                            {...register("sell_price", {
                                 required: "هذا الحقل مطلوب",
+                                pattern: {
+                                    value: /^[1-9]\d*$/,
+                                    message: "أدخل رقم صحيح موجب",
+                                },
                             })}
-                            onBlur={() => trigger("stock")}
+                            min={0}
+                            onBlur={() => trigger("sell_price")}
                         />
-                        {errors.stock && (
+                        {errors.sell_price && (
                             <p className="error-message">
-                                {errors.stock.message}
+                                {errors.sell_price.message}
                             </p>
                         )}
                     </div>

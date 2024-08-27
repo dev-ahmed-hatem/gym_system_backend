@@ -87,7 +87,7 @@ const BarcodeReportForm = ({ setLoading, setFetchError, setData, client }) => {
                                 language="ar"
                                 labelClearButton="مسح"
                                 labelTodayButton="اليوم"
-                                placeholder="تاريخ الميلاد"
+                                placeholder="من"
                                 color={"primary"}
                                 onSelectedDateChanged={(date) => {
                                     field.onChange(
@@ -117,7 +117,7 @@ const BarcodeReportForm = ({ setLoading, setFetchError, setData, client }) => {
                                 language="ar"
                                 labelClearButton="مسح"
                                 labelTodayButton="اليوم"
-                                placeholder="تاريخ الميلاد"
+                                placeholder="إلى"
                                 color={errors.to ? "failure" : "primary"}
                                 onSelectedDateChanged={(date) => {
                                     field.onChange(

@@ -83,7 +83,6 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
         setValue,
     } = useForm({ defaultValues: transformValues(defaultValues) });
     const formFunction = defaultValues ? "edit" : "add";
-    const requestMethod = formFunction == "add" ? axios.post : axios.patch;
 
     const [subType, setSubType] = useState(
         defaultValues?.plan?.subscription_type

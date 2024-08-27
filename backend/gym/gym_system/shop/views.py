@@ -1,6 +1,10 @@
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from .serializers import *
 from .models import *
+from rest_framework.decorators import api_view, permission_classes
 
 
 class ProductCategoryViewSet(ModelViewSet):
@@ -43,3 +47,15 @@ class SaleViewSet(ModelViewSet):
 class SaleItemViewSet(ModelViewSet):
     queryset = SaleItem.objects.all()
     serializer_class = SaleItemSerializer
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_stock(request):
+    product_id = request.data['product_id']
+    amount = request.data['amount']
+
+    product = Product.objects.get(pk=product_id)
+    product.stock += int(amount)
+    product.save()
+    return Response(status=status.HTTP_201_CREATED)

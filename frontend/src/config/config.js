@@ -38,6 +38,7 @@ const endpoints = {
     // shop routing
     product_category_list: `${api_base_url}api/shop/product-category/?`,
     product_list: `${api_base_url}api/shop/product/?`,
+    add_stock: `${api_base_url}api/shop/add-stock/?`,
 };
 
 export default endpoints;

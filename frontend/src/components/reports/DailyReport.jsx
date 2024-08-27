@@ -9,7 +9,7 @@ import { fetch_list_data } from "../../config/actions";
 import { usePermission } from "../../providers/PermissionProvider";
 import ErrorGroup from "../groups/ErrorGroup";
 
-const ClientFilterForm = ({ setLoading, setFetchError, setData }) => {
+const DailyReportForm = ({ setLoading, setFetchError, setData }) => {
     const [post, setPost] = useState(false);
     const today = new Date().toLocaleDateString("en-CA");
     const {
@@ -19,30 +19,9 @@ const ClientFilterForm = ({ setLoading, setFetchError, setData }) => {
         control,
         watch,
         clearErrors,
-    } = useForm({ defaultValues: { from: today, to: today } });
-    const from = watch("from");
-    const to = watch("to");
-
-    useEffect(() => {
-        if (to < from) {
-            setError("to", {
-                type: "manual",
-                message: "تاريخ النهاية أقدم من تاريخ البداية",
-            });
-        } else {
-            clearErrors();
-        }
-    }, [from, to]);
+    } = useForm({ defaultValues: { day: today } });
 
     const onSubmit = (data) => {
-        if (data.to < data.from) {
-            setError("to", {
-                type: "manual",
-                message: "تاريخ النهاية أقدم من تاريخ البداية",
-            });
-            return;
-        }
-
         const url = `${endpoints.client_list}from=${data.from}&to=${data.to}&no_pagination=true`;
         setPost(true);
         setLoading(true);
@@ -62,9 +41,7 @@ const ClientFilterForm = ({ setLoading, setFetchError, setData }) => {
         <div
             className={`wrapper p-4 my-8 bg-white rounded border-t-4 border-primary shadow-lg`}
         >
-            <h1 className="font-bold text-text text-lg">
-                عملاء تمت إضافتهم في الفترة :
-            </h1>
+            <h1 className="font-bold text-text text-lg">عرض تقارير يوم :</h1>
             <hr className="h-px my-3 bg-gray-200 border-0"></hr>
             <form
                 className="fields flex gap-x-10 gap-y-6 flex-wrap"
@@ -72,20 +49,20 @@ const ClientFilterForm = ({ setLoading, setFetchError, setData }) => {
             >
                 <div className="w-full lg:max-w-md lg:w-[30%]">
                     <div className="mb-2 block">
-                        <Label htmlFor="from" value="من :" />
+                        <Label htmlFor="day" value="اليوم :" />
                     </div>
                     <Controller
-                        name="from"
+                        name="day"
                         control={control}
                         rules={{ required: "" }}
                         render={({ field }) => (
                             <Datepicker
                                 selected={field.value}
-                                id="from"
+                                id="day"
                                 language="ar"
                                 labelClearButton="مسح"
                                 labelTodayButton="اليوم"
-                                placeholder="من"
+                                placeholder="تاريخ الميلاد"
                                 color={"primary"}
                                 onSelectedDateChanged={(date) => {
                                     field.onChange(
@@ -96,38 +73,8 @@ const ClientFilterForm = ({ setLoading, setFetchError, setData }) => {
                             />
                         )}
                     />
-                    {errors.from && (
-                        <p className="error-message">{errors.from.message}</p>
-                    )}
-                </div>
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label htmlFor="to" value="إلى :" />
-                    </div>
-                    <Controller
-                        name="to"
-                        control={control}
-                        rules={{ required: "هذا الحقل مطلوب" }}
-                        render={({ field }) => (
-                            <Datepicker
-                                selected={field.value}
-                                id="to"
-                                language="ar"
-                                labelClearButton="مسح"
-                                labelTodayButton="اليوم"
-                                placeholder="إلى"
-                                color={errors.to ? "failure" : "primary"}
-                                onSelectedDateChanged={(date) => {
-                                    field.onChange(
-                                        date.toLocaleDateString("en-CA")
-                                    );
-                                }}
-                                {...field}
-                            />
-                        )}
-                    />
-                    {errors.to && (
-                        <p className="error-message">{errors.to.message}</p>
+                    {errors.day && (
+                        <p className="error-message">{errors.day.message}</p>
                     )}
                 </div>
 
@@ -151,7 +98,7 @@ const ClientFilterForm = ({ setLoading, setFetchError, setData }) => {
     );
 };
 
-const ClientFilter = () => {
+const DailyReport = () => {
     //////////////////////////////// list data ////////////////////////////////
     const [loading, setLoading] = useState(false);
     const [fetchError, setFetchError] = useState(null);
@@ -172,7 +119,7 @@ const ClientFilter = () => {
     return (
         <>
             {/* search form */}
-            <ClientFilterForm
+            <DailyReportForm
                 setLoading={setLoading}
                 setFetchError={setFetchError}
                 setData={setData}
@@ -267,4 +214,4 @@ const ClientFilter = () => {
     );
 };
 
-export default ClientFilter;
+export default DailyReport;

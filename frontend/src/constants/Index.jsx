@@ -21,6 +21,7 @@ import {
     MdSubscriptions,
     MdAssignment,
     MdOutlineTimerOff,
+    MdInventory,
 } from "react-icons/md";
 import { FaShop } from "react-icons/fa6";
 import { RiShoppingBag3Fill } from "react-icons/ri";
@@ -53,6 +54,7 @@ import SubscriptionFilter from "../components/subscriptions/SubscriptionFilter";
 import Scanner from "../components/barcode/Scanner";
 import { LuFileScan, LuScanLine } from "react-icons/lu";
 import BarcodeReport from "../components/barcode/AttendanceReport";
+import DailyReport from "../components/reports/DailyReport";
 
 export const routes = [
     {
@@ -330,6 +332,16 @@ export const routes = [
             },
             {
                 id: 2,
+                title: "المخزون",
+                name: "products",
+                url: "/store/stock",
+                icon: <MdInventory />,
+                element: <Products stock={true} />,
+                app_label: "shop",
+                model_name: "product",
+            },
+            {
+                id: 3,
                 title: "عمليات الشراء",
                 name: "sales",
                 url: "/store/sales",
@@ -396,6 +408,7 @@ export const routes = [
                 name: "daily-reports",
                 url: "/reports/daily",
                 icon: <MdAssignment />,
+                element: <DailyReport />
             },
             {
                 id: 2,

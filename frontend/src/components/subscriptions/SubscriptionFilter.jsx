@@ -95,7 +95,7 @@ const SubscriptionFilterForm = ({ setLoading, setFetchError, setData }) => {
                                 language="ar"
                                 labelClearButton="مسح"
                                 labelTodayButton="اليوم"
-                                placeholder="تاريخ الميلاد"
+                                placeholder="من"
                                 color={"primary"}
                                 onSelectedDateChanged={(date) => {
                                     field.onChange(
@@ -125,7 +125,7 @@ const SubscriptionFilterForm = ({ setLoading, setFetchError, setData }) => {
                                 language="ar"
                                 labelClearButton="مسح"
                                 labelTodayButton="اليوم"
-                                placeholder="تاريخ الميلاد"
+                                placeholder="إلى"
                                 color={errors.to ? "failure" : "primary"}
                                 onSelectedDateChanged={(date) => {
                                     field.onChange(
