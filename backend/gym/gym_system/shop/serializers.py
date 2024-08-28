@@ -70,7 +70,7 @@ class SaleSerializer(serializers.ModelSerializer):
         return f"{localtime(obj.created_at):%Y-%m-%d}"
 
     def get_confirm_date(self, obj):
-        return f"{localtime(obj.confirmed_at):%Y-%m-%d}"
+        return f"{localtime(obj.confirmed_at):%Y-%m-%d - %H:%M}"
 
     def get_state(self, obj):
         return obj.get_state_display()
