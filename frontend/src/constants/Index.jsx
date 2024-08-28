@@ -55,6 +55,8 @@ import Scanner from "../components/barcode/Scanner";
 import { LuFileScan, LuScanLine } from "react-icons/lu";
 import BarcodeReport from "../components/barcode/AttendanceReport";
 import DailyReport from "../components/reports/DailyReport";
+import Sale from "../components/shop/sales/Sale";
+import ConfirmSales from "../components/shop/sales/ConfirmSales";
 
 export const routes = [
     {
@@ -309,22 +311,27 @@ export const routes = [
                 name: "barcode-client-attendance",
                 url: "/barcode/client-attendance",
                 icon: <TbUserScan />,
-                element: <BarcodeReport client={true} key={"attendance-client-report"} />,
+                element: (
+                    <BarcodeReport
+                        client={true}
+                        key={"attendance-client-report"}
+                    />
+                ),
             },
         ],
     },
     {
         id: 6,
         title: "المتجر",
-        name: "store",
-        url: "/store",
+        name: "shop",
+        url: "/shop",
         icon: <FaShop />,
         children: [
             {
                 id: 1,
                 title: "المنتجات",
                 name: "products",
-                url: "/store/products",
+                url: "/shop/products",
                 icon: <RiShoppingBag3Fill />,
                 element: <Products />,
                 app_label: "shop",
@@ -334,7 +341,7 @@ export const routes = [
                 id: 2,
                 title: "المخزون",
                 name: "products",
-                url: "/store/stock",
+                url: "/shop/stock",
                 icon: <MdInventory />,
                 element: <Products stock={true} />,
                 app_label: "shop",
@@ -342,10 +349,21 @@ export const routes = [
             },
             {
                 id: 3,
-                title: "عمليات الشراء",
+                title: "الطلبات",
+                name: "products",
+                url: "/shop/sale-products",
+                icon: <RiShoppingBag3Fill />,
+                element: <Sale />,
+                app_label: "shop",
+                model_name: "sale",
+            },
+            {
+                id: 4,
+                title: "تأكيد طلبات البيع",
                 name: "sales",
-                url: "/store/sales",
+                url: "/shop/sales",
                 icon: <IoBagCheck />,
+                element: <ConfirmSales />,
                 permissions: "unadjustable",
             },
         ],
@@ -408,7 +426,7 @@ export const routes = [
                 name: "daily-reports",
                 url: "/reports/daily",
                 icon: <MdAssignment />,
-                element: <DailyReport />
+                element: <DailyReport />,
             },
             {
                 id: 2,

@@ -22,7 +22,12 @@ barcode record for each client:
 
 shop:
     - incoming products
-    - product's two salaries (buy | repay)
+    - product's two prices (buy | repay)
     - products reports
     - 
+
+
+offers:
+    - when recording barcode check both start and expiration of subscriptions, cuz of incoming subscriptions
+    - add discount option to subscriptions 
 

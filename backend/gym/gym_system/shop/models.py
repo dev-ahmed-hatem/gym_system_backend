@@ -1,5 +1,6 @@
 from django.db import models
 from clients.models import Client
+from django.utils.timezone import now
 
 
 class ProductCategory(models.Model):
@@ -25,29 +26,43 @@ class Product(models.Model):
 
 
 class Sale(models.Model):
-    customer = models.ForeignKey(Client, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    STATE_CHOICES = (
+        ('pending', 'معلق'),
+        ('sold', 'تم البيع')
+    )
 
-    @property
-    def total_price(self):
-        return sum(item.total_price for item in self.saleitem_set.all())
+    customer = models.ForeignKey(Client, on_delete=models.CASCADE, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    confirmed_at = models.DateTimeField(null=True)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    after_discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    state = models.CharField(max_length=10, choices=STATE_CHOICES, default='pending')
 
     @property
     def total_quantity(self):
-        return sum(item.quantity for item in self.saleitem_set.all())
+        return sum(item.amount for item in self.items.all())
+
+    def confirm_sale(self):
+        if self.state == 'pending':
+            self.state = 'sold'
+            self.confirmed_at = now()
+            self.save()
+        else:
+            return ValueError("تم تأكيد هذا الطلب بالفعل")
 
     def __str__(self):
-        return f"order for: {self.customer.name}"
+        return f"order no: {self.id}"
 
 
 class SaleItem(models.Model):
-    sale = models.ForeignKey(Sale, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='items')
-    quantity = models.PositiveIntegerField(default=1)
+    sale = models.ForeignKey(Sale, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    amount = models.PositiveIntegerField(default=1)
 
     @property
     def total_price(self):
-        return self.product.price * self.quantity
+        return self.product.sell_price * self.amount
 
     def __str__(self):
         return f"{self.product.name} -> {self.sale}"

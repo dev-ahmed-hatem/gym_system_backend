@@ -39,6 +39,7 @@ const endpoints = {
     product_category_list: `${api_base_url}api/shop/product-category/?`,
     product_list: `${api_base_url}api/shop/product/?`,
     add_stock: `${api_base_url}api/shop/add-stock/?`,
+    sale_list: `${api_base_url}api/shop/sale/?`,
 };
 
 export default endpoints;

@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from .serializers import *
 from .models import *
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
+from django.utils.timezone import datetime, localtime, make_aware
 
 
 class ProductCategoryViewSet(ModelViewSet):
@@ -37,16 +38,36 @@ class ProductViewSet(ModelViewSet):
 
 class SaleViewSet(ModelViewSet):
     queryset = Sale.objects.all()
+    serializer_class = SaleSerializer
 
-    def get_serializer_class(self):
-        if self.action in ['create', 'update', 'partial_update']:
-            return SaleWriteSerializer
-        return SaleReadSerializer
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.query_params.get('search', None)
+        date = self.request.query_params.get('date', None)
+
+        if search:
+            queryset = queryset.filter(id__icontains=search)
+        if date:
+            local_date = localtime(make_aware(datetime.strptime(date, '%Y-%m-%d'))).date()
+            queryset = queryset.filter(created_at__date=local_date)
+        return queryset
+
+    @action(methods=['get'], detail=True)
+    def confirm_sale(self, request, pk=None):
+        sale = Sale.objects.get(id=pk)
+        sale.confirm_sale()
+        return Response(status=status.HTTP_200_OK)
+
+
 
 
 class SaleItemViewSet(ModelViewSet):
     queryset = SaleItem.objects.all()
-    serializer_class = SaleItemSerializer
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return SaleItemWriteSerializer
+        return SaleItemReadSeializer
 
 
 @api_view(['POST'])

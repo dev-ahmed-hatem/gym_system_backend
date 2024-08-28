@@ -62,7 +62,7 @@ export const fetch_list_data = ({
 }) => {
     axios
         .get(searchURL)
-        .then((response) => {
+        .then((response) => {            
             setData(response.data);
         })
         .catch((fetchError) => {
