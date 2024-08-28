@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "flowbite-react";
 import axios from "../../config/axiosconfig";
 import { useToast } from "../../providers/ToastProvider";
+import { AiOutlineLoading } from "react-icons/ai";
 
 const ConfirmDelete = ({
     deleteURL,
@@ -56,6 +57,10 @@ const ConfirmDelete = ({
                     color={"failure"}
                     disabled={post}
                     onClick={deleteManager}
+                    isProcessing={post}
+                    processingSpinner={
+                        <AiOutlineLoading className="h-6 w-6 animate-spin" />
+                    }
                 >
                     حذف
                 </Button>

@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import axios from "../../../config/axiosconfig";
 import { useToast } from "../../../providers/ToastProvider";
 import { Button } from "flowbite-react";
+import { AiOutlineLoading } from "react-icons/ai";
 
 const ConfirmPrompt = ({ sale, closeDrawer, callBack }) => {
     const { showToast } = useToast();
     const [post, setPost] = useState(false);
 
     const confirm_sale = () => {
+        setPost(true);
         axios
             .get(`${sale.url}confirm_sale`)
             .then(() => {
@@ -123,6 +125,10 @@ const ConfirmPrompt = ({ sale, closeDrawer, callBack }) => {
                     color={"primary"}
                     disabled={post}
                     onClick={confirm_sale}
+                    isProcessing={post}
+                    processingSpinner={
+                        <AiOutlineLoading className="h-6 w-6 animate-spin" />
+                    }
                 >
                     تأكيد
                 </Button>

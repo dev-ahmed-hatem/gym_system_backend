@@ -71,22 +71,6 @@ const ConfirmSales = () => {
         }
     };
 
-    // const handleDrawer = (sale) => {
-    //     showDrawer(
-    //         "تأكيد عملية البيع",
-    //         FaInfoCircle,
-    //         <ConfirmPrompt
-    //             sale={sale}
-    //             closeDrawer={closeDrawer}
-    //             callBack={() => {
-    //                 setSearchParam(null);
-    //                 setPageNumber(null);
-    //                 get_current_sales();
-    //             }}
-    //         />
-    //     );
-    // };
-
     const get_current_sales = () => {
         const searchURL = `${endpoints.sale_list}${
             searchParam ? `&search=${searchParam}` : ""
