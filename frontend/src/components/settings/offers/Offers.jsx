@@ -6,20 +6,26 @@ import TableGroup from "../../groups/TableGroup";
 import { MdEdit, MdDelete } from "react-icons/md";
 import TablePagination from "../../groups/TablePagination";
 import endpoints from "../../../config/config";
-import FinancialItemsForm from "./FinancialItemsForm";
+import OffersForm from "./OffersForm";
 import { fetch_list_data } from "../../../config/actions";
 import ConfirmDelete from "../../groups/ConfirmDelete";
 import ErrorGroup from "../../groups/ErrorGroup";
 import { usePermission } from "../../../providers/PermissionProvider";
 import { useDrawer } from "../../../providers/DrawerProvider";
 
-const FinancialItems = () => {
+const Offers = () => {
+    //////////////////////////////// form settings ////////////////////////////////
+    const [currentSetting, setCurrentSetting] = useState({
+        name: "الجنسية",
+        list_url: endpoints.nationality_list,
+    });
+
     //////////////////////////////// providers ////////////////////////////////
     const { showDrawer, closeDrawer } = useDrawer();
     const { set_page_permissions } = usePermission();
 
     //////////////////////////////// permissions ////////////////////////////////
-    const permissions = set_page_permissions("financials", "financialitem");
+    const permissions = set_page_permissions("shop", "offer");
     if (!permissions.add && !permissions.view) {
         return (
             <p className="text-lg text-center text-red-600 py-4">
@@ -40,11 +46,11 @@ const FinancialItems = () => {
             showDrawer(
                 "تعديل بند",
                 MdEdit,
-                <FinancialItemsForm
+                <OffersForm
                     postURL={item.url}
                     defaultValues={item}
                     callBack={() => {
-                        get_current_items();
+                        get_current_offers();
                         closeDrawer();
                     }}
                 />
@@ -56,23 +62,23 @@ const FinancialItems = () => {
                 <>
                     <ConfirmDelete
                         deleteURL={item.url}
-                        deletePrompt={" هل أنت متأكد تريد حذف البند"}
+                        deletePrompt={" هل أنت متأكد تريد حذف العرض"}
                         itemName={item.name}
                         closeDrawer={closeDrawer}
                         callBack={() => {
                             setSearchParam(null);
                             setPageNumber(null);
-                            get_current_items();
+                            get_current_offers();
                         }}
-                        toastMessage={"تم حذف البند بنجاح"}
+                        toastMessage={"تم حذف العرض بنجاح"}
                     />
                 </>
             );
         }
     };
 
-    const get_current_items = () => {
-        const searchURL = `${endpoints.financial_item_list}${
+    const get_current_offers = () => {
+        const searchURL = `${endpoints.offer_list}${
             searchParam ? `&search=${searchParam}` : ""
         }${pageNumber ? `&page=${pageNumber}` : ""}
         `;
@@ -87,25 +93,25 @@ const FinancialItems = () => {
 
     useEffect(() => {
         if (permissions.view) {
-            get_current_items();
+            get_current_offers();
         }
-    }, [searchParam, pageNumber]);
+    }, [searchParam, pageNumber, currentSetting]);
 
     return (
         <>
             {/* add form */}
             {permissions.add ? (
-                <FinancialItemsForm
-                    postURL={endpoints.financial_item_list}
-                    callBack={get_current_items}
+                <OffersForm
+                    postURL={endpoints.offer_list}
+                    callBack={get_current_offers}
                 />
             ) : (
-                <ErrorGroup title={"إضافة بند"} message={"ليس لديك صلاحية"} />
+                <ErrorGroup title={"إضافة عرض"} message={"ليس لديك صلاحية"} />
             )}
 
             {/* table data */}
             {permissions.view ? (
-                <ViewGroup title={"البنود المالية الحالية"}>
+                <ViewGroup title={`العروض الحالية`}>
                     {loading ? (
                         <Loading />
                     ) : fetchError ? (
@@ -132,25 +138,34 @@ const FinancialItems = () => {
                                     <>
                                         <Table.Head>
                                             <Table.HeadCell>
-                                                اسم البند
+                                                نوع العرض
                                             </Table.HeadCell>
                                             <Table.HeadCell>
-                                                النوع
+                                                العنصر
+                                            </Table.HeadCell>
+                                            <Table.HeadCell>
+                                                نسبة الخصم
+                                            </Table.HeadCell>
+                                            <Table.HeadCell>
+                                                البداية
+                                            </Table.HeadCell>
+                                            <Table.HeadCell>
+                                                النهاية
                                             </Table.HeadCell>
                                             <Table.HeadCell>
                                                 إجراءات
                                             </Table.HeadCell>
                                         </Table.Head>
                                         <Table.Body>
-                                            {data.results.map((item) => {
+                                            {data.results.map((offer) => {
                                                 return (
                                                     <Table.Row
-                                                        key={item.id}
+                                                        key={offer.id}
                                                         className="bg-white font-medium text-gray-900"
                                                     >
                                                         <Table.Cell>
-                                                            {item.name ? (
-                                                                item.name
+                                                            {offer.offer_type_display ? (
+                                                                offer.offer_type_display
                                                             ) : (
                                                                 <span className="text-red-600">
                                                                     غير مسجل
@@ -158,13 +173,34 @@ const FinancialItems = () => {
                                                             )}
                                                         </Table.Cell>
                                                         <Table.Cell>
-                                                            {item.financial_type ? (
-                                                                item.financial_type ===
-                                                                "expenses" ? (
-                                                                    "مصروفات"
-                                                                ) : (
-                                                                    "إيرادات"
-                                                                )
+                                                            {offer.offer_type ==
+                                                            "product"
+                                                                ? offer.product
+                                                                      .name
+                                                                : offer.plan
+                                                                      .name}
+                                                        </Table.Cell>
+                                                        <Table.Cell>
+                                                            {offer.percentage ? (
+                                                                offer.percentage
+                                                            ) : (
+                                                                <span className="text-red-600">
+                                                                    غير مسجل
+                                                                </span>
+                                                            )}
+                                                        </Table.Cell>
+                                                        <Table.Cell>
+                                                            {offer.start_date ? (
+                                                                offer.start_date
+                                                            ) : (
+                                                                <span className="text-red-600">
+                                                                    غير مسجل
+                                                                </span>
+                                                            )}
+                                                        </Table.Cell>
+                                                        <Table.Cell>
+                                                            {offer.end_date ? (
+                                                                offer.end_date
                                                             ) : (
                                                                 <span className="text-red-600">
                                                                     غير مسجل
@@ -173,36 +209,27 @@ const FinancialItems = () => {
                                                         </Table.Cell>
                                                         <Table.Cell>
                                                             <span className="flex text-xl gap-x-3">
-                                                                {item.system_related ? (
-                                                                    <span className="text-sm text-secondary">
-                                                                        خاص
-                                                                        بالنظام
-                                                                    </span>
-                                                                ) : (
-                                                                    <>
-                                                                        {permissions.change && (
-                                                                            <MdEdit
-                                                                                className="text-accent cursor-pointer"
-                                                                                onClick={() => {
-                                                                                    handleDrawer(
-                                                                                        "edit",
-                                                                                        item
-                                                                                    );
-                                                                                }}
-                                                                            />
-                                                                        )}
-                                                                        {permissions.delete && (
-                                                                            <MdDelete
-                                                                                className="text-secondary cursor-pointer"
-                                                                                onClick={() => {
-                                                                                    handleDrawer(
-                                                                                        "delete",
-                                                                                        item
-                                                                                    );
-                                                                                }}
-                                                                            />
-                                                                        )}
-                                                                    </>
+                                                                {permissions.change && (
+                                                                    <MdEdit
+                                                                        className="text-accent cursor-pointer"
+                                                                        onClick={() => {
+                                                                            handleDrawer(
+                                                                                "edit",
+                                                                                offer
+                                                                            );
+                                                                        }}
+                                                                    />
+                                                                )}
+                                                                {permissions.delete && (
+                                                                    <MdDelete
+                                                                        className="text-secondary cursor-pointer"
+                                                                        onClick={() => {
+                                                                            handleDrawer(
+                                                                                "delete",
+                                                                                offer
+                                                                            );
+                                                                        }}
+                                                                    />
                                                                 )}
                                                             </span>
                                                         </Table.Cell>
@@ -228,7 +255,7 @@ const FinancialItems = () => {
                 </ViewGroup>
             ) : (
                 <ErrorGroup
-                    title={"البنود المالية الحالية"}
+                    title={"العروض الحالية"}
                     message={"ليس لديك صلاحية"}
                 />
             )}
@@ -236,4 +263,4 @@ const FinancialItems = () => {
     );
 };
 
-export default FinancialItems;
+export default Offers;

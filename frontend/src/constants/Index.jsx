@@ -57,6 +57,7 @@ import BarcodeReport from "../components/barcode/AttendanceReport";
 import DailyReport from "../components/reports/DailyReport";
 import Sale from "../components/shop/sales/Sale";
 import ConfirmSales from "../components/shop/sales/ConfirmSales";
+import Offers from "../components/settings/offers/Offers";
 
 export const routes = [
     {
@@ -158,6 +159,9 @@ export const routes = [
                 name: "offers",
                 url: "/settings/offers",
                 icon: <BiSolidOffer />,
+                element: <Offers />,
+                app_label: "shop",
+                model_name: "offer",
             },
             {
                 id: 6,

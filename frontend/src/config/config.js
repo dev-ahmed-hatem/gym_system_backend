@@ -40,6 +40,7 @@ const endpoints = {
     product_list: `${api_base_url}api/shop/product/?`,
     add_stock: `${api_base_url}api/shop/add-stock/?`,
     sale_list: `${api_base_url}api/shop/sale/?`,
+    offer_list: `${api_base_url}api/shop/offer/?`,
 };
 
 export default endpoints;

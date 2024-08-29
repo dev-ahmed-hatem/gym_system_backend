@@ -7,6 +7,7 @@ router.register('product-category', ProductCategoryViewSet, basename='product-ca
 router.register('product', ProductViewSet, basename='product')
 router.register('sale', SaleViewSet, basename='sale')
 router.register('sale-item', SaleItemViewSet, basename='sale-item')
+router.register('offer', OfferViewSet, basename='offer')
 
 urlpatterns = [
     path('', include(router.urls)),

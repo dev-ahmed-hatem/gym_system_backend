@@ -102,7 +102,7 @@ const ConfirmPrompt = ({ sale, closeDrawer, callBack }) => {
             </table>
             <div className="w-full my-3">
                 <p>
-                    سيتم إضافة إيداع بقيمة{" "}
+                    سيتم إضافة إيراد بقيمة{" "}
                     <span className="text-primary font-bold mx-2">
                         {sale.after_discount}{" "}
                     </span>

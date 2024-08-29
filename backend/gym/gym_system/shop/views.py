@@ -5,7 +5,8 @@ from rest_framework.viewsets import ModelViewSet
 from .serializers import *
 from .models import *
 from rest_framework.decorators import api_view, permission_classes, action
-from django.utils.timezone import datetime, localtime, make_aware
+from django.utils.timezone import datetime, localtime, make_aware, now
+from financials.models import FinancialItem, Transaction
 
 
 class ProductCategoryViewSet(ModelViewSet):
@@ -59,8 +60,6 @@ class SaleViewSet(ModelViewSet):
         return Response(status=status.HTTP_200_OK)
 
 
-
-
 class SaleItemViewSet(ModelViewSet):
     queryset = SaleItem.objects.all()
 
@@ -79,4 +78,22 @@ def add_stock(request):
     product = Product.objects.get(pk=product_id)
     product.stock += int(amount)
     product.save()
+
+    # create transaction
+    financial_item, _ = FinancialItem.objects.get_or_create(name="مصاريف منتجات", financial_type="expenses",
+                                                            system_related=True)
+    transaction = Transaction.objects.create(category=financial_item,
+                                             date=now().date(),
+                                             amount=product.cost_price * int(amount)
+                                             )
+    transaction.save()
     return Response(status=status.HTTP_201_CREATED)
+
+
+class OfferViewSet(ModelViewSet):
+    queryset = Offer.objects.all()
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return OfferWriteSerializer
+        return OfferReadSerializer

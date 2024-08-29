@@ -1,10 +1,15 @@
 from django.db import models
 from clients.models import Client
-from django.utils.timezone import now
+from django.utils.timezone import now, localdate
+from financials.models import FinancialItem, Transaction
+from subscriptions.models import SubscriptionPlan
 
 
 class ProductCategory(models.Model):
     name = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name_plural = "Product Categories"
 
     def __str__(self):
         return self.name
@@ -48,6 +53,15 @@ class Sale(models.Model):
             self.state = 'sold'
             self.confirmed_at = now()
             self.save()
+
+            # create transaction
+            financial_item, _ = FinancialItem.objects.get_or_create(name="إيرادات منتجات", financial_type="incomes",
+                                                                    system_related=True)
+            transaction = Transaction.objects.create(category=financial_item,
+                                                     amount=self.total_price,
+                                                     date=now().date(),
+                                                     )
+            transaction.save()
         else:
             return ValueError("تم تأكيد هذا الطلب بالفعل")
 
@@ -66,3 +80,30 @@ class SaleItem(models.Model):
 
     def __str__(self):
         return f"{self.product.name} -> {self.sale}"
+
+
+class Offer(models.Model):
+    OFFER_CHOICES = (
+        ("product", "عرض على منتج"),
+        ("plan", "عرض على اشتراك"),
+    )
+
+    offer_type = models.CharField(max_length=12, choices=OFFER_CHOICES)
+    percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    # Relations to either Product or plan
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
+    plan = models.ForeignKey(SubscriptionPlan, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        if self.product:
+            return f"Offer on Product: {self.product.name}"
+        elif self.plan:
+            return f"Offer on Plan: {self.plan.name}"
+        return "Offer"
+
+
+    def is_active(self):
+        return self.start_date <= localdate(now()) <= self.end_date
