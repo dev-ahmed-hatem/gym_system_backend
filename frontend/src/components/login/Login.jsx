@@ -169,10 +169,10 @@ const Login = () => {
 
                 {/* left logo */}
                 <div
-                    className="logo w-full md:w-1/2 h-[30%] md:h-full flex justify-center items-center"
+                    className="logo w-full md:w-1/2 h-[30%] md:h-full flex justify-center items-center overflow-hidden"
                     // bg-gradient-to-l from-primary-400 to-primary-200 "
                 >
-                    <img className="h-full object-cover" src={gymData?.logo} alt="" />
+                    <img className="w-full md:w-auto md:h-full object-cover" src={gymData?.logo} alt="" />
                 </div>
             </div>
         </div>

@@ -29,7 +29,7 @@ const Navbar = ({ menuState, setMenuState }) => {
                 <MenuBtn menuState={menuState} setMenuState={setMenuState} />
                 <Link to={"/"}>
                     <FaHome
-                        className={`${iconStyle} mx-5 lg:mx-7 hover:text-accent`}
+                        className={`${iconStyle} mx-4 lg:mx-7 hover:text-accent`}
                     />
                 </Link>
                 <Link to={"/barcode/today"}>
@@ -37,10 +37,12 @@ const Navbar = ({ menuState, setMenuState }) => {
                 </Link>
             </div>
 
-            <h1 className="text-white font-bold text-2xl hidden lg:block ">{gymData?.title}</h1>
+            <h1 className="text-white font-bold text-2xl hidden lg:block ">
+                {gymData?.title}
+            </h1>
 
             {/* user */}
-            <UserIcon gymData={gymData} />
+            {!menuState && <UserIcon gymData={gymData} />}
         </nav>
     );
 };
