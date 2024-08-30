@@ -93,7 +93,7 @@ const subscriptions = [
     },
 ];
 
-const SubscriptionsPrompt = ({ subscriptions, client, callBack }) => {
+const SubscriptionsPrompt = ({ /* subscriptions, client, */ callBack }) => {
     const [post, setPost] = useState(false);
     const [selected, setSelected] = useState(subscriptions[0]?.id);
     const { showToast } = useToast();
@@ -121,26 +121,27 @@ const SubscriptionsPrompt = ({ subscriptions, client, callBack }) => {
 
     return (
         <div>
-            <h1 className="font-bold text-text text-lg my-3">
+            <h1 className="font-bold text-text text-base lg:text-lg my-3">
                 اسم العميل :{" "}
-                <span className="text-primary font-bold ms-2 me-5">
+                <span className="text-primary font-bold ms-2 me-3 lg:me-5">
                     {client.name}
                 </span>
+                <br />
                 كود العميل :{" "}
                 <span className="text-primary font-bold ms-2">{client.id}</span>
             </h1>
             {subscriptions.length == 0 ? (
-                <p className="text-lg text-center text-red-600 py-4">
+                <p className="text-base lg:text-lg text-center text-red-600 py-4">
                     لا يوجد اشتراكات مفعلة حاليا
                 </p>
             ) : (
                 <>
-                    <h1 className="text-text text-lg">
+                    <h1 className="text-text text-base lg:text-lg">
                         اختر الاشتراك لتسجيل الحضور فيه :
                     </h1>
                     {subscriptions.map((sub) => (
                         <div
-                            className="my-3 p-1 border-2 rounded border-primary flex items-center"
+                            className="my-3 p-1 border rounded border-primary flex items-center"
                             key={sub.id}
                         >
                             <Radio
@@ -154,7 +155,7 @@ const SubscriptionsPrompt = ({ subscriptions, client, callBack }) => {
                                 }}
                             />
                             <Label
-                                className="ms-4 text-lg font-bold"
+                                className="ms-4 text-base lg:text-lg font-bold"
                                 htmlFor={`sub-${sub.id}`}
                             >
                                 {sub.plan.name}

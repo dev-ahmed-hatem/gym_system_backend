@@ -54,6 +54,19 @@ const Scanner = () => {
             scannerRef.current.resume();
         }
     };
+    
+    showDrawer(
+        "تسجيل حضور ",
+        FaInfoCircle,
+        <SubscriptionsPrompt
+            // subscriptions={response.data.subscriptions}
+            // client={response.data.client}
+            callBack={() => {
+                resumeScanning();
+                closeDrawer();
+            }}
+        />
+    );
 
     useEffect(() => {
         const checkCode = async (code) => {
