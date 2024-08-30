@@ -1,0 +1,8 @@
+#qa button:focus ~ #qa-menu,
+#qa:hover #qa-menu {
+    width: 224px;
+}
+
+#qa #qa-menu {
+    width: 0;
+}

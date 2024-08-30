@@ -8,6 +8,7 @@ import { verifyToken } from "../config/axiosconfig.js";
 import Loading from "./groups/Loading.jsx";
 import DrawerProvider from "../providers/DrawerProvider.jsx";
 import ToastProvider from "../providers/ToastProvider.jsx";
+import QuickAccess from "./quick-access/QuickAccess.jsx";
 
 const Main = () => {
     const navigate = useNavigate();
@@ -78,6 +79,7 @@ const Main = () => {
                             ref={menuRef}
                         />
                         {isHome ? <Home /> : <Outlet />}
+                        <QuickAccess />
                     </DrawerProvider>
                 </ToastProvider>
             )}
