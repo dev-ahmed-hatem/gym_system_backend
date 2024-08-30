@@ -14,12 +14,6 @@ import { usePermission } from "../../../providers/PermissionProvider";
 import { useDrawer } from "../../../providers/DrawerProvider";
 
 const Offers = () => {
-    //////////////////////////////// form settings ////////////////////////////////
-    const [currentSetting, setCurrentSetting] = useState({
-        name: "الجنسية",
-        list_url: endpoints.nationality_list,
-    });
-
     //////////////////////////////// providers ////////////////////////////////
     const { showDrawer, closeDrawer } = useDrawer();
     const { set_page_permissions } = usePermission();
@@ -95,7 +89,7 @@ const Offers = () => {
         if (permissions.view) {
             get_current_offers();
         }
-    }, [searchParam, pageNumber, currentSetting]);
+    }, [searchParam, pageNumber]);
 
     return (
         <>

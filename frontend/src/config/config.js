@@ -10,6 +10,10 @@ const endpoints = {
     models_permissions: `${api_base_url}api/users/get_models_permissions/`,
     authenticated_user: `${api_base_url}api/get_authenticated_user/`,
 
+    // gym-data routing
+    gym_data: `${api_base_url}api/gym-data/gym-data/`,
+    link_list: `${api_base_url}api/gym-data/link/`,
+
     // users routing
     manager_list: `${api_base_url}api/users/users/?is_superuser=true`,
     employee_list: `${api_base_url}api/users/employee/?`,

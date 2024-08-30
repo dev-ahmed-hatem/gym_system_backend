@@ -6,7 +6,7 @@ import { AiOutlineLoading } from "react-icons/ai";
 import endpoints from "../../config/config";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { fetchUserData } from "../../config/actions";
+import { fetchUserData, get_gym_data } from "../../config/actions";
 import { verifyToken } from "../../config/axiosconfig";
 
 const Login = () => {
@@ -14,6 +14,7 @@ const Login = () => {
     const navigate = useNavigate();
     const params = new URLSearchParams(location.search);
     const next = params.get("next") || null;
+    const [gymData, setGymData] = useState(null);
 
     // forward to home if logged in
     useEffect(() => {
@@ -71,6 +72,12 @@ const Login = () => {
                 setPost(false);
             });
     };
+
+    useEffect(() => {
+        get_gym_data().then(({ gym_data }) => {
+            setGymData(gym_data);
+        });
+    }, []);
 
     return (
         <div className="w-full h-svh overflow-hidden flex justify-center items-center bg-slate-200">
@@ -162,10 +169,10 @@ const Login = () => {
 
                 {/* left logo */}
                 <div
-                    className="logo w-full md:w-1/2 h-[30%] md:h-full flex justify-center items-center bg-gradient-to-l
-                 from-primary-400 to-primary-200 "
+                    className="logo w-full md:w-1/2 h-[30%] md:h-full flex justify-center items-center"
+                    // bg-gradient-to-l from-primary-400 to-primary-200 "
                 >
-                    <img className="w-32 h-full" src="vite.svg" alt="" />
+                    <img className="h-full object-cover" src={gymData?.logo} alt="" />
                 </div>
             </div>
         </div>

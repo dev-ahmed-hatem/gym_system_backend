@@ -1,17 +1,26 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { forwardRef } from "react";
 import { routes } from "../../constants/Index";
 import NestedMenuItem from "./NestedMenuItem";
 import SingleMenuItem from "./SingleMenuItem";
 import { Link } from "react-router-dom";
+import { get_gym_data } from "../../config/actions";
 
 const Menu = forwardRef(({ menuOpen, setMenuState }, menuRef) => {
+    const [gymData, setGymData] = useState(null);
+
     useEffect(() => {
         let activeLink = menuRef.current.querySelector("a.active");
         if (activeLink) {
             activeLink.scrollIntoView({ behavior: "smooth", block: "center" });
         }
     }, [menuOpen]);
+
+    useEffect(() => {
+        get_gym_data().then(({ gym_data }) => {
+            setGymData(gym_data);
+        });
+    }, []);
 
     return (
         // main container
@@ -31,8 +40,8 @@ const Menu = forwardRef(({ menuOpen, setMenuState }, menuRef) => {
                 }}
             >
                 <img
-                    className="m-auto w-16 h-16"
-                    src="/vite.svg"
+                    className="m-auto w-36 rounded-lg"
+                    src={gymData?.logo}
                     alt="GYM Logo"
                 />
             </Link>

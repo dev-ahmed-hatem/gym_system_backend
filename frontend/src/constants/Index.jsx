@@ -58,6 +58,7 @@ import DailyReport from "../components/reports/DailyReport";
 import Sale from "../components/shop/sales/Sale";
 import ConfirmSales from "../components/shop/sales/ConfirmSales";
 import Offers from "../components/settings/offers/Offers";
+import GymData from "../components/settings/gym-data/GymData";
 
 export const routes = [
     {
@@ -123,6 +124,16 @@ export const routes = [
                 name: "gym-data",
                 url: "/settings/gym-data",
                 icon: <IoIosFitness />,
+                element: <GymData />,
+                app_label: "gym_data",
+                model_name: "gymdata",
+                permissions: [
+                    {
+                        id: 1,
+                        value: "تعديل بيانات الجيم",
+                        name: "gym_data.change_gymdata",
+                    },
+                ],
             },
             {
                 id: 2,

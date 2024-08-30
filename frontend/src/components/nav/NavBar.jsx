@@ -1,13 +1,21 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FaHome } from "react-icons/fa";
 import "./nav.css";
 import MenuBtn from "./Menubtn";
 import UserIcon from "./UserIcon";
 import { Link } from "react-router-dom";
 import { LuScanLine } from "react-icons/lu";
+import { get_gym_data } from "../../config/actions";
 
 const Navbar = ({ menuState, setMenuState }) => {
+    const [gymData, setGymData] = useState(null);
     const iconStyle = `text-[29px] text-white cursor-pointer`;
+
+    useEffect(() => {
+        get_gym_data().then(({ gym_data }) => {
+            setGymData(gym_data);
+        });
+    }, []);
 
     return (
         <nav
@@ -29,10 +37,10 @@ const Navbar = ({ menuState, setMenuState }) => {
                 </Link>
             </div>
 
-            {/* <h1 className="text-white font-bold text-2xl ">GYM Name</h1> */}
+            <h1 className="text-white font-bold text-2xl hidden lg:block ">{gymData?.title}</h1>
 
             {/* user */}
-            <UserIcon />
+            <UserIcon gymData={gymData} />
         </nav>
     );
 };

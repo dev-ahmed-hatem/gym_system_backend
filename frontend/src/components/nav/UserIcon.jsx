@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-const UserIcon = () => {
+const UserIcon = ({ gymData }) => {
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem("auth_user"));
 
@@ -19,16 +19,16 @@ const UserIcon = () => {
         >
             <button
                 type="button"
-                className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4
-                 focus:ring-white"
+                className="flex text-sm bg-gray-800 rounded-full w-11 h-11 md:me-0 focus:ring-4
+                 focus:ring-white overflow-hidden"
                 id="user-menu-button"
                 aria-expanded="false"
                 data-dropdown-toggle="user-dropdown"
                 data-dropdown-placement="bottom"
             >
                 <img
-                    className="w-11 h-11 rounded-full"
-                    src="/vite.svg"
+                    className="w-full h-full"
+                    src={gymData?.logo}
                     alt="صورة المستخدم"
                 />
             </button>

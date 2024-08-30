@@ -62,7 +62,7 @@ export const fetch_list_data = ({
 }) => {
     axios
         .get(searchURL)
-        .then((response) => {            
+        .then((response) => {
             setData(response.data);
         })
         .catch((fetchError) => {
@@ -71,4 +71,18 @@ export const fetch_list_data = ({
         .finally(() => {
             setLoading(false);
         });
+};
+
+// fetch gym_data
+export const get_gym_data = async () => {
+    try {
+        const gym_data = await axios.get(endpoints.gym_data);
+        const links = await axios.get(endpoints.link_list);
+        return {
+            gym_data: gym_data?.data?.results?.[0],
+            links: links?.data?.results,
+        };
+    } catch (error) {
+        return null;
+    }
 };
