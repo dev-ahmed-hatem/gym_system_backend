@@ -13,6 +13,7 @@ const Scanner = () => {
     const [scanError, setScanError] = useState(null);
     const { showToast } = useToast();
     const { showDrawer, closeDrawer, drawerState } = useDrawer();
+    const audio = new Audio("./success.mp3");
 
     useEffect(() => {
         if (!scannerRef.current) {
@@ -61,6 +62,7 @@ const Scanner = () => {
             axios
                 .post(endpoints.scanner_code, { code: code })
                 .then((response) => {
+                    audio.play();
                     showDrawer(
                         "تسجيل حضور ",
                         FaInfoCircle,
