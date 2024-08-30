@@ -100,7 +100,7 @@ const LinksForm = ({ postURL, defaultValues, callBack }) => {
 
             <div className="w-full lg:max-w-md lg:w-[30%]">
                 <div className="mb-2 block">
-                    <Label htmlFor="icon" value="الصورة :" />
+                    <Label htmlFor="icon" value="الأيقون :" />
                 </div>
                 <CustomFileInput
                     register={register}

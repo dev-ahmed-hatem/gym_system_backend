@@ -44,7 +44,7 @@ const OffersForm = ({ postURL, defaultValues, callBack }) => {
     const [dataList, setDataList] = useState(null);
 
     const formFunction = defaultValues ? "edit" : "add";
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState(false);
     const start_date = watch("start_date");
     const end_date = watch("end_date");

@@ -176,7 +176,12 @@ const Offers = () => {
                                                         </Table.Cell>
                                                         <Table.Cell>
                                                             {offer.percentage ? (
-                                                                offer.percentage
+                                                                <>
+                                                                    {
+                                                                        offer.percentage
+                                                                    }{" "}
+                                                                    %
+                                                                </>
                                                             ) : (
                                                                 <span className="text-red-600">
                                                                     غير مسجل
