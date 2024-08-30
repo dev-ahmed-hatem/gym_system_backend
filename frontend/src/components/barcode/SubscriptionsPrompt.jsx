@@ -93,7 +93,7 @@ const subscriptions = [
     },
 ];
 
-const SubscriptionsPrompt = ({ /* subscriptions, client, */ callBack }) => {
+const SubscriptionsPrompt = ({ subscriptions, client, callBack }) => {
     const [post, setPost] = useState(false);
     const [selected, setSelected] = useState(subscriptions[0]?.id);
     const { showToast } = useToast();
