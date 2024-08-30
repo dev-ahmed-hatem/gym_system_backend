@@ -75,9 +75,23 @@ const Login = () => {
 
     useEffect(() => {
         get_gym_data().then(({ gym_data }) => {
+            const link = document.querySelector("link[rel~='icon']");
+            if (link) {
+                link.href = gym_data?.logo;
+            } else {
+                const newLink = document.createElement("link");
+                newLink.rel = "icon";
+                newLink.href = gym_data?.logo;
+                document.head.appendChild(newLink);
+            }
             setGymData(gym_data);
         });
     }, []);
+
+    const title = document.querySelector("title");
+    if (title) {
+        title.innerHTML = "Login";
+    }
 
     return (
         <div className="w-full h-svh overflow-hidden flex justify-center items-center bg-slate-200">
@@ -172,7 +186,11 @@ const Login = () => {
                     className="logo w-full md:w-1/2 h-[30%] md:h-full flex justify-center items-center overflow-hidden"
                     // bg-gradient-to-l from-primary-400 to-primary-200 "
                 >
-                    <img className="w-full md:h-full object-cover" src={gymData?.logo} alt="" />
+                    <img
+                        className="w-full md:h-full object-cover"
+                        src={gymData?.logo}
+                        alt=""
+                    />
                 </div>
             </div>
         </div>

@@ -19,7 +19,7 @@ const QuickAccess = () => {
         >
             <button
                 className="rounded-full w-12 h-12 bg-black flex items-center
-            justify-center text-white text-xl cursor-pointer shadow-2xl"
+            justify-center text-white text-xl cursor-pointer shadow-2xl focus:ring-4 focus:text-accent ring-accent"
             >
                 <BsRocketTakeoff className="absolute z-10" />
             </button>

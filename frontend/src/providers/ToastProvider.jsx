@@ -47,7 +47,7 @@ const ToastProvider = ({ children }) => {
             value={{ toast, setToast, toastError, setToastError, showToast }}
         >
             {toast && (
-                <div className="fixed bottom-20 left-[50%] -translate-x-1/2 z-50 min-w-[400px]">
+                <div className="fixed bottom-20 left-[50%] -translate-x-1/2 z-50 min-w-[310px]">
                     <Toast
                         className={`border-x-4 ${
                             toastError ? "border-secondary" : "border-accent"

@@ -18,6 +18,19 @@ const Menu = forwardRef(({ menuOpen, setMenuState }, menuRef) => {
 
     useEffect(() => {
         get_gym_data().then(({ gym_data }) => {
+            const link = document.querySelector("link[rel~='icon']");
+            const title = document.querySelector("title");
+            if (title) {
+                title.innerHTML = gym_data?.title + " Dashboard";
+            }
+            if (link) {
+                link.href = gym_data?.logo;
+            } else {
+                const newLink = document.createElement("link");
+                newLink.rel = "icon";
+                newLink.href = gym_data?.logo;
+                document.head.appendChild(newLink);
+            }
             setGymData(gym_data);
         });
     }, []);
