@@ -28,7 +28,7 @@
 html,
 body {
     background-color: theme(colors.light-gray);
-    height: 100vh;
+    overflow-x: hidden;
 }
 
 .error-message {
