@@ -111,7 +111,7 @@ const Login = () => {
                                 {...register("username", {
                                     required: "أدخل اسم المستخدم",
                                 })}
-                                onBlur={() => trigger("username")}
+                                // onBlur={() => trigger("username")}
                                 autoFocus
                             />
                             {errors.username && (
@@ -134,7 +134,7 @@ const Login = () => {
                                 {...register("password", {
                                     required: "أدخل كلمة المرور",
                                 })}
-                                onBlur={() => trigger("password")}
+                                // onBlur={() => trigger("password")}
                             />
                             {errors.password && (
                                 <p className="error-message">
@@ -172,7 +172,7 @@ const Login = () => {
                     className="logo w-full md:w-1/2 h-[30%] md:h-full flex justify-center items-center overflow-hidden"
                     // bg-gradient-to-l from-primary-400 to-primary-200 "
                 >
-                    <img className="w-full md:w-auto md:h-full object-cover" src={gymData?.logo} alt="" />
+                    <img className="w-full md:h-full object-cover" src={gymData?.logo} alt="" />
                 </div>
             </div>
         </div>

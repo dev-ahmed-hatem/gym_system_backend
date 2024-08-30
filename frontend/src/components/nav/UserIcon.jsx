@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-const UserIcon = ({ gymData }) => {
+const UserIcon = ({ gymData, className }) => {
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem("auth_user"));
 
@@ -14,7 +14,9 @@ const UserIcon = ({ gymData }) => {
 
     return (
         <div
-            className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse relative"
+            className={`flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse relative ${
+                className ?? ""
+            }`}
             id="user-icon"
         >
             <button

@@ -9,7 +9,7 @@ import { get_gym_data } from "../../config/actions";
 
 const Navbar = ({ menuState, setMenuState }) => {
     const [gymData, setGymData] = useState(null);
-    const iconStyle = `text-[29px] text-white cursor-pointer`;
+    const iconStyle = `text-[29px] text-white hover:text-accent cursor-pointer`;
 
     useEffect(() => {
         get_gym_data().then(({ gym_data }) => {
@@ -28,21 +28,22 @@ const Navbar = ({ menuState, setMenuState }) => {
             <div className="icons flex items-center">
                 <MenuBtn menuState={menuState} setMenuState={setMenuState} />
                 <Link to={"/"}>
-                    <FaHome
-                        className={`${iconStyle} mx-4 lg:mx-7 hover:text-accent`}
-                    />
+                    <FaHome className={`${iconStyle} mx-4 lg:mx-7`} />
                 </Link>
                 <Link to={"/barcode/today"}>
-                    <LuScanLine className={`${iconStyle} hover:text-text`} />
+                    <LuScanLine className={`${iconStyle}`} />
                 </Link>
             </div>
 
-            <h1 className="text-white font-bold text-2xl hidden lg:block ">
+            <h1 className="text-accent font-bold text-2xl hidden lg:block ">
                 {gymData?.title}
             </h1>
 
             {/* user */}
-            {!menuState && <UserIcon gymData={gymData} />}
+            <UserIcon
+                gymData={gymData}
+                className={`${menuState && "hidden md:block"}`}
+            />
         </nav>
     );
 };

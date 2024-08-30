@@ -9,7 +9,7 @@ export default {
                 cairo: ["cairo", "sans-serif"],
             },
             colors: {
-                primary: {
+                primary_o: {
                     DEFAULT: "#1976d2",
                     50: "#effaff",
                     100: "#daf3ff",
@@ -22,6 +22,20 @@ export default {
                     800: "#1c63b1",
                     900: "#1c548c",
                     950: "#163355",
+                },
+                primary: {
+                    DEFAULT: "#000000",
+                    50: "#f6f6f6",
+                    100: "#e7e7e7",
+                    200: "#d1d1d1",
+                    300: "#b0b0b0",
+                    400: "#888888",
+                    500: "#6d6d6d",
+                    600: "#5d5d5d",
+                    700: "#4f4f4f",
+                    800: "#454545",
+                    900: "#3d3d3d",
+                    950: "#000000",
                 },
                 secondary: {
                     DEFAULT: "#d32f2f",
