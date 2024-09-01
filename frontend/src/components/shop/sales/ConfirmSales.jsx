@@ -19,7 +19,7 @@ const ConfirmSales = () => {
     const { set_page_permissions } = usePermission();
 
     //////////////////////////////// permissions ////////////////////////////////
-    const permissions = set_page_permissions("clients", "client");
+    const permissions = set_page_permissions("shop", "sale");
     if (!permissions.change && !permissions.view) {
         return (
             <p className="text-lg text-center text-red-600 py-4">
@@ -191,36 +191,40 @@ const ConfirmSales = () => {
                                                             {sale.state ==
                                                             "معلق" ? (
                                                                 <>
-                                                                    <Button
-                                                                        type="button"
-                                                                        color={
-                                                                            "primary"
-                                                                        }
-                                                                        onClick={() =>
-                                                                            handleDrawer(
-                                                                                "confirm",
-                                                                                sale
-                                                                            )
-                                                                        }
-                                                                        className="w-20 h-10 flex justify-center items-center"
-                                                                    >
-                                                                        تأكيد
-                                                                    </Button>
-                                                                    <Button
-                                                                        type="button"
-                                                                        color={
-                                                                            "failure"
-                                                                        }
-                                                                        onClick={() =>
-                                                                            handleDrawer(
-                                                                                "delte",
-                                                                                sale
-                                                                            )
-                                                                        }
-                                                                        className="w-20 h-10 flex justify-center items-center"
-                                                                    >
-                                                                        حذف
-                                                                    </Button>
+                                                                    {permissions.change && (
+                                                                        <Button
+                                                                            type="button"
+                                                                            color={
+                                                                                "primary"
+                                                                            }
+                                                                            onClick={() =>
+                                                                                handleDrawer(
+                                                                                    "confirm",
+                                                                                    sale
+                                                                                )
+                                                                            }
+                                                                            className="w-20 h-10 flex justify-center items-center"
+                                                                        >
+                                                                            تأكيد
+                                                                        </Button>
+                                                                    )}
+                                                                    {permissions.delete && (
+                                                                        <Button
+                                                                            type="button"
+                                                                            color={
+                                                                                "failure"
+                                                                            }
+                                                                            onClick={() =>
+                                                                                handleDrawer(
+                                                                                    "delte",
+                                                                                    sale
+                                                                                )
+                                                                            }
+                                                                            className="w-20 h-10 flex justify-center items-center"
+                                                                        >
+                                                                            حذف
+                                                                        </Button>
+                                                                    )}
                                                                 </>
                                                             ) : (
                                                                 <span
