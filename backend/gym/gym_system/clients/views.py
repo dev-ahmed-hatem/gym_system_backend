@@ -21,6 +21,7 @@ class ClientViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        search = self.request.query_params.get('search', None)
         from_date = self.request.query_params.get('from', None)
         to_date = self.request.query_params.get('to', None)
 
@@ -34,6 +35,14 @@ class ClientViewSet(ModelViewSet):
                 Q(created_at__gte=local_from) &
                 Q(created_at__lte=local_to)
             )
+
+        if search:
+            queryset = queryset.filter(
+                Q(id__icontains=search) |
+                Q(name__icontains=search) |
+                Q(national_id__icontains=search) |
+                Q(phone__icontains=search) |
+                Q(phone2__icontains=search))
         return queryset
 
 

@@ -361,6 +361,7 @@ export const routes = [
                 element: <Products stock={true} />,
                 app_label: "shop",
                 model_name: "product",
+                permissions: "unadjustable",
             },
             {
                 id: 3,

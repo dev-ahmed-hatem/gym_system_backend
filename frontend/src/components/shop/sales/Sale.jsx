@@ -7,8 +7,22 @@ import TablePagination from "../../groups/TablePagination";
 import endpoints from "../../../config/config";
 import { fetch_list_data } from "../../../config/actions";
 import SaleForm from "./SaleForm";
+import { usePermission } from "../../../providers/PermissionProvider";
+import ErrorGroup from "../../groups/ErrorGroup";
 
 const Sale = () => {
+    //////////////////////////////// providers ////////////////////////////////
+    const { set_page_permissions } = usePermission();
+
+    //////////////////////////////// permissions ////////////////////////////////
+    const permissions = set_page_permissions("shop", "sale");
+    if (!permissions.add && !permissions.view) {
+        return (
+            <p className="text-lg text-center text-red-600 py-4">
+                ليس لديك صلاحيات هنا
+            </p>
+        );
+    }
     //////////////////////////////// list data ////////////////////////////////
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -34,7 +48,9 @@ const Sale = () => {
     };
 
     useEffect(() => {
-        get_current_sales();
+        if (permissions.view) {
+            get_current_sales();
+        }
     }, [searchParam, pageNumber, date]);
 
     return (

@@ -117,7 +117,7 @@ const Products = ({ stock }) => {
                         <StockForm callBack={get_current_products} />
                     ) : (
                         <ErrorGroup
-                            title={"إضافة منتج"}
+                            title={"إضافة مخزون منتج"}
                             message={"ليس لديك صلاحية"}
                         />
                     )}
