@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
 from users.serializers import EmployeeReadSerializer
+from financials.models import FinancialItem, Transaction
+from django.utils.timezone import now
 from .models import *
 
 
@@ -65,3 +67,17 @@ class SubscriptionWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = '__all__'
+
+    def create(self, validated_data):
+        subscription = super(SubscriptionWriteSerializer, self).create(validated_data)
+        total_price = self.initial_data.get('total_price')
+
+        # create transaction
+        financial_item, _ = FinancialItem.objects.get_or_create(name="إيرادات اشتراكات", financial_type="incomes",
+                                                                system_related=True)
+        transaction = Transaction.objects.create(category=financial_item,
+                                                 date=now().date(),
+                                                 amount=total_price
+                                                 )
+        transaction.save()
+        return subscription

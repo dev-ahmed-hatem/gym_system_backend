@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Label, Select as FlowbiteSelect, Datepicker } from "flowbite-react";
+import {
+    Label,
+    Select as FlowbiteSelect,
+    Datepicker,
+    TextInput,
+} from "flowbite-react";
 import axios from "../../config/axiosconfig";
 import { useForm, Controller } from "react-hook-form";
 import endpoints from "../../config/config";
@@ -9,6 +14,7 @@ import Loading from "../groups/Loading";
 import FormGroup from "../groups/FormGroup";
 import { useToast } from "../../providers/ToastProvider";
 import { defaultFormSubmission } from "../../config/actions";
+import { FaPercent } from "react-icons/fa";
 
 const transformValues = (defaultValues) => {
     if (defaultValues) {
@@ -71,6 +77,10 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
     const [post, setPost] = useState(false);
     const { showToast } = useToast();
 
+    const [discount, setDiscount] = useState(false);
+    const [discountPercent, setDiscountPercent] = useState(0);
+    const [discountedPrice, setDiscountedPrice] = useState(0);
+
     const {
         handleSubmit,
         trigger,
@@ -81,6 +91,7 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
         control,
         watch,
         setValue,
+        getValues,
     } = useForm({ defaultValues: transformValues(defaultValues) });
     const formFunction = defaultValues ? "edit" : "add";
 
@@ -100,6 +111,17 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
     const currentTrainer = watch("trainer");
     const startDate = watch("start_date");
     const currentReferrer = watch("referrer");
+
+    useEffect(() => {
+        if (discount) {
+            if (currentplan) {
+                setDiscountedPrice(
+                    currentplan?.price -
+                        (currentplan?.price * discountPercent) / 100
+                );
+            }
+        }
+    }, [discountPercent, discount, currentplan]);
 
     const fetchData = (key, search_word) => {
         let endpoint = ``;
@@ -185,6 +207,8 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                 data[i] = null;
             }
         }
+
+        data["total_price"] = discount ? discountedPrice : currentplan?.price;
 
         defaultFormSubmission({
             url: postURL,
@@ -442,6 +466,53 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                                 )}
                             />
                         </div>
+                        <div className="w-full">
+                            <div>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        className="me-4"
+                                        checked={discount}
+                                        onChange={() => setDiscount(!discount)}
+                                    />
+                                    الخصم
+                                </label>
+                            </div>
+                            {discount && (
+                                <>
+                                    <div className="mb-6">
+                                        <label>
+                                            نسبة الخصم :
+                                            <TextInput
+                                                id="discount"
+                                                type="number"
+                                                className="inline-block mx-3"
+                                                rightIcon={FaPercent}
+                                                placeholder="الخصم"
+                                                color={"primary"}
+                                                value={discountPercent}
+                                                onChange={(e) =>
+                                                    setDiscountPercent(
+                                                        parseFloat(
+                                                            e.target.value
+                                                        ) || 0
+                                                    )
+                                                }
+                                                min={0}
+                                                max={100}
+                                            />
+                                        </label>
+                                    </div>
+
+                                    <div>
+                                        <label>
+                                            الصافى :{" "}
+                                            {discountedPrice.toFixed(2)} جنيه
+                                        </label>
+                                    </div>
+                                </>
+                            )}
+                        </div>
 
                         {/* totals */}
                         <div className="w-full h-px my-3 bg-gray-200 border-0"></div>
@@ -504,11 +575,42 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                                     السعر :
                                 </span>
                                 <span className="text-primary font-bold">
-                                    {currentplan
-                                        ? currentplan?.price
+                                    {currentplan ? currentplan?.price : "0"}
+                                </span>
+                            </p>
+                            <p className="mt-2 ms-10">
+                                <span className="inline-block text-black font-bold pe-1 min-w-40">
+                                    نسبة الخصم :
+                                </span>
+                                <span className="text-primary font-bold">
+                                    {discountPercent && discount
+                                        ? `${discountPercent} %`
                                         : "لا يوجد"}
                                 </span>
                             </p>
+                            <p className="mt-2 ms-10">
+                                <span className="inline-block text-black font-bold pe-1 min-w-40">
+                                    الصافى :
+                                </span>
+                                <span className="text-primary font-bold">
+                                    {discount
+                                        ? discountedPrice.toFixed(2)
+                                        : currentplan?.price ? currentplan?.price : 0}
+                                </span>
+                            </p>
+                            {currentplan && (
+                                <div className="w-full my-3">
+                                    <p>
+                                        سيتم إضافة إيراد بقيمة{" "}
+                                        <span className="text-primary font-bold mx-2">
+                                            {discount
+                                                ? discountedPrice.toFixed(2)
+                                                : currentplan?.price}{" "}
+                                        </span>
+                                        بتاريخ اليوم
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </>
                 )}

@@ -187,7 +187,7 @@ const ConfirmSales = () => {
                                                                 </span>
                                                             )}
                                                         </Table.Cell>
-                                                        <Table.Cell className="flex gap-x-2 text-center">
+                                                        <Table.Cell className="flex gap-x-2 text-center items-center">
                                                             {sale.state ==
                                                             "معلق" ? (
                                                                 <>
@@ -208,23 +208,6 @@ const ConfirmSales = () => {
                                                                             تأكيد
                                                                         </Button>
                                                                     )}
-                                                                    {permissions.delete && (
-                                                                        <Button
-                                                                            type="button"
-                                                                            color={
-                                                                                "failure"
-                                                                            }
-                                                                            onClick={() =>
-                                                                                handleDrawer(
-                                                                                    "delte",
-                                                                                    sale
-                                                                                )
-                                                                            }
-                                                                            className="w-20 h-10 flex justify-center items-center"
-                                                                        >
-                                                                            حذف
-                                                                        </Button>
-                                                                    )}
                                                                 </>
                                                             ) : (
                                                                 <span
@@ -234,6 +217,23 @@ const ConfirmSales = () => {
                                                                         sale.confirm_date
                                                                     }
                                                                 </span>
+                                                            )}
+                                                            {permissions.delete && (
+                                                                <Button
+                                                                    type="button"
+                                                                    color={
+                                                                        "failure"
+                                                                    }
+                                                                    onClick={() =>
+                                                                        handleDrawer(
+                                                                            "delte",
+                                                                            sale
+                                                                        )
+                                                                    }
+                                                                    className="w-20 h-10 flex justify-center items-center"
+                                                                >
+                                                                    حذف
+                                                                </Button>
                                                             )}
                                                         </Table.Cell>
                                                     </Table.Row>
