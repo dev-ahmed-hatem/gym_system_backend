@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { FaHome } from "react-icons/fa";
-import PermissionProvider from "../../providers/PermissionProvider";
+// import PermissionProvider from "../../providers/PermissionProvider";
 
 const Section = ({ item }) => {
     return (
@@ -53,9 +53,9 @@ const Section = ({ item }) => {
             </div>
 
             {/* Page Content */}
-            <PermissionProvider>
-                <Outlet />
-            </PermissionProvider>
+            {/* <PermissionProvider> */}
+            <Outlet />
+            {/* </PermissionProvider> */}
         </div>
     );
 };

@@ -433,7 +433,13 @@ export const routes = [
         name: "reports",
         url: "/reports",
         icon: <FaFileAlt />,
-        permissions: [{ id: 1, value: "عرض التقارير", name: "reports" }],
+        permissions: [
+            {
+                id: 1,
+                value: "عرض الإحصائيات والتقارير",
+                name: "reports.view_report",
+            },
+        ],
         children: [
             {
                 id: 1,

@@ -9,6 +9,7 @@ import Loading from "./groups/Loading.jsx";
 import DrawerProvider from "../providers/DrawerProvider.jsx";
 import ToastProvider from "../providers/ToastProvider.jsx";
 import QuickAccess from "./quick-access/QuickAccess.jsx";
+import PermissionProvider from "../providers/PermissionProvider.jsx";
 
 const Main = () => {
     const navigate = useNavigate();
@@ -41,7 +42,11 @@ const Main = () => {
         const navigateToLogin = () => {
             if (location.pathname == "/login") return;
             let next = encodeURI(location.pathname);
-            navigate(`/login?next=${next}`);
+            if (next == "/login") {
+                navigate(`/login`);
+            } else {
+                navigate(`/login?next=${next}`);
+            }
         };
 
         const checkToken = async () => {
@@ -69,17 +74,19 @@ const Main = () => {
             ) : (
                 <ToastProvider>
                     <DrawerProvider>
-                        <Navbar
-                            menuState={menuOpen}
-                            setMenuState={setMenuOpen}
-                        />
-                        <Menu
-                            menuOpen={menuOpen}
-                            setMenuState={setMenuOpen}
-                            ref={menuRef}
-                        />
-                        {isHome ? <Home /> : <Outlet />}
-                        <QuickAccess />
+                        <PermissionProvider>
+                            <Navbar
+                                menuState={menuOpen}
+                                setMenuState={setMenuOpen}
+                            />
+                            <Menu
+                                menuOpen={menuOpen}
+                                setMenuState={setMenuOpen}
+                                ref={menuRef}
+                            />
+                            {isHome ? <Home /> : <Outlet />}
+                            <QuickAccess />
+                        </PermissionProvider>
                     </DrawerProvider>
                 </ToastProvider>
             )}

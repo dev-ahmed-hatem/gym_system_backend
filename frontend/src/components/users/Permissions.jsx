@@ -181,17 +181,21 @@ const Permissions = () => {
                                                                 className="ps-5 lg:ps-7 mb-1 text-base"
                                                             >
                                                                 <Checkbox
-                                                                    id={`${route.app_label}.${permission.name}_${route.model_name}`}
+                                                                    id={
+                                                                        permission.name
+                                                                    }
                                                                     className="me-2"
                                                                     color={
                                                                         "yellow"
                                                                     }
                                                                     defaultChecked={permissions.includes(
-                                                                        `${route.app_label}.${permission.name}_${route.model_name}`
+                                                                        permission.name
                                                                     )}
                                                                 />
                                                                 <Label
-                                                                    htmlFor={`${route.app_label}.${permission.name}_${route.model_name}`}
+                                                                    htmlFor={
+                                                                        permission.name
+                                                                    }
                                                                     className="text-base"
                                                                 >
                                                                     {

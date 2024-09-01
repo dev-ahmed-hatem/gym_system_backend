@@ -45,6 +45,9 @@ const endpoints = {
     add_stock: `${api_base_url}api/shop/add-stock/?`,
     sale_list: `${api_base_url}api/shop/sale/?`,
     offer_list: `${api_base_url}api/shop/offer/?`,
+
+    // reports routing
+    statistics: `${api_base_url}api/reports/statistics/`,
 };
 
 export default endpoints;

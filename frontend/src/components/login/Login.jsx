@@ -60,8 +60,7 @@ const Login = () => {
                     "auth_user",
                     JSON.stringify(userData ?? {})
                 );
-
-                navigate(next ?? "/");
+                navigate(next && next != "/login" ? next : "/");
             })
             .catch((error) => {
                 console.log(error);

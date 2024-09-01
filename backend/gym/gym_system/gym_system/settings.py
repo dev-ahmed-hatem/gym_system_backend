@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'clients',
     'shop',
     'gym_data',
+    'reports',
 
     # Third Parties
     'rest_framework',

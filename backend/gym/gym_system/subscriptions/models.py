@@ -73,8 +73,8 @@ class Subscription(models.Model):
             self.save()
 
     def is_expired(self):
-        return now().date() > self.end_date
+        return localtime(now()).date() > self.end_date
 
     @classmethod
     def get_active_subscriptions(cls):
-        return cls.objects.filter(end_date__gte=now().date())
+        return cls.objects.filter(end_date__gte=localtime(now()).date())
