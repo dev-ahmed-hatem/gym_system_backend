@@ -37,6 +37,13 @@ const SaleForm = ({ callBack }) => {
     }, [selectedProducts, discount, discountPercent]);
 
     const handleGameChange = (product, amount) => {
+        console.log(amount > product.stock);
+
+        if (amount > product.stock) {
+            return;
+        }
+        console.log("here");
+
         setSelectedProducts((prev) => {
             const exists = prev.find((p) => p.id === product.id);
             if (exists) {
@@ -100,7 +107,6 @@ const SaleForm = ({ callBack }) => {
             discount: discountPercent,
             after_discount: discountedPrice,
         };
-        
 
         axios
             .post(endpoints.sale_list, saleData)
@@ -165,6 +171,7 @@ const SaleForm = ({ callBack }) => {
                                         </Table.HeadCell>
                                         <Table.HeadCell>السعر</Table.HeadCell>
                                         <Table.HeadCell>الكمية</Table.HeadCell>
+                                        <Table.HeadCell>متوفر</Table.HeadCell>
                                     </Table.Head>
                                     <Table.Body>
                                         {products.map((product) => (
@@ -173,22 +180,24 @@ const SaleForm = ({ callBack }) => {
                                                 className="mb-8 text-right"
                                             >
                                                 <Table.Cell>
-                                                    <input
-                                                        type="checkbox"
-                                                        id={`product_${product.id}`}
-                                                        onChange={() =>
-                                                            handleCheckboxChange(
-                                                                product
-                                                            )
-                                                        }
-                                                        checked={
-                                                            !!selectedProducts.find(
-                                                                (p) =>
-                                                                    p.id ===
-                                                                    product.id
-                                                            )
-                                                        }
-                                                    />
+                                                    {product.stock > 0 && (
+                                                        <input
+                                                            type="checkbox"
+                                                            id={`product_${product.id}`}
+                                                            onChange={() =>
+                                                                handleCheckboxChange(
+                                                                    product
+                                                                )
+                                                            }
+                                                            checked={
+                                                                !!selectedProducts.find(
+                                                                    (p) =>
+                                                                        p.id ===
+                                                                        product.id
+                                                                )
+                                                            }
+                                                        />
+                                                    )}
                                                 </Table.Cell>
                                                 <Table.Cell>
                                                     <label
@@ -213,52 +222,63 @@ const SaleForm = ({ callBack }) => {
                                                     />
                                                 </Table.Cell>
                                                 <Table.Cell className="min-w-[230px]">
-                                                    <TextInput
-                                                        id="amount"
-                                                        type="number"
-                                                        className="inline-block"
-                                                        rightIcon={
-                                                            TbMultiplier1X
-                                                        }
-                                                        placeholder="العدد"
-                                                        color={
-                                                            errors.amount
-                                                                ? "failure"
-                                                                : "primary"
-                                                        }
-                                                        value={
-                                                            selectedProducts.find(
-                                                                (p) =>
-                                                                    p.id ===
-                                                                    product.id
-                                                            )
-                                                                ? selectedProducts.find(
-                                                                      (p) =>
-                                                                          p.id ===
-                                                                          product.id
-                                                                  ).amount
-                                                                : 0
-                                                        }
-                                                        onChange={(e) =>
-                                                            handleGameChange(
-                                                                product,
-                                                                parseInt(
-                                                                    e.target
-                                                                        .value
+                                                    {product.stock > 0 ? (
+                                                        <TextInput
+                                                            id="amount"
+                                                            type="number"
+                                                            className="inline-block"
+                                                            rightIcon={
+                                                                TbMultiplier1X
+                                                            }
+                                                            placeholder="العدد"
+                                                            color={
+                                                                errors.amount
+                                                                    ? "failure"
+                                                                    : "primary"
+                                                            }
+                                                            value={
+                                                                selectedProducts.find(
+                                                                    (p) =>
+                                                                        p.id ===
+                                                                        product.id
                                                                 )
-                                                            )
-                                                        }
-                                                        onBlur={() =>
-                                                            trigger("amount")
-                                                        }
-                                                        disabled={
-                                                            !selectedProducts.find(
-                                                                (p) =>
-                                                                    p.id ===
-                                                                    product.id
-                                                            )
-                                                        }
-                                                    />
+                                                                    ? selectedProducts.find(
+                                                                          (p) =>
+                                                                              p.id ===
+                                                                              product.id
+                                                                      ).amount
+                                                                    : 0
+                                                            }
+                                                            onChange={(e) =>
+                                                                handleGameChange(
+                                                                    product,
+                                                                    parseInt(
+                                                                        e.target
+                                                                            .value
+                                                                    )
+                                                                )
+                                                            }
+                                                            onBlur={() =>
+                                                                trigger(
+                                                                    "amount"
+                                                                )
+                                                            }
+                                                            disabled={
+                                                                !selectedProducts.find(
+                                                                    (p) =>
+                                                                        p.id ===
+                                                                        product.id
+                                                                )
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        <span className="text-secondary">
+                                                            غير متوفر
+                                                        </span>
+                                                    )}
+                                                </Table.Cell>
+                                                <Table.Cell>
+                                                    {product.stock}
                                                 </Table.Cell>
                                             </Table.Row>
                                         ))}
