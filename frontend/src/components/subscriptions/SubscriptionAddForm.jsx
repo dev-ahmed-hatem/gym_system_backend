@@ -71,6 +71,7 @@ const transformValues = (defaultValues) => {
 };
 
 const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
+    const [blockedClient, setBlockedClient] = useState(false);
     const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState(false);
     const [submitError, setSubmitError] = useState(false);
@@ -165,6 +166,9 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                             : `${instance.classes_no} (حصة)`;
                         option.price = instance?.price;
                     }
+                    if (key == "clients") {
+                        option.is_blocked = instance.is_blocked;
+                    }
                     options.push({
                         value: instance.id,
                         ...option,
@@ -194,6 +198,11 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
     }, [subType]);
 
     const onSubmit = (data) => {
+        setBlockedClient(false);
+        if (currentClient.is_blocked) {
+            setBlockedClient(true);
+            return;
+        }
         if (formFunction === "edit" && defaultValues?.is_expired) {
             setSubmitError(true);
             return;
@@ -595,7 +604,9 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                                 <span className="text-primary font-bold">
                                     {discount
                                         ? discountedPrice.toFixed(2)
-                                        : currentplan?.price ? currentplan?.price : 0}
+                                        : currentplan?.price
+                                        ? currentplan?.price
+                                        : 0}
                                 </span>
                             </p>
                             {currentplan && (
@@ -623,6 +634,11 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                             غير مسموح بالتعديل (اشتراك منتهى)
                         </p>
                     </>
+                )}
+                {blockedClient && (
+                    <p className="w-full text-base lg:text-lg text-center text-red-600 py-4">
+                        عميل محظور
+                    </p>
                 )}
             </FormGroup>
         </>

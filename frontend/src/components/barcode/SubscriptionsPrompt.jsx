@@ -130,7 +130,11 @@ const SubscriptionsPrompt = ({ subscriptions, client, callBack }) => {
                 كود العميل :{" "}
                 <span className="text-primary font-bold ms-2">{client.id}</span>
             </h1>
-            {subscriptions.length == 0 ? (
+            {client.is_blocked ? (
+                <p className="text-base lg:text-2xl text-center text-red-600 py-4">
+                    هذا العميل محظور
+                </p>
+            ) : subscriptions.length == 0 ? (
                 <p className="text-base lg:text-lg text-center text-red-600 py-4">
                     لا يوجد اشتراكات مفعلة حاليا
                 </p>
