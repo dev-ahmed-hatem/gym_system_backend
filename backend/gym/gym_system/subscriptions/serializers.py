@@ -10,6 +10,7 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='subscription-plan-detail', lookup_field='pk')
     sub_type = serializers.SerializerMethodField()
     duration_display = serializers.SerializerMethodField()
+    num_subscriptions = serializers.SerializerMethodField()
 
     class Meta:
         model = SubscriptionPlan
@@ -23,6 +24,11 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
             return f"{obj.days} {'يوم' if obj.days > 10 else 'أيام'}"
         else:
             return f"{obj.classes_no} {'حصة' if obj.classes_no > 10 else 'حصص'}"
+
+    def get_num_subscriptions(self, obj):
+        if hasattr(obj, 'num_subscriptions'):
+            return obj.num_subscriptions
+        return None
 
     def validate(self, attrs):
         days = attrs.get('days')

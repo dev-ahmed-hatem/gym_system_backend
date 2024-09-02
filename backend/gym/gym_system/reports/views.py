@@ -1,3 +1,5 @@
+from clients.serializers import ClientReadSerializer
+from django.db.models import Sum, Q, Count
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -8,8 +10,9 @@ from financials.models import *
 from financials.serializers import *
 from subscriptions.models import *
 from subscriptions.serializers import *
-from shop.models import Sale
-from django.utils.timezone import datetime, now, localtime, localdate
+from shop.models import Sale, Product
+from shop.serializers import *
+from django.utils.timezone import datetime, now, localtime, localdate, make_aware
 
 
 @api_view(['GET'])
@@ -50,19 +53,51 @@ def statistics(request):
 @permission_classes([IsAuthenticated])
 def daily_reports(request):
     day = request.GET.get('day')
-    day = datetime.strptime(day, '%Y-%m-%d').date()
+    if day:
+        day = datetime.strptime(day, '%Y-%m-%d').replace(hour=0, minute=0, second=0, microsecond=0)
+        day = localtime(make_aware(day))
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
     response_data = {}
 
     # Filter Transactions
     expenses = Transaction.objects.filter(date=day, category__financial_type="expenses")
     incomes = Transaction.objects.filter(date=day, category__financial_type="incomes")
-    expenses_serialized = TransactionReadSerializer(expenses, many=True).data
-    incomes_serialized = TransactionReadSerializer(incomes, many=True).data
-    response_data['expenses_serialized'] = expenses_serialized
-    response_data['incomes_serialized'] = incomes_serialized
+    total_expenses = sum(t.amount for t in expenses)
+    total_incomes = sum(t.amount for t in incomes)
+    expenses_serialized = TransactionReadSerializer(expenses, context={'request': request}, many=True).data
+    incomes_serialized = TransactionReadSerializer(incomes, context={'request': request}, many=True).data
+    response_data['expenses'] = expenses_serialized
+    response_data['total_expenses'] = total_expenses
+    response_data['incomes'] = incomes_serialized
+    response_data['total_incomes'] = total_incomes
 
     # Filter Subscriptions
-    subscriptions = Subscription.objects.filter(start_date=day)
-    subscriptions_serialized = SubscriptionReadSerializer(subscriptions, many=True).data
-    response_data['subscriptions_serialized'] = subscriptions_serialized
+    # subscriptions = Subscription.objects.filter(start_date=day)
+    subscriptions = SubscriptionPlan.objects.annotate(
+        num_subscriptions=Count('subscriptions', filter=Q(subscriptions__start_date=day))).filter(
+        num_subscriptions__gt=0)
+    total_subscriptions = sum(p.num_subscriptions for p in subscriptions)
+    subscriptions_serialized = SubscriptionPlanSerializer(subscriptions, context={'request': request}, many=True).data
+    response_data['subscriptions'] = subscriptions_serialized
+    response_data['total_subscriptions'] = total_subscriptions
+
+    # Filter Clients
+    clients = Client.objects.filter(created_at__date=day)
+    clients_serialized = ClientReadSerializer(clients, context={'request': request}, many=True).data
+    response_data['clients'] = clients_serialized
+    response_data['total_clients'] = len(clients)
+
+    # Filter Sales
+    sales = Sale.objects.filter(created_at__date=day, state="sold")
+    sales_serialized = SaleSerializer(sales, context={'request': request}, many=True).data
+    response_data['sales'] = sales_serialized
+    response_data['total_sales'] = sum(s.total_price for s in sales)
+
+    # Filter Products
+    products = Product.objects.annotate(total_sold=Sum('saleitem__amount'),
+                                        filter=Q(saleitem__sale__created_at__date=day)).filter(total_sold__gt=0)
+    products_serialized = ProductReadSerializer(products, context={'request': request}, many=True).data
+    response_data['products'] = products_serialized
+
     return Response(response_data, status=status.HTTP_200_OK)

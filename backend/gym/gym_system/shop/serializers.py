@@ -20,10 +20,16 @@ class ProductCategorySerializer(serializers.ModelSerializer):
 class ProductReadSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='product-detail', lookup_field='pk')
     category = ProductCategorySerializer()
+    total_sold = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         fields = '__all__'
+
+    def get_total_sold(self, obj):
+        if hasattr(obj, 'total_sold'):
+            return obj.total_sold
+        return None
 
 
 class ProductWriteSerializer(serializers.ModelSerializer):

@@ -156,7 +156,7 @@ const Transactions = ({ type }) => {
                             >
                                 {data.count == 0 ? (
                                     <Table.Body>
-                                        <Table.Row className="text-lg text-center text-gray-800 py-3 font-bold bg-red-500">
+                                        <Table.Row className="text-lg text-center py-3 font-bold">
                                             <Table.Cell>
                                                 لا توجد بيانات
                                             </Table.Cell>
