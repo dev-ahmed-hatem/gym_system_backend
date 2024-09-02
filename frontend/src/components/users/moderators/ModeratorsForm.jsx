@@ -22,7 +22,9 @@ const ModeratorsForm = ({ postURL, defaultValues, callBack }) => {
         clearErrors,
         reset,
         control,
-    } = useForm({ defaultValues: defaultValues });
+    } = useForm({
+        defaultValues: { ...defaultValues, ...defaultValues?.user },
+    });
     const formFunction = defaultValues ? "edit" : "add";
     const requestMethod = formFunction == "add" ? axios.post : axios.patch;
     const password = watch("password");
@@ -54,7 +56,10 @@ const ModeratorsForm = ({ postURL, defaultValues, callBack }) => {
             },
             employee: data.employee.value,
         };
-        console.log(data);
+
+        if (defaultValues?.user?.username == data.user.username) {
+            delete data.user.username;
+        }
 
         setPost(true);
         requestMethod(postURL, data)
@@ -121,7 +126,7 @@ const ModeratorsForm = ({ postURL, defaultValues, callBack }) => {
             .get(url)
             .then((response) => {
                 response.data.results.map((employee) => {
-                    options.push({ value: employee.id, label: employee.name });
+                    options.push({ value: employee.id, label: `${employee.id} - ${employee.name}` });
                 });
                 setEmployeesList(options);
             })

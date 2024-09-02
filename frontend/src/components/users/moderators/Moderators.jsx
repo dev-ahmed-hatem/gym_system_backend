@@ -97,7 +97,7 @@ const Moderators = () => {
             {permissions.add ? (
                 <ModeratorsForm
                     postURL={endpoints.moderator_list}
-                    callBack={fetch_list_data}
+                    callBack={get_current_moderators}
                 />
             ) : (
                 <ErrorGroup title={"إضافة مشرف"} message={"ليس لديك صلاحية"} />
@@ -138,6 +138,9 @@ const Moderators = () => {
                                                 اسم المستخدم
                                             </Table.HeadCell>
                                             <Table.HeadCell>
+                                                الكود
+                                            </Table.HeadCell>
+                                            <Table.HeadCell>
                                                 رقم الهوية
                                             </Table.HeadCell>
                                             <Table.HeadCell>
@@ -171,6 +174,15 @@ const Moderators = () => {
                                                                 .username ? (
                                                                 moderator.user
                                                                     .username
+                                                            ) : (
+                                                                <span className="text-red-600">
+                                                                    غير مسجل
+                                                                </span>
+                                                            )}
+                                                        </Table.Cell>
+                                                        <Table.Cell>
+                                                            {moderator.id ? (
+                                                                moderator.id
                                                             ) : (
                                                                 <span className="text-red-600">
                                                                     غير مسجل

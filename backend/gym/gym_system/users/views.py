@@ -214,3 +214,12 @@ class ModeratorViewSet(ModelViewSet):
         if self.action in ['create', 'update', 'partial_update']:
             return ModeratorWriteSerializer
         return ModeratorReadSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if instance:
+            user: User = instance.user
+            user.delete()
+            instance.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)

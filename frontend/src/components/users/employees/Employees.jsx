@@ -135,6 +135,9 @@ const Employees = () => {
                                                 اسم الموظف
                                             </Table.HeadCell>
                                             <Table.HeadCell>
+                                                الكود
+                                            </Table.HeadCell>
+                                            <Table.HeadCell>
                                                 نوع الموظف
                                             </Table.HeadCell>
                                             <Table.HeadCell>
@@ -142,9 +145,6 @@ const Employees = () => {
                                             </Table.HeadCell>
                                             <Table.HeadCell>
                                                 رقم الهاتف
-                                            </Table.HeadCell>
-                                            <Table.HeadCell>
-                                                الجنسية
                                             </Table.HeadCell>
                                             <Table.HeadCell>
                                                 إجراءات
@@ -167,10 +167,8 @@ const Employees = () => {
                                                             )}
                                                         </Table.Cell>
                                                         <Table.Cell>
-                                                            {employee.emp_type ? (
-                                                                employee
-                                                                    .emp_type
-                                                                    .name
+                                                            {employee.id ? (
+                                                                employee.id
                                                             ) : (
                                                                 <span className="text-red-600">
                                                                     غير مسجل
@@ -178,8 +176,10 @@ const Employees = () => {
                                                             )}
                                                         </Table.Cell>
                                                         <Table.Cell>
-                                                            {employee.national_id ? (
-                                                                employee.national_id
+                                                            {employee.emp_type ? (
+                                                                employee
+                                                                    .emp_type
+                                                                    .name
                                                             ) : (
                                                                 <span className="text-red-600">
                                                                     غير مسجل
