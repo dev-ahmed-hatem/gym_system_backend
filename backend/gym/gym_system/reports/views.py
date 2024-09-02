@@ -49,20 +49,9 @@ def statistics(request):
     return Response(response_data, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def daily_reports(request):
-    day = request.GET.get('day')
-    if day:
-        day = datetime.strptime(day, '%Y-%m-%d').replace(hour=0, minute=0, second=0, microsecond=0)
-        day = localtime(make_aware(day))
-    else:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+def get_response_data(request, incomes, expenses, subscriptions, clients, sales, products):
     response_data = {}
 
-    # Filter Transactions
-    expenses = Transaction.objects.filter(date=day, category__financial_type="expenses")
-    incomes = Transaction.objects.filter(date=day, category__financial_type="incomes")
     total_expenses = sum(t.amount for t in expenses)
     total_incomes = sum(t.amount for t in incomes)
     expenses_serialized = TransactionReadSerializer(expenses, context={'request': request}, many=True).data
@@ -72,32 +61,56 @@ def daily_reports(request):
     response_data['incomes'] = incomes_serialized
     response_data['total_incomes'] = total_incomes
 
-    # Filter Subscriptions
-    # subscriptions = Subscription.objects.filter(start_date=day)
-    subscriptions = SubscriptionPlan.objects.annotate(
-        num_subscriptions=Count('subscriptions', filter=Q(subscriptions__start_date=day))).filter(
-        num_subscriptions__gt=0)
     total_subscriptions = sum(p.num_subscriptions for p in subscriptions)
     subscriptions_serialized = SubscriptionPlanSerializer(subscriptions, context={'request': request}, many=True).data
     response_data['subscriptions'] = subscriptions_serialized
     response_data['total_subscriptions'] = total_subscriptions
 
-    # Filter Clients
-    clients = Client.objects.filter(created_at__date=day)
     clients_serialized = ClientReadSerializer(clients, context={'request': request}, many=True).data
     response_data['clients'] = clients_serialized
     response_data['total_clients'] = len(clients)
 
-    # Filter Sales
-    sales = Sale.objects.filter(created_at__date=day, state="sold")
     sales_serialized = SaleSerializer(sales, context={'request': request}, many=True).data
     response_data['sales'] = sales_serialized
     response_data['total_sales'] = sum(s.total_price for s in sales)
 
-    # Filter Products
-    products = Product.objects.annotate(total_sold=Sum('saleitem__amount'),
-                                        filter=Q(saleitem__sale__created_at__date=day)).filter(total_sold__gt=0)
     products_serialized = ProductReadSerializer(products, context={'request': request}, many=True).data
     response_data['products'] = products_serialized
 
     return Response(response_data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def daily_reports(request):
+    day = request.GET.get('day')
+    if day:
+        day = datetime.strptime(day, '%Y-%m-%d').replace(hour=0, minute=0, second=0, microsecond=0)
+        day = localtime(make_aware(day))
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # Filter Transactions
+    expenses = Transaction.objects.filter(date=day, category__financial_type="expenses")
+    incomes = Transaction.objects.filter(date=day, category__financial_type="incomes")
+
+    # Filter Subscriptions
+    # subscriptions = Subscription.objects.filter(start_date=day)
+    subscriptions = SubscriptionPlan.objects.annotate(
+        num_subscriptions=Count('subscriptions', filter=Q(subscriptions__start_date=day))).filter(
+        num_subscriptions__gt=0)
+
+    # Filter Clients
+    clients = Client.objects.filter(created_at__date=day)
+
+    # Filter Sales
+    sales = Sale.objects.filter(created_at__date=day, state="sold")
+
+    # Filter Products
+    products = (Product.objects.annotate(
+        total_sold=Sum('saleitem__amount',
+                       filter=Q(saleitem__sale__created_at__date=day) &
+                              Q(saleitem__sale__state__exact="sold")))
+                .filter(total_sold__gt=0))
+
+    return get_response_data(request, expenses, incomes, subscriptions, clients, sales, products)

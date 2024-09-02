@@ -54,7 +54,7 @@ import SubscriptionFilter from "../components/subscriptions/SubscriptionFilter";
 import Scanner from "../components/barcode/Scanner";
 import { LuFileScan, LuScanLine } from "react-icons/lu";
 import BarcodeReport from "../components/barcode/AttendanceReport";
-import DailyReport from "../components/reports/DailyReport";
+import Report from "../components/reports/Report";
 import Sale from "../components/shop/sales/Sale";
 import ConfirmSales from "../components/shop/sales/ConfirmSales";
 import Offers from "../components/settings/offers/Offers";
@@ -448,7 +448,7 @@ export const routes = [
                 name: "daily-reports",
                 url: "/reports/daily",
                 icon: <MdAssignment />,
-                element: <DailyReport />,
+                element: <Report />,
             },
             {
                 id: 2,
