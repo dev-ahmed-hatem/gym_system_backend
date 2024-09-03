@@ -80,83 +80,85 @@ const Report = ({ category }) => {
                         <div className="flex flex-col gap-y-5">
                             <div className="lists flex flex-wrap gap-x-10 gap-y-2 my-4">
                                 <div className="text-lg">القوائم :</div>
-                                <div className="flex gap-x-2 items-center">
-                                    <Checkbox
-                                        id="incomes"
-                                        onChange={handleChange}
-                                        color="yellow"
-                                        checked={lists.incomes}
-                                    />
-                                    <Label
-                                        htmlFor="incomes"
-                                        value="الإيرادات"
-                                        className="text-lg"
-                                    />
-                                </div>
-                                <div className="flex gap-x-3 items-center">
-                                    <Checkbox
-                                        id="expenses"
-                                        onChange={handleChange}
-                                        color="yellow"
-                                        checked={lists.expenses}
-                                    />
-                                    <Label
-                                        htmlFor="expenses"
-                                        value="المصروفات"
-                                        className="text-lg"
-                                    />
-                                </div>
-                                <div className="flex gap-x-3 items-center">
-                                    <Checkbox
-                                        id="subscriptions"
-                                        onChange={handleChange}
-                                        color="yellow"
-                                        checked={lists.subscriptions}
-                                    />
-                                    <Label
-                                        htmlFor="subscriptions"
-                                        value="الاشتراكات"
-                                        className="text-lg"
-                                    />
-                                </div>
-                                <div className="flex gap-x-3 items-center">
-                                    <Checkbox
-                                        id="clients"
-                                        onChange={handleChange}
-                                        color="yellow"
-                                        checked={lists.clients}
-                                    />
-                                    <Label
-                                        htmlFor="clients"
-                                        value="الأعضاء"
-                                        className="text-lg"
-                                    />
-                                </div>
-                                <div className="flex gap-x-3 items-center">
-                                    <Checkbox
-                                        id="sales"
-                                        onChange={handleChange}
-                                        color="yellow"
-                                        checked={lists.sales}
-                                    />
-                                    <Label
-                                        htmlFor="sales"
-                                        value="طلبات المنتجات"
-                                        className="text-lg"
-                                    />
-                                </div>
-                                <div className="flex gap-x-3 items-center">
-                                    <Checkbox
-                                        id="products"
-                                        onChange={handleChange}
-                                        color="yellow"
-                                        checked={lists.products}
-                                    />
-                                    <Label
-                                        htmlFor="products"
-                                        value="المنتجات"
-                                        className="text-lg"
-                                    />
+                                <div className="cont flex flex-wrap gap-x-10 gap-y-2">
+                                    <div className="flex gap-x-2 items-center max-md:w-[40%]">
+                                        <Checkbox
+                                            id="incomes"
+                                            onChange={handleChange}
+                                            color="yellow"
+                                            checked={lists.incomes}
+                                        />
+                                        <Label
+                                            htmlFor="incomes"
+                                            value="الإيرادات"
+                                            className="text-lg"
+                                        />
+                                    </div>
+                                    <div className="flex gap-x-3 items-center max-md:w-[40%]">
+                                        <Checkbox
+                                            id="expenses"
+                                            onChange={handleChange}
+                                            color="yellow"
+                                            checked={lists.expenses}
+                                        />
+                                        <Label
+                                            htmlFor="expenses"
+                                            value="المصروفات"
+                                            className="text-lg"
+                                        />
+                                    </div>
+                                    <div className="flex gap-x-3 items-center max-md:w-[40%]">
+                                        <Checkbox
+                                            id="subscriptions"
+                                            onChange={handleChange}
+                                            color="yellow"
+                                            checked={lists.subscriptions}
+                                        />
+                                        <Label
+                                            htmlFor="subscriptions"
+                                            value="الاشتراكات"
+                                            className="text-lg"
+                                        />
+                                    </div>
+                                    <div className="flex gap-x-3 items-center max-md:w-[40%]">
+                                        <Checkbox
+                                            id="clients"
+                                            onChange={handleChange}
+                                            color="yellow"
+                                            checked={lists.clients}
+                                        />
+                                        <Label
+                                            htmlFor="clients"
+                                            value="الأعضاء"
+                                            className="text-lg"
+                                        />
+                                    </div>
+                                    <div className="flex gap-x-3 items-center max-md:w-[40%]">
+                                        <Checkbox
+                                            id="sales"
+                                            onChange={handleChange}
+                                            color="yellow"
+                                            checked={lists.sales}
+                                        />
+                                        <Label
+                                            htmlFor="sales"
+                                            value="طلبات المنتجات"
+                                            className="text-lg"
+                                        />
+                                    </div>
+                                    <div className="flex gap-x-3 items-center max-md:w-[40%]">
+                                        <Checkbox
+                                            id="products"
+                                            onChange={handleChange}
+                                            color="yellow"
+                                            checked={lists.products}
+                                        />
+                                        <Label
+                                            htmlFor="products"
+                                            value="المنتجات"
+                                            className="text-lg"
+                                        />
+                                    </div>
                                 </div>
                             </div>
 

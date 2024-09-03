@@ -114,7 +114,7 @@ def daily_reports(request):
                               Q(saleitem__sale__state__exact="sold")))
                 .filter(total_sold__gt=0))
 
-    return get_response_data(request, expenses, incomes, subscriptions, clients, sales, products)
+    return get_response_data(request, incomes, expenses, subscriptions, clients, sales, products)
 
 
 @api_view(['GET'])
@@ -167,7 +167,7 @@ def duration_reports(request):
                               Q(saleitem__sale__state__exact="sold")))
                 .filter(total_sold__gt=0))
 
-    return get_response_data(request, expenses, incomes, subscriptions, clients, sales, products)
+    return get_response_data(request, incomes, expenses, subscriptions, clients, sales, products)
 
 
 @api_view(['GET'])
