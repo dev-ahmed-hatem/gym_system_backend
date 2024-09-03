@@ -41,8 +41,8 @@ const ProductCategories = () => {
                 "تعديل فئة",
                 MdEdit,
                 <ProductCategoriesForm
-                    postURL={category.url}
-                    defaultValues={category}
+                    postURL={item.url}
+                    defaultValues={item}
                     callBack={() => {
                         get_current_categories();
                         closeDrawer();

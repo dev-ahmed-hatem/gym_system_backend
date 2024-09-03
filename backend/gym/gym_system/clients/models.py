@@ -3,6 +3,7 @@ from datetime import date
 from django.utils.timezone import now
 from django.conf import settings
 import qrcode
+import os
 from barcode import get_barcode_class, writer
 from io import BytesIO
 from django.core.files.base import File

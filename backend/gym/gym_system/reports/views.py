@@ -91,8 +91,6 @@ def daily_reports(request):
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    print(day)
-
     # Filter Transactions
     expenses = Transaction.objects.filter(date=day, category__financial_type="expenses")
     incomes = Transaction.objects.filter(date=day, category__financial_type="incomes")
