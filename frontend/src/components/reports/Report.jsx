@@ -79,9 +79,9 @@ const Report = ({ category }) => {
                     ) : (
                         <div className="flex flex-col gap-y-5">
                             <div className="lists flex flex-wrap gap-x-10 gap-y-2 my-4">
-                                <div className="text-lg">القوائم :</div>
+                                <div className="text-base md:text-lg">القوائم :</div>
                                 <div className="cont flex flex-wrap gap-x-10 gap-y-2">
-                                    <div className="flex gap-x-2 items-center max-md:w-[40%]">
+                                    <div className="flex gap-x-2 items-center max-md:w-[43%]">
                                         <Checkbox
                                             id="incomes"
                                             onChange={handleChange}
@@ -94,7 +94,7 @@ const Report = ({ category }) => {
                                             className="text-lg"
                                         />
                                     </div>
-                                    <div className="flex gap-x-3 items-center max-md:w-[40%]">
+                                    <div className="flex gap-x-3 items-center max-md:w-[43%]">
                                         <Checkbox
                                             id="expenses"
                                             onChange={handleChange}
@@ -107,7 +107,7 @@ const Report = ({ category }) => {
                                             className="text-lg"
                                         />
                                     </div>
-                                    <div className="flex gap-x-3 items-center max-md:w-[40%]">
+                                    <div className="flex gap-x-3 items-center max-md:w-[43%]">
                                         <Checkbox
                                             id="subscriptions"
                                             onChange={handleChange}
@@ -120,7 +120,7 @@ const Report = ({ category }) => {
                                             className="text-lg"
                                         />
                                     </div>
-                                    <div className="flex gap-x-3 items-center max-md:w-[40%]">
+                                    <div className="flex gap-x-3 items-center max-md:w-[43%]">
                                         <Checkbox
                                             id="clients"
                                             onChange={handleChange}
@@ -133,7 +133,7 @@ const Report = ({ category }) => {
                                             className="text-lg"
                                         />
                                     </div>
-                                    <div className="flex gap-x-3 items-center max-md:w-[40%]">
+                                    <div className="flex gap-x-3 items-center max-md:w-[43%]">
                                         <Checkbox
                                             id="sales"
                                             onChange={handleChange}
@@ -146,7 +146,7 @@ const Report = ({ category }) => {
                                             className="text-lg"
                                         />
                                     </div>
-                                    <div className="flex gap-x-3 items-center max-md:w-[40%]">
+                                    <div className="flex gap-x-3 items-center max-md:w-[43%]">
                                         <Checkbox
                                             id="products"
                                             onChange={handleChange}

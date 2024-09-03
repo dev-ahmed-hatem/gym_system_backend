@@ -86,8 +86,8 @@ def get_response_data(request, incomes, expenses, subscriptions, clients, sales,
 def daily_reports(request):
     day = request.GET.get('day')
     if day:
-        day = datetime.strptime(day, '%Y-%m-%d').replace(hour=0, minute=0, second=0, microsecond=0)
-        day = localtime(make_aware(day))
+        day = datetime.strptime(day, '%Y-%m-%d')
+        day = localtime(make_aware(day)).replace(hour=0, minute=0, second=0, microsecond=0)
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
