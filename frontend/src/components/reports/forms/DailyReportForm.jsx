@@ -15,7 +15,7 @@ const DailyReportForm = ({ setLoading, setFetchError, setData }) => {
     } = useForm({ defaultValues: { day: today } });
 
     const onSubmit = (data) => {
-        const url = `${endpoints.daily_reports}day=${data.day}`;
+        const url = `${endpoints.duration_reports}from=${data.day}&to=${data.day}`;
         setPost(true);
         setLoading(true);
 
