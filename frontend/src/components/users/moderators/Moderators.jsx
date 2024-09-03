@@ -181,8 +181,8 @@ const Moderators = () => {
                                                             )}
                                                         </Table.Cell>
                                                         <Table.Cell>
-                                                            {moderator.id ? (
-                                                                moderator.id
+                                                            {moderator?.employee?.id ? (
+                                                                moderator?.employee?.id
                                                             ) : (
                                                                 <span className="text-red-600">
                                                                     غير مسجل

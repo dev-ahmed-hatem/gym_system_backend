@@ -49,6 +49,8 @@ const endpoints = {
     // reports routing
     statistics: `${api_base_url}api/reports/statistics/`,
     daily_reports: `${api_base_url}api/reports/daily-reports/?`,
+    duration_reports: `${api_base_url}api/reports/duration-reports/?`,
+    birthdays: `${api_base_url}api/reports/birthdays/?`,
 };
 
 export default endpoints;

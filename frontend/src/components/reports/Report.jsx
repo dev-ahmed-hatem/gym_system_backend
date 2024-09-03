@@ -5,8 +5,10 @@ import ViewGroup from "../groups/ViewGroup";
 import { usePermission } from "../../providers/PermissionProvider";
 import ErrorGroup from "../groups/ErrorGroup";
 import DailyReportForm from "./forms/DailyReportForm";
+import MonthlyReportForm from "./forms/MonthlyReportForm";
+import DurationReportForm from "./forms/DurationReportForm";
 
-const Report = () => {
+const Report = ({ category }) => {
     //////////////////////////////// list data ////////////////////////////////
     const [loading, setLoading] = useState(false);
     const [fetchError, setFetchError] = useState(null);
@@ -22,7 +24,7 @@ const Report = () => {
 
     //////////////////////////////// permissions ////////////////////////////////
     const { set_page_permissions } = usePermission();
-    const permissions = set_page_permissions("clients", "client");
+    const permissions = set_page_permissions("reports", "report");
 
     if (!permissions.view)
         return (
@@ -43,11 +45,27 @@ const Report = () => {
     return (
         <>
             {/* search form */}
-            <DailyReportForm
-                setLoading={setLoading}
-                setFetchError={setFetchError}
-                setData={setData}
-            />
+            {category == "day" && (
+                <DailyReportForm
+                    setLoading={setLoading}
+                    setFetchError={setFetchError}
+                    setData={setData}
+                />
+            )}
+            {category == "month" && (
+                <MonthlyReportForm
+                    setLoading={setLoading}
+                    setFetchError={setFetchError}
+                    setData={setData}
+                />
+            )}
+            {category == "duration" && (
+                <DurationReportForm
+                    setLoading={setLoading}
+                    setFetchError={setFetchError}
+                    setData={setData}
+                />
+            )}
 
             {/* table data */}
             {(data || loading || fetchError) && (

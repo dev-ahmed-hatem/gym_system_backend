@@ -76,7 +76,7 @@ const Permissions = () => {
                 response.data.results.map((moderator) => {
                     options.push({
                         value: moderator.id,
-                        label: `${moderator.id} - ${moderator.employee.name}`,
+                        label: `${moderator?.employee?.id} - ${moderator.employee.name}`,
                         username: moderator.user.username,
                     });
                 });

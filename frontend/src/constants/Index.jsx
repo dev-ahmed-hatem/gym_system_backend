@@ -59,6 +59,7 @@ import Sale from "../components/shop/sales/Sale";
 import ConfirmSales from "../components/shop/sales/ConfirmSales";
 import Offers from "../components/settings/offers/Offers";
 import GymData from "../components/settings/gym-data/GymData";
+import Birthdays from "../components/reports/birthdays/Birthdays";
 
 export const routes = [
     {
@@ -448,7 +449,7 @@ export const routes = [
                 name: "daily-reports",
                 url: "/reports/daily",
                 icon: <MdAssignment />,
-                element: <Report />,
+                element: <Report category={"day"} key={"day"} />,
             },
             {
                 id: 2,
@@ -456,6 +457,7 @@ export const routes = [
                 name: "monthly-reports",
                 url: "/reports/monthly",
                 icon: <FaRegFileAlt />,
+                element: <Report category={"month"} key={"month"} />,
             },
             {
                 id: 3,
@@ -463,20 +465,15 @@ export const routes = [
                 name: "within-duration-reports",
                 url: "/reports/within-duration",
                 icon: <TbReport />,
+                element: <Report category={"duration"} key={"duration"} />,
             },
             {
                 id: 4,
-                title: "تقارير الاشتراكات",
-                name: "subscription-reports",
-                url: "/reports/subscriptions",
-                icon: <MdSubscriptions />,
-            },
-            {
-                id: 5,
-                title: "تقارير أعياد الميلاد",
+                title: "أعياد الميلاد",
                 name: "birthday-reports",
                 url: "/reports/birthdays",
                 icon: <FaBirthdayCake />,
+                element: <Birthdays />,
             },
         ],
     },

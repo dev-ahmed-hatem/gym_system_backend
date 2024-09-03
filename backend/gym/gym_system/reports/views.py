@@ -13,6 +13,7 @@ from subscriptions.serializers import *
 from shop.models import Sale, Product
 from shop.serializers import *
 from django.utils.timezone import datetime, now, localtime, localdate, make_aware
+from calendar import monthrange
 
 
 @api_view(['GET'])
@@ -114,3 +115,65 @@ def daily_reports(request):
                 .filter(total_sold__gt=0))
 
     return get_response_data(request, expenses, incomes, subscriptions, clients, sales, products)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def duration_reports(request):
+    # in case of month report
+    month = request.GET.get('month')
+    year = request.GET.get('year')
+
+    # in case of duration report
+    from_date = request.GET.get('from', None)
+    to_date = request.GET.get('to', None)
+
+    if month and year:
+        month = int(month)
+        year = int(year)
+        start_date = datetime(year, month, 1, 0, 0, 0, 0)
+        end_date = datetime(year, month, monthrange(year, month)[1], 23, 59, 59, 999999)
+    elif from_date and to_date:
+        start_date = datetime.strptime(from_date, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0)
+        end_date = datetime.strptime(to_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=999999)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    local_start = localtime(make_aware(start_date))
+    local_end = localtime(make_aware(end_date))
+
+    # Filter Transactions
+    expenses = Transaction.objects.filter(date__gte=start_date, date__lte=end_date, category__financial_type="expenses")
+    incomes = Transaction.objects.filter(date__gte=start_date, date__lte=end_date, category__financial_type="incomes")
+
+    # Filter Subscriptions
+    # subscriptions = Subscription.objects.filter(start_date=day)
+    subscriptions = SubscriptionPlan.objects.annotate(
+        num_subscriptions=Count('subscriptions', filter=Q(subscriptions__start_date__gte=start_date) &
+                                                        Q(subscriptions__start_date__lte=end_date))).filter(
+        num_subscriptions__gt=0)
+
+    # Filter Clients
+    clients = Client.objects.filter(created_at__date__gte=start_date, created_at__date__lte=end_date)
+
+    # Filter Sales
+    sales = Sale.objects.filter(created_at__date__gte=start_date, created_at__date__lte=end_date, state="sold")
+
+    # Filter Products
+    products = (Product.objects.annotate(
+        total_sold=Sum('saleitem__amount',
+                       filter=Q(saleitem__sale__created_at__date__gte=start_date) &
+                              Q(saleitem__sale__created_at__date__lte=end_date) &
+                              Q(saleitem__sale__state__exact="sold")))
+                .filter(total_sold__gt=0))
+
+    return get_response_data(request, expenses, incomes, subscriptions, clients, sales, products)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def birthdays(request):
+    today = localdate(now())
+    clients = Client.objects.filter(birth_date__day=today.day, birth_date__month=today.month)
+    clients_serialized = ClientReadSerializer(clients, context={'request': request}, many=True).data
+    return Response(clients_serialized, status=status.HTTP_200_OK)
