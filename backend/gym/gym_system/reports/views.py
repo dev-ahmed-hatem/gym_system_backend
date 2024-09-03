@@ -12,7 +12,7 @@ from subscriptions.models import *
 from subscriptions.serializers import *
 from shop.models import Sale, Product
 from shop.serializers import *
-from django.utils.timezone import datetime, now, localtime, localdate, make_aware
+from django.utils.timezone import datetime, now, localtime, localdate, make_aware, timedelta
 from calendar import monthrange
 
 
@@ -23,7 +23,7 @@ def statistics(request):
     clients_count = clients.count()
     recently_clients = clients.filter(created_at__month=localdate(now()).month).count()
     active_subscriptions = Subscription.get_active_subscriptions().count()
-    recently_expired_subscriptions = Subscription.objects.filter(end_date__day=localdate(now()).day).count()
+    recently_expired_subscriptions = Subscription.objects.filter(end_date=localdate(now() - timedelta(days=1))).count()
     today_barcode = Attendance.objects.filter(timestamp__day=localdate(now()).day).count()
     sales = Sale.objects.all()
     today_sales = sales.filter(created_at__day=localdate(now()).day).count()
