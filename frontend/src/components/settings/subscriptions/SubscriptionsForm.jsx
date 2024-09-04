@@ -148,54 +148,6 @@ const SubscriptionPlanForm = ({ postURL, defaultValues, callBack }) => {
                     <p className="error-message">{errors.price.message}</p>
                 )}
             </div>
-            <div className="w-full lg:max-w-md lg:w-[30%]">
-                <div className="mb-2 block">
-                    <Label
-                        htmlFor="invitations"
-                        value="عدد الدعوات المتاحة :"
-                    />
-                </div>
-                <TextInput
-                    id="invitations"
-                    type="number"
-                    rightIcon={FcInvite}
-                    placeholder="عدد الدعوات المتاحة"
-                    color={errors.invitations ? "failure" : "primary"}
-                    defaultValue={0}
-                    {...register("invitations", {
-                        required: "هذا الحقل مطلوب",
-                    })}
-                    onBlur={() => trigger("invitations")}
-                />
-                {errors.invitations && (
-                    <p className="error-message">
-                        {errors.invitations.message}
-                    </p>
-                )}
-            </div>
-            <div className="w-full lg:max-w-md lg:w-[30%]">
-                <div className="mb-2 block">
-                    <Label
-                        htmlFor="validity"
-                        value="فترة صلاحية الاشتراك : (يوم)"
-                    />
-                </div>
-                <TextInput
-                    id="validity"
-                    type="number"
-                    rightIcon={GiDuration}
-                    placeholder="فترة صلاحية الاشتراك"
-                    color={errors.validity ? "failure" : "primary"}
-                    defaultValue={30}
-                    {...register("validity", {
-                        required: "هذا الحقل مطلوب",
-                    })}
-                    onBlur={() => trigger("validity")}
-                />
-                {errors.validity && (
-                    <p className="error-message">{errors.validity.message}</p>
-                )}
-            </div>
             <div className="w-full flex items-center lg:max-w-md lg:w-[30%] min-h-[70px] lg:pt-5">
                 <div className="mb-2 me-10 hidden">
                     <Label htmlFor="for_students" value="اشتراك محدد بفترة :" />
@@ -232,29 +184,81 @@ const SubscriptionPlanForm = ({ postURL, defaultValues, callBack }) => {
                 </div>
             )}
             {!isDuration && (
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label htmlFor="classes_no" value="عدد الحصص :" />
+                <>
+                    <div className="w-full lg:max-w-md lg:w-[30%]">
+                        <div className="mb-2 block">
+                            <Label htmlFor="classes_no" value="عدد الحصص :" />
+                        </div>
+                        <TextInput
+                            id="classes_no"
+                            type="number"
+                            defaultValue={8}
+                            rightIcon={PiNumberEightFill}
+                            placeholder="عدد الحصص"
+                            color={errors.classes_no ? "failure" : "primary"}
+                            {...register("classes_no", {
+                                required: "هذا الحقل مطلوب",
+                            })}
+                            onBlur={() => trigger("classes_no")}
+                        />
+                        {errors.classes_no && (
+                            <p className="error-message">
+                                {errors.classes_no.message}
+                            </p>
+                        )}
                     </div>
-                    <TextInput
-                        id="classes_no"
-                        type="number"
-                        defaultValue={8}
-                        rightIcon={PiNumberEightFill}
-                        placeholder="عدد الحصص"
-                        color={errors.classes_no ? "failure" : "primary"}
-                        {...register("classes_no", {
-                            required: "هذا الحقل مطلوب",
-                        })}
-                        onBlur={() => trigger("classes_no")}
-                    />
-                    {errors.classes_no && (
-                        <p className="error-message">
-                            {errors.classes_no.message}
-                        </p>
-                    )}
-                </div>
+                    <div className="w-full lg:max-w-md lg:w-[30%]">
+                        <div className="mb-2 block">
+                            <Label
+                                htmlFor="validity"
+                                value="فترة صلاحية الاشتراك : (يوم)"
+                            />
+                        </div>
+                        <TextInput
+                            id="validity"
+                            type="number"
+                            rightIcon={GiDuration}
+                            placeholder="فترة صلاحية الاشتراك"
+                            color={errors.validity ? "failure" : "primary"}
+                            defaultValue={30}
+                            {...register("validity", {
+                                required: "هذا الحقل مطلوب",
+                            })}
+                            onBlur={() => trigger("validity")}
+                        />
+                        {errors.validity && (
+                            <p className="error-message">
+                                {errors.validity.message}
+                            </p>
+                        )}
+                    </div>
+                </>
             )}
+            <div className="w-full lg:max-w-md lg:w-[30%]">
+                <div className="mb-2 block">
+                    <Label
+                        htmlFor="invitations"
+                        value="عدد الدعوات المتاحة :"
+                    />
+                </div>
+                <TextInput
+                    id="invitations"
+                    type="number"
+                    rightIcon={FcInvite}
+                    placeholder="عدد الدعوات المتاحة"
+                    color={errors.invitations ? "failure" : "primary"}
+                    defaultValue={0}
+                    {...register("invitations", {
+                        required: "هذا الحقل مطلوب",
+                    })}
+                    onBlur={() => trigger("invitations")}
+                />
+                {errors.invitations && (
+                    <p className="error-message">
+                        {errors.invitations.message}
+                    </p>
+                )}
+            </div>
             <div className="w-full flex items-center lg:max-w-md lg:w-[30%] min-h-[70px] lg:pt-5">
                 <div className="mb-2 me-10 hidden">
                     <Label htmlFor="for_students" value="اشتراك طلاب :" />

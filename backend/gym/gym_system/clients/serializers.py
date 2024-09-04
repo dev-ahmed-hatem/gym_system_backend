@@ -3,10 +3,11 @@ from rest_framework import serializers
 from .models import *
 from subscriptions.models import SubscriptionPlan, Subscription
 from subscriptions.serializers import SubscriptionReadSerializer
+from financials.models import FinancialItem, Transaction
 from users.models import Employee
 from users.serializers import UserSerializer
 from django.conf import settings
-from django.utils.timezone import localtime
+from django.utils.timezone import localtime, now
 
 
 class ClientReadSerializer(serializers.ModelSerializer):
@@ -72,7 +73,14 @@ class ClientWriteSerializer(serializers.ModelSerializer):
                                                      client=client,
                                                      start_date=start_date,
                                                      trainer=trainer)
+
             client_sub.save()
+            financial_item, _ = FinancialItem.objects.get_or_create(name="إيرادات اشتراكات", financial_type="incomes",
+                                                                    system_related=True)
+            transaction = Transaction.objects.create(category=financial_item,
+                                                     date=now().date(),
+                                                     amount=client_sub.plan.price
+                                                     )
 
         user = self.context['request'].user
         client.added_by = user

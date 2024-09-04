@@ -58,7 +58,7 @@ class Sale(models.Model):
             financial_item, _ = FinancialItem.objects.get_or_create(name="إيرادات منتجات", financial_type="incomes",
                                                                     system_related=True)
             transaction = Transaction.objects.create(category=financial_item,
-                                                     amount=self.total_price,
+                                                     amount=self.after_discount,
                                                      date=now().date(),
                                                      )
             transaction.save()

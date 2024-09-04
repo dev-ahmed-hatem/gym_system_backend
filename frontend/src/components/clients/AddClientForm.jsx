@@ -25,6 +25,7 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
     const [post, setPost] = useState(false);
     const [age, setAge] = useState(defaultValues?.age);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [currentPlan, setCurrentPlan] = useState(null);
     const [trainersList, setTrainersList] = useState(null);
     const [subscriptionsList, setSubscriptionsList] = useState(null);
     const { showToast } = useToast();
@@ -71,7 +72,7 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
         const options = [];
         const url = `${
             endpoints.subscription_plan_list
-        }page_size=20&ordering=-id${
+        }&sub_type=main&page_size=20&ordering=-id${
             search_word ? `&search=${search_word}` : ""
         }`;
 
@@ -82,6 +83,7 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
                     options.push({
                         value: subscription.id,
                         label: subscription.name,
+                        price: subscription.price,
                     });
                 });
                 setSubscriptionsList(options);
@@ -112,8 +114,8 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
         }
 
         //  validate start date for current subscription
-        if (data.subscription_plan) {
-            data.subscription_plan = data.subscription_plan.value;
+        if (currentPlan) {
+            data.subscription_plan = currentPlan.value;
             if (!data.start_date) {
                 data.start_date = new Date().toLocaleDateString("en-CA");
             }
@@ -413,6 +415,9 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
                                             styles={style(
                                                 errors.subscription_plan
                                             )}
+                                            onChange={(plan) => {
+                                                setCurrentPlan(plan);
+                                            }}
                                         ></Select>
                                         {errors.subscription_plan && (
                                             <p className="error-message">
@@ -490,6 +495,18 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
                         ) : (
                             <p className="error-message">لا توجد صورة</p>
                         )}
+                    </div>
+                )}
+
+                {formFunction === "add" && currentPlan && (
+                    <div className="w-full my-3">
+                        <p>
+                            سيتم إضافة إيراد بقيمة{" "}
+                            <span className="text-primary font-bold mx-2">
+                                {currentPlan?.price.toFixed(2)}{" "}
+                            </span>
+                            بتاريخ اليوم
+                        </p>
                     </div>
                 )}
             </FormGroup>

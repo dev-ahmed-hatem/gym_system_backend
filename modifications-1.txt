@@ -31,3 +31,10 @@ offers:
     - when recording barcode check both start and expiration of subscriptions, cuz of incoming subscriptions
     - add discount option to subscriptions 
 
+
+
+1- subscription freeze
+2- invitations
+3- check product stock with order confirmation
+4- salaries
+5- loans
