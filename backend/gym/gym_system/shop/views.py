@@ -5,7 +5,8 @@ from rest_framework.viewsets import ModelViewSet
 from .serializers import *
 from .models import *
 from rest_framework.decorators import api_view, permission_classes, action
-from django.utils.timezone import datetime, localtime, make_aware, now
+from django.utils.timezone import datetime, now
+from django.conf import settings
 from financials.models import FinancialItem, Transaction
 
 
@@ -49,7 +50,7 @@ class SaleViewSet(ModelViewSet):
         if search:
             queryset = queryset.filter(id__icontains=search)
         if date:
-            local_date = localtime(make_aware(datetime.strptime(date, '%Y-%m-%d'))).date()
+            local_date = settings.CAIRO_TZ.localize(datetime.strptime(date, '%Y-%m-%d')).date()
             queryset = queryset.filter(created_at__date=local_date)
         return queryset
 

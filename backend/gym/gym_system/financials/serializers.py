@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from rest_framework import serializers
 from .models import *
 from users.serializers import EmployeeReadSerializer

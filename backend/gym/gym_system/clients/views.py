@@ -28,9 +28,7 @@ class ClientViewSet(ModelViewSet):
         if from_date and to_date:
             from_date = datetime.strptime(from_date, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0)
             to_date = datetime.strptime(to_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=999999)
-
-            # local_from = localtime(make_aware(from_date))
-            # local_to = localtime(make_aware(to_date))
+            
             local_from = settings.CAIRO_TZ.localize(from_date)
             local_to = settings.CAIRO_TZ.localize(to_date)
 
@@ -64,15 +62,12 @@ class AttendanceViewSet(ModelViewSet):
         client = self.request.query_params.get('client', None)
 
         if client is not None:
-            print(client, type(client))
             queryset = queryset.filter(client=int(client))
 
         if from_date and to_date:
             from_date = datetime.strptime(from_date, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0)
             to_date = datetime.strptime(to_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=999999)
 
-            # local_from = localtime(make_aware(from_date))
-            # local_to = localtime(make_aware(to_date))
             local_from = settings.CAIRO_TZ.localize(from_date)
             local_to = settings.CAIRO_TZ.localize(to_date)
             queryset = queryset.filter(

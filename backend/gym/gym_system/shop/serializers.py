@@ -6,7 +6,7 @@ from django.utils.timezone import datetime
 
 from .models import *
 from clients.serializers import ClientReadSerializer
-from django.utils.timezone import localtime
+from django.conf import settings
 
 
 class ProductCategorySerializer(serializers.ModelSerializer):
@@ -76,10 +76,10 @@ class SaleSerializer(serializers.ModelSerializer):
         return obj.total_quantity
 
     def get_date(self, obj):
-        return f"{localtime(obj.created_at):%Y-%m-%d}"
+        return f"{obj.created_at.astimezone(settings.CAIRO_TZ):%Y-%m-%d}"
 
     def get_confirm_date(self, obj):
-        return f"{localtime(obj.confirmed_at):%Y-%m-%d - %H:%M}"
+        return f"{obj.confirmed_at.astimezone(settings.CAIRO_TZ):%Y-%m-%d - %H:%M}"
 
     def get_state(self, obj):
         return obj.get_state_display()
@@ -158,5 +158,3 @@ class OfferWriteSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-
-

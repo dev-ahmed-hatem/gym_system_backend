@@ -7,7 +7,7 @@ from financials.models import FinancialItem, Transaction
 from users.models import Employee
 from users.serializers import UserSerializer
 from django.conf import settings
-from django.utils.timezone import localtime, now
+from django.utils.timezone import now
 
 
 class ClientReadSerializer(serializers.ModelSerializer):
@@ -37,7 +37,7 @@ class ClientReadSerializer(serializers.ModelSerializer):
                                           context={'request': self.context.get('request')}).data
 
     def get_date_created(self, obj):
-        return f"{localtime(obj.created_at):%Y-%m-%d - %H:%M:%S}"
+        return f"{obj.created_at.astimezone(settings.CAIRO_TZ):%Y-%m-%d - %H:%M:%S}"
 
 
 class ClientWriteSerializer(serializers.ModelSerializer):
@@ -100,7 +100,7 @@ class AttendanceReadSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_timestamp(self, obj):
-        return f"{localtime(obj.timestamp):%Y-%m-%d - %H:%M:%S}"
+        return f"{obj.timestamp.astimezone(settings.CAIRO_TZ):%Y-%m-%d - %H:%M:%S}"
 
 
 class AttendanceWriteSerializer(serializers.ModelSerializer):

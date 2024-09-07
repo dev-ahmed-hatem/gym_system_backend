@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from django.utils.timezone import datetime, make_aware, localtime
+from django.utils.timezone import datetime
 
 
 class SubscriptionPlanViewSet(ModelViewSet):
@@ -45,8 +45,8 @@ class SubscriptionViewSet(ModelViewSet):
             from_date = datetime.strptime(from_date, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0)
             to_date = datetime.strptime(to_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=999999)
 
-            local_from = localtime(make_aware(from_date))
-            local_to = localtime(make_aware(to_date))
+            local_from = settings.CAIRO_TZ.localize(from_date)
+            local_to = settings.CAIRO_TZ.localize(to_date)
             queryset = queryset.filter(
                 Q(start_date__gte=local_from) &
                 Q(start_date__lte=local_to)
@@ -73,7 +73,7 @@ class SubscriptionViewSet(ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def active(self, request):
-        active_subscriptions = Subscription.get_active_subscriptions().filter(is_frozen=False)
+        active_subscriptions = Subscription.get_active_subscriptions().filter(is_frozen=False).order_by("-start_date")
         page = self.paginate_queryset(active_subscriptions)
         if page is not None:
             serializer = self.get_serializer(page, many=True)

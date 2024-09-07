@@ -12,7 +12,8 @@ from subscriptions.models import *
 from subscriptions.serializers import *
 from shop.models import Sale, Product
 from shop.serializers import *
-from django.utils.timezone import datetime, now, localtime, localdate, make_aware, timedelta
+from django.conf import settings
+from datetime import datetime, timedelta
 from calendar import monthrange
 
 
@@ -21,18 +22,23 @@ from calendar import monthrange
 def statistics(request):
     clients = Client.objects.all()
     clients_count = clients.count()
-    recently_clients = clients.filter(created_at__month=localdate(now()).month).count()
+    recently_clients = clients.filter(created_at__month=settings.CAIRO_TZ.localize(datetime.now()).month).count()
     active_subscriptions = Subscription.get_active_subscriptions().count()
-    recently_expired_subscriptions = Subscription.objects.filter(end_date=localdate(now() - timedelta(days=1))).count()
-    today_barcode = Attendance.objects.filter(timestamp__day=localdate(now()).day).count()
+    recently_expired_subscriptions = Subscription.objects.filter(
+        end_date=settings.CAIRO_TZ.localize(datetime.now() - timedelta(days=1))).count()
+    today_barcode = Attendance.objects.filter(timestamp__day=settings.CAIRO_TZ.localize(datetime.now()).day).count()
     sales = Sale.objects.all()
-    today_sales = sales.filter(created_at__day=localdate(now()).day).count()
+    today_sales = sales.filter(created_at__day=settings.CAIRO_TZ.localize(datetime.now()).day).count()
     pending_sales = sales.filter(state="pending").count()
     transactions = Transaction.objects.all()
-    today_incomes = transactions.filter(date__day=localdate(now()).day, category__financial_type="incomes")
-    month_incomes = transactions.filter(date__month=localdate(now()).month, category__financial_type="incomes")
-    today_expenses = transactions.filter(date__day=localdate(now()).day, category__financial_type="expenses")
-    month_expenses = transactions.filter(date__month=localdate(now()).month, category__financial_type="expenses")
+    today_incomes = transactions.filter(date__day=settings.CAIRO_TZ.localize(datetime.now()).day,
+                                        category__financial_type="incomes")
+    month_incomes = transactions.filter(date__month=settings.CAIRO_TZ.localize(datetime.now()).month,
+                                        category__financial_type="incomes")
+    today_expenses = transactions.filter(date__day=settings.CAIRO_TZ.localize(datetime.now()).day,
+                                         category__financial_type="expenses")
+    month_expenses = transactions.filter(date__month=settings.CAIRO_TZ.localize(datetime.now()).month,
+                                         category__financial_type="expenses")
     response_data = {
         'clients_count': clients_count,
         'recently_clients': recently_clients,
@@ -87,7 +93,7 @@ def daily_reports(request):
     day = request.GET.get('day')
     if day:
         day = datetime.strptime(day, '%Y-%m-%d')
-        day = localtime(make_aware(day)).replace(hour=0, minute=0, second=0, microsecond=0)
+        day = settings.CAIRO_TZ.localize(day).replace(hour=0, minute=0, second=0, microsecond=0)
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -139,8 +145,8 @@ def duration_reports(request):
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    local_start = localtime(make_aware(start_date))
-    local_end = localtime(make_aware(end_date))
+    local_start = settings.CAIRO_TZ.localize(start_date)
+    local_end = settings.CAIRO_TZ.localize(end_date)
 
     # Filter Transactions
     expenses = Transaction.objects.filter(date__gte=start_date, date__lte=end_date, category__financial_type="expenses")
@@ -173,7 +179,7 @@ def duration_reports(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def birthdays(request):
-    today = localdate(now())
+    today = settings.CAIRO_TZ.localize(datetime.now())
     clients = Client.objects.filter(birth_date__day=today.day, birth_date__month=today.month)
     clients_serialized = ClientReadSerializer(clients, context={'request': request}, many=True).data
     return Response(clients_serialized, status=status.HTTP_200_OK)
