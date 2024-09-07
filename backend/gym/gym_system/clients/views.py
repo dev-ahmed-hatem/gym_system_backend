@@ -1,4 +1,4 @@
-from django.utils.timezone import make_aware, datetime, localtime
+from datetime import datetime
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -29,8 +29,11 @@ class ClientViewSet(ModelViewSet):
             from_date = datetime.strptime(from_date, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0)
             to_date = datetime.strptime(to_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=999999)
 
-            local_from = localtime(make_aware(from_date))
-            local_to = localtime(make_aware(to_date))
+            # local_from = localtime(make_aware(from_date))
+            # local_to = localtime(make_aware(to_date))
+            local_from = settings.CAIRO_TZ.localize(from_date)
+            local_to = settings.CAIRO_TZ.localize(to_date)
+
             queryset = queryset.filter(
                 Q(created_at__gte=local_from) &
                 Q(created_at__lte=local_to)
@@ -68,8 +71,10 @@ class AttendanceViewSet(ModelViewSet):
             from_date = datetime.strptime(from_date, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0)
             to_date = datetime.strptime(to_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=999999)
 
-            local_from = localtime(make_aware(from_date))
-            local_to = localtime(make_aware(to_date))
+            # local_from = localtime(make_aware(from_date))
+            # local_to = localtime(make_aware(to_date))
+            local_from = settings.CAIRO_TZ.localize(from_date)
+            local_to = settings.CAIRO_TZ.localize(to_date)
             queryset = queryset.filter(
                 Q(timestamp__gte=local_from) &
                 Q(timestamp__lte=local_to)

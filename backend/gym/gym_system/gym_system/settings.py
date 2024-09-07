@@ -1,4 +1,5 @@
 from django.utils.timezone import timedelta
+import pytz
 from pathlib import Path
 from os.path import join
 
@@ -103,6 +104,7 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Africa/Cairo'
+CAIRO_TZ = pytz.timezone('Africa/Cairo')
 
 USE_I18N = True
 
