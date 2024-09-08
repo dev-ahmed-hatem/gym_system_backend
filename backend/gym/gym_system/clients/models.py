@@ -61,7 +61,7 @@ class Client(models.Model):
 
         buffer = BytesIO()
         img.save(buffer, 'png')
-        self.qr_code.save(f"{self.id}_{self.name}_qr.png", File(buffer), save=False)
+        self.qr_code.save(f"client_{self.id}_qr.png", File(buffer), save=False)
         buffer.close()
 
     def generate_barcode(self):
@@ -70,7 +70,7 @@ class Client(models.Model):
 
         buffer = BytesIO()
         img.write(buffer)
-        self.barcode.save(f"{self.id}_{self.name}_bar.png", File(buffer), save=False)
+        self.barcode.save(f"client_{self.id}_bar.png", File(buffer), save=False)
         buffer.close()
 
     @property

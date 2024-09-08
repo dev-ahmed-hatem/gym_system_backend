@@ -31,13 +31,15 @@ def statistics(request):
     today_sales = sales.filter(created_at__day=settings.CAIRO_TZ.localize(datetime.now()).day).count()
     pending_sales = sales.filter(state="pending").count()
     transactions = Transaction.objects.all()
-    today_incomes = transactions.filter(date__day=settings.CAIRO_TZ.localize(datetime.now()).day,
+    today_incomes = transactions.filter(date=settings.CAIRO_TZ.localize(datetime.now()).date(),
                                         category__financial_type="incomes")
     month_incomes = transactions.filter(date__month=settings.CAIRO_TZ.localize(datetime.now()).month,
+                                        date__year=settings.CAIRO_TZ.localize(datetime.now()).year,
                                         category__financial_type="incomes")
-    today_expenses = transactions.filter(date__day=settings.CAIRO_TZ.localize(datetime.now()).day,
+    today_expenses = transactions.filter(date=settings.CAIRO_TZ.localize(datetime.now()).date(),
                                          category__financial_type="expenses")
     month_expenses = transactions.filter(date__month=settings.CAIRO_TZ.localize(datetime.now()).month,
+                                         date__year=settings.CAIRO_TZ.localize(datetime.now()).year,
                                          category__financial_type="expenses")
     response_data = {
         'clients_count': clients_count,
