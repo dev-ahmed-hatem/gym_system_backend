@@ -56,12 +56,14 @@ class SubscriptionViewSet(ModelViewSet):
     @action(detail=True, methods=['get'])
     def freeze(self, request, pk=None):
         subscription = self.get_object()
+        if subscription.freeze_start_date:
+            return Response({'detail': 'تم تعليق الاشتراك من قبل'}, status=status.HTTP_400_BAD_REQUEST)
         if subscription.is_frozen:
             return Response({'detail': 'اشتراك معلق بالفعل'}, status=status.HTTP_400_BAD_REQUEST)
         if subscription.freeze_days_used > subscription.plan.freeze_no:
             return Response({'detail': 'تخطى الحد الأقصى للتعليق'}, status=status.HTTP_400_BAD_REQUEST)
         subscription.freeze()
-        return Response({'detail': 'Subscription has been frozen'}, status=status.HTTP_200_OK)
+        return Response({'detail': 'تم تعليق الاشتراك'}, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['get'])
     def unfreeze(self, request, pk=None):
@@ -69,7 +71,7 @@ class SubscriptionViewSet(ModelViewSet):
         if not subscription.is_frozen:
             return Response({'detail': 'الاشتراك مفعل'}, status=status.HTTP_400_BAD_REQUEST)
         subscription.unfreeze()
-        return Response({'detail': 'Subscription has been unfrozen'}, status=status.HTTP_200_OK)
+        return Response({'detail': 'تم إلغاء تعليق الاشتراك'}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'])
     def active(self, request):

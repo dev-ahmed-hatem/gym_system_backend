@@ -72,13 +72,23 @@ const SubscriptionFreeze = ({ sub, callBack }) => {
                                         : "أيام"}
                                 </span>
                             </p>
-                            {sub?.is_frozen && (
+                            {sub?.freeze_start_date && (
                                 <p className="mt-2 ms-10">
                                     <span className="inline-block text-black font-bold pe-1 min-w-44">
                                         تاريخ بدأ التعليق :
                                     </span>
                                     <span className="text-primary font-bold">
                                         {sub?.freeze_start_date}
+                                    </span>
+                                </p>
+                            )}
+                            {sub?.unfreeze_date && (
+                                <p className="mt-2 ms-10">
+                                    <span className="inline-block text-black font-bold pe-1 min-w-44">
+                                        تاريخ استئناف التعليق :
+                                    </span>
+                                    <span className="text-primary font-bold">
+                                        {sub?.unfreeze_date}
                                     </span>
                                 </p>
                             )}
