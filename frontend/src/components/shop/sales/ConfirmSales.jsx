@@ -9,7 +9,7 @@ import ErrorGroup from "../../groups/ErrorGroup";
 import endpoints from "../../../config/config";
 import { fetch_list_data } from "../../../config/actions";
 import { useDrawer } from "../../../providers/DrawerProvider";
-import { FaInfoCircle } from "react-icons/fa";
+import { FaCheck, FaInfoCircle } from "react-icons/fa";
 import ConfirmPrompt from "./ConfirmPrompt";
 import { MdDelete } from "react-icons/md";
 import ConfirmDelete from "../../groups/ConfirmDelete";
@@ -43,12 +43,23 @@ const ConfirmSales = () => {
                 FaInfoCircle,
                 <ConfirmPrompt
                     sale={sale}
+                    state={drawerFunction}
                     closeDrawer={closeDrawer}
                     callBack={() => {
                         setSearchParam(null);
                         setPageNumber(null);
                         get_current_sales();
                     }}
+                />
+            );
+        } else if (drawerFunction == "view") {
+            showDrawer(
+                "عملية بيع ناجحة",
+                FaCheck,
+                <ConfirmPrompt
+                    sale={sale}
+                    state={drawerFunction}
+                    closeDrawer={closeDrawer}
                 />
             );
         } else {
@@ -195,7 +206,7 @@ const ConfirmSales = () => {
                                                                         <Button
                                                                             type="button"
                                                                             color={
-                                                                                "primary"
+                                                                                "green"
                                                                             }
                                                                             onClick={() =>
                                                                                 handleDrawer(
@@ -210,13 +221,21 @@ const ConfirmSales = () => {
                                                                     )}
                                                                 </>
                                                             ) : (
-                                                                <span
-                                                                    className={`font-bold text-green-500`}
-                                                                >
-                                                                    {
-                                                                        sale.confirm_date
+                                                                <Button
+                                                                    type="button"
+                                                                    color={
+                                                                        "primary"
                                                                     }
-                                                                </span>
+                                                                    onClick={() =>
+                                                                        handleDrawer(
+                                                                            "view",
+                                                                            sale
+                                                                        )
+                                                                    }
+                                                                    className="w-20 h-10 flex justify-center items-center"
+                                                                >
+                                                                    عرض
+                                                                </Button>
                                                             )}
                                                             {permissions.delete && (
                                                                 <Button

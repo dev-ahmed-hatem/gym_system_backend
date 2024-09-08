@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextInput, Table, Button } from "flowbite-react";
+import { TextInput, Table, Button, Checkbox } from "flowbite-react";
 import Loading from "../../groups/Loading";
 import endpoints from "../../../config/config";
 import { FaMoneyBill, FaPercent, FaInfoCircle } from "react-icons/fa";
@@ -88,6 +88,7 @@ const SaleForm = ({ callBack }) => {
             FaInfoCircle,
             <ConfirmPrompt
                 sale={sale}
+                state={"confirm"}
                 closeDrawer={closeDrawer}
                 callBack={() => {
                     if (callBack) callBack();
@@ -181,7 +182,8 @@ const SaleForm = ({ callBack }) => {
                                             >
                                                 <Table.Cell>
                                                     {product.stock > 0 && (
-                                                        <input
+                                                        <Checkbox
+                                                            color={"yellow"}
                                                             type="checkbox"
                                                             id={`product_${product.id}`}
                                                             onChange={() =>
@@ -293,7 +295,8 @@ const SaleForm = ({ callBack }) => {
                                 </div>
                                 <div>
                                     <label>
-                                        <input
+                                        <Checkbox
+                                            color={"yellow"}
                                             type="checkbox"
                                             className="me-4"
                                             checked={discount}

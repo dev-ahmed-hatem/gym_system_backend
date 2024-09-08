@@ -57,6 +57,24 @@ class SaleViewSet(ModelViewSet):
     @action(methods=['get'], detail=True)
     def confirm_sale(self, request, pk=None):
         sale = Sale.objects.get(id=pk)
+        items = sale.items
+        insufficient = []
+        for item in items.all():
+            stock = item.product.stock
+            amount = item.amount
+            if amount > stock:
+                insufficient.append(item.product.name)
+
+        if len(insufficient) > 0:
+            return Response({"detail": "insufficient", 'insufficient_items': insufficient},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        for item in items.all():
+            product = item.product
+            amount = item.amount
+            product.stock -= amount
+            product.save()
+
         sale.confirm_sale()
         return Response(status=status.HTTP_200_OK)
 

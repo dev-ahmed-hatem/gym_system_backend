@@ -79,7 +79,8 @@ class SaleSerializer(serializers.ModelSerializer):
         return f"{obj.created_at.astimezone(settings.CAIRO_TZ):%Y-%m-%d}"
 
     def get_confirm_date(self, obj):
-        return f"{obj.confirmed_at.astimezone(settings.CAIRO_TZ):%Y-%m-%d - %H:%M}"
+        if obj.confirmed_at:
+            return f"{obj.confirmed_at.astimezone(settings.CAIRO_TZ):%Y-%m-%d - %H:%M}"
 
     def get_state(self, obj):
         return obj.get_state_display()

@@ -37,6 +37,7 @@ theme.button.color = {
     ...theme.button.color,
     primary: "bg-primary hover:bg-primary-500 text-white",
     accent: "bg-accent hover:bg-accent-500 text-white",
+    green: "bg-green-500 hover:bg-green-700 text-white",
 };
 
 // ToggleSwitch
