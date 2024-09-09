@@ -41,6 +41,7 @@ class Subscription(models.Model):
     freeze_start_date = models.DateField(null=True, blank=True)
     is_frozen = models.BooleanField(default=False)
     unfreeze_date = models.DateField(null=True, blank=True)
+    total_price = models.FloatField(default=0, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.plan.is_duration:

@@ -35,8 +35,16 @@ class SalaryReadSerializer(serializers.ModelSerializer):
     hourly_rate = serializers.SerializerMethodField()
     total_salary = serializers.SerializerMethodField()
     total_deductions = serializers.SerializerMethodField()
+    total_extra = serializers.SerializerMethodField()
     available_advance = serializers.SerializerMethodField()
     employee = EmployeeReadSerializer()
+    referred_subscriptions = serializers.SerializerMethodField()
+    private_trainings = serializers.SerializerMethodField()
+    total_subscriptions_price = serializers.SerializerMethodField()
+    total_trainings_price = serializers.SerializerMethodField()
+
+    referred_subscriptions_net = serializers.SerializerMethodField()
+    private_trainings_net = serializers.SerializerMethodField()
 
     class Meta:
         model = Salary
@@ -51,8 +59,29 @@ class SalaryReadSerializer(serializers.ModelSerializer):
     def get_total_deductions(self, obj):
         return obj.total_deductions
 
+    def get_total_extra(self, obj):
+        return obj.total_extra
+
     def get_available_advance(self, obj):
         return obj.available_advance
+
+    def get_referred_subscriptions(self, obj):
+        return obj.referred_subscriptions
+
+    def get_private_trainings(self, obj):
+        return obj.private_trainings
+
+    def get_total_subscriptions_price(self, obj):
+        return sum(s["total_price"] for s in obj.referred_subscriptions)
+
+    def get_total_trainings_price(self, obj):
+        return sum(s["total_price"] for s in obj.private_trainings)
+
+    def get_referred_subscriptions_net(self, obj):
+        return obj.referred_subscriptions_net
+
+    def get_private_trainings_net(self, obj):
+        return obj.private_trainings_net
 
 
 class SalaryWriteSerializer(serializers.ModelSerializer):
@@ -61,20 +90,3 @@ class SalaryWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Salary
         fields = '__all__'
-
-    def validate_advance_payment(self, data):
-        if data > self.instance.available_advance:
-            raise serializers.ValidationError({"advance_payment": "value more than available"})
-        return data
-
-    def update(self, instance, validated_data):
-        advance_payment = validated_data.pop('advance_payment')
-        got_advance = instance.got_advance
-        if advance_payment > 0 and not got_advance:
-            instance.advance_payment = Decimal(advance_payment)
-            validated_data["advance_date"] = datetime.today().date()
-            instance.save()
-        elif advance_payment == 0:
-            instance.advance_payment = Decimal(0)
-            instance.save()
-        return super().update(instance, validated_data)

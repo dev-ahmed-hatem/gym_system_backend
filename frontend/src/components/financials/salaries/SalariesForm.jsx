@@ -4,6 +4,7 @@ import {
     Label,
     Button,
     Select as FlowbiteSelect,
+    Table,
 } from "flowbite-react";
 import Select from "react-select";
 import Loading from "../../groups/Loading";
@@ -23,6 +24,7 @@ import { GiTakeMyMoney } from "react-icons/gi";
 import { useToast } from "../../../providers/ToastProvider";
 import { useDrawer } from "../../../providers/DrawerProvider";
 import { defaultFormSubmission } from "../../../config/actions";
+import style from "../../../assets/rect-select-style";
 
 const ConfirmUpdate = ({ postData, setPostData, callBack, closeDrawer }) => {
     return (
@@ -30,19 +32,6 @@ const ConfirmUpdate = ({ postData, setPostData, callBack, closeDrawer }) => {
             className={`wrapper p-4 my-2 bg-white rounded border-t-4 border-primary shadow-lg`}
         >
             <p className="text-base">تأكيد تحديث البيانات ؟</p>
-            {Number(postData.advance_payment) !== 0 &&
-                !postData.got_advance && (
-                    <p className="mt-2">
-                        <span className="text-secondary font-bold pe-1">
-                            ملحوظة :{" "}
-                        </span>
-                        سيتم تسجيل سلفة قدرها{" "}
-                        <span className="text-primary font-bold">
-                            {postData.advance_payment}
-                        </span>{" "}
-                        بتاريخ اليوم
-                    </p>
-                )}
             <hr className="h-px my-3 bg-gray-200 border-0"></hr>
             <div className="flex flex-wrap max-h-12 min-w-full justify-center">
                 <Button
@@ -206,7 +195,7 @@ const SalariesForm = () => {
 
     const fetchEmployees = (search_word) => {
         const options = [];
-        const url = `${endpoints.employee_list}page_size=20&ordering=-id${
+        const url = `${endpoints.employee_list}page_size=20&ordering=name${
             search_word ? `&search=${search_word}` : ""
         }`;
 
@@ -214,7 +203,10 @@ const SalariesForm = () => {
             .get(url)
             .then((response) => {
                 response.data.results.map((employee) => {
-                    options.push({ value: employee.id, label: employee.name });
+                    options.push({
+                        value: employee.id,
+                        label: `${employee.id} - ${employee.name}`,
+                    });
                 });
                 setEmployeesList(options);
             })
@@ -272,34 +264,7 @@ const SalariesForm = () => {
                                                 : null,
                                         });
                                     }}
-                                    styles={{
-                                        control: (base, state) => ({
-                                            ...base,
-                                            borderColor: errors.employee
-                                                ? "red"
-                                                : base.borderColor,
-                                            color: errors.employee
-                                                ? "red"
-                                                : base.color,
-                                            "&:hover": {
-                                                borderColor: errors.employee
-                                                    ? "red"
-                                                    : base["&:hover"]
-                                                          .borderColor,
-                                            },
-                                            boxShadow: state.isFocused
-                                                ? errors.employee
-                                                    ? "0 0 0 1px red"
-                                                    : "0 0 0 1px blue"
-                                                : base.boxShadow,
-                                        }),
-                                        placeholder: (base, state) => ({
-                                            ...base,
-                                            color: errors.employee
-                                                ? "red"
-                                                : base.color,
-                                        }),
-                                    }}
+                                    styles={style(errors.employee)}
                                 />
                             </div>
                             <div className="w-full lg:max-w-md lg:w-[30%]">
@@ -352,7 +317,7 @@ const SalariesForm = () => {
                                     }}
                                 >
                                     {Array.from(
-                                        { length: currentMonth },
+                                        { length: 12 },
                                         (_, i) => i + 1
                                     ).map((num) => (
                                         <option value={num} key={num}>
@@ -742,92 +707,233 @@ const SalariesForm = () => {
                                         )}
                                     </div>
 
-                                    <div className="w-full flex items-end">
-                                        <div className="mb-2 ">
-                                            {currentSalary.got_advance ? (
-                                                <span>
-                                                    تم الحصول علي سلفة بقيمة :
-                                                    <span className="font-bold text-primary mx-5">
-                                                        {
-                                                            currentSalary.advance_payment
-                                                        }
-                                                    </span>
-                                                    يوم :
-                                                    <span className="font-bold text-primary mx-5">
-                                                        {
-                                                            currentSalary.advance_date
-                                                        }
-                                                    </span>
-                                                </span>
+                                    {/* Trainings */}
+                                    <div className="w-full h-px my-3 bg-gray-200 border-0"></div>
+                                    <div className="table-wrapper w-full overflow-x-auto">
+                                        <h1 className="w-full text-lg text-center text-white py-3 font-bold bg-primary-900 rounded-t-lg">
+                                            اشتراكات خاصة
+                                        </h1>
+                                        <Table
+                                            striped
+                                            className="font-bold text-right"
+                                        >
+                                            {currentSalary?.private_trainings
+                                                ?.length == 0 ? (
+                                                <Table.Body className="!rounded-none">
+                                                    <Table.Row className="text-lg text-center py-3 font-bold !rounded-t-none">
+                                                        <Table.Cell className="!rounded-t-none">
+                                                            لا توجد اشتراكات
+                                                        </Table.Cell>
+                                                    </Table.Row>
+                                                </Table.Body>
                                             ) : (
-                                                <span>
-                                                    لم يتم الحصول على سلفة
-                                                    <br />
-                                                    المتاح :
-                                                    <span className="font-bold text-primary ms-5">
-                                                        {Number(
-                                                            currentSalary.available_advance
-                                                        ).toFixed(2)}
-                                                    </span>
-                                                </span>
+                                                <>
+                                                    <Table.Head>
+                                                        <Table.HeadCell>
+                                                            كود الاشتراك
+                                                        </Table.HeadCell>
+                                                        <Table.HeadCell>
+                                                            تاريخ بدأ الاشتراك
+                                                        </Table.HeadCell>
+                                                        <Table.HeadCell>
+                                                            القيمة
+                                                        </Table.HeadCell>
+                                                    </Table.Head>
+                                                    <Table.Body>
+                                                        {currentSalary.private_trainings.map(
+                                                            (sub) => (
+                                                                <Table.Row
+                                                                    key={sub.id}
+                                                                    className="bg-white font-medium text-gray-900"
+                                                                >
+                                                                    <Table.Cell>
+                                                                        {sub.id ? (
+                                                                            sub.id
+                                                                        ) : (
+                                                                            <span className="text-red-600">
+                                                                                غير
+                                                                                مسجل
+                                                                            </span>
+                                                                        )}
+                                                                    </Table.Cell>
+                                                                    <Table.Cell>
+                                                                        {sub.start_date ? (
+                                                                            sub.start_date
+                                                                        ) : (
+                                                                            <span className="text-red-600">
+                                                                                غير
+                                                                                مسجل
+                                                                            </span>
+                                                                        )}
+                                                                    </Table.Cell>
+                                                                    <Table.Cell>
+                                                                        {sub.total_price ? (
+                                                                            sub.total_price
+                                                                        ) : (
+                                                                            <span className="text-red-600">
+                                                                                غير
+                                                                                مسجل
+                                                                            </span>
+                                                                        )}
+                                                                    </Table.Cell>
+                                                                </Table.Row>
+                                                            )
+                                                        )}
+                                                        <Table.Row className="font-bold text-lg">
+                                                            <Table.Cell
+                                                                colSpan={2}
+                                                            >
+                                                                الإجمالى
+                                                            </Table.Cell>
+                                                            <Table.Cell>
+                                                                {currentSalary?.total_trainings_price ||
+                                                                    0}
+                                                            </Table.Cell>
+                                                        </Table.Row>
+                                                        <Table.Row className="font-bold text-lg">
+                                                            <Table.Cell
+                                                                colSpan={2}
+                                                            >
+                                                                النسبة
+                                                            </Table.Cell>
+                                                            <Table.Cell>
+                                                                {currentSalary?.private_percent ||
+                                                                    null}{" "}
+                                                                %
+                                                            </Table.Cell>
+                                                        </Table.Row>
+                                                        <Table.Row className="font-bold text-lg">
+                                                            <Table.Cell
+                                                                colSpan={2}
+                                                            >
+                                                                الصافى
+                                                            </Table.Cell>
+                                                            <Table.Cell>
+                                                                {
+                                                                    currentSalary?.private_trainings_net
+                                                                }
+                                                            </Table.Cell>
+                                                        </Table.Row>
+                                                    </Table.Body>
+                                                </>
                                             )}
-                                        </div>
+                                        </Table>
                                     </div>
 
-                                    {!currentSalary?.got_advance && (
-                                        <div className="w-full lg:max-w-md lg:w-[30%]">
-                                            <div className="mb-2 block">
-                                                <Label
-                                                    htmlFor="advance_payment"
-                                                    value="تسجيل مبلغ سلفة :"
-                                                />
-                                            </div>
-                                            <TextInput
-                                                id="advance_payment"
-                                                type="number"
-                                                rightIcon={GiTakeMyMoney}
-                                                placeholder="تسجيل سلفة"
-                                                color={
-                                                    errors.advance_payment
-                                                        ? "failure"
-                                                        : "primary"
-                                                }
-                                                {...register(
-                                                    "advance_payment",
-                                                    {
-                                                        required:
-                                                            "هذا الحقل مطلوب",
-                                                        pattern: {
-                                                            value: /^(0*[0-9][0-9]*(\.[0-9]+)?|0+\.[0-9]*[1-9][0-9]*)$/,
-                                                            message:
-                                                                "غير مسموح بقيم سالبة",
-                                                        },
-                                                        validate: (value) => {
-                                                            return value >
-                                                                currentSalary.available_advance
-                                                                ? "مبلغ أكبر من المسموح"
-                                                                : true;
-                                                        },
-                                                    }
-                                                )}
-                                                onBlur={() =>
-                                                    trigger("advance_payment")
-                                                }
-                                                defaultValue={0}
-                                                min={0}
-                                            />
-                                            {errors.advance_payment && (
-                                                <p className="error-message">
-                                                    {
-                                                        errors.advance_payment
-                                                            .message
-                                                    }
-                                                </p>
+                                    {/* referred Subscriptions */}
+                                    <div className="table-wrapper w-full overflow-x-auto">
+                                        <h1 className="w-full text-lg text-center text-white py-3 font-bold bg-primary-900 rounded-t-lg">
+                                            اشتراكات بواسطة الموظف
+                                        </h1>
+                                        <Table
+                                            striped
+                                            className="font-bold text-right"
+                                        >
+                                            {currentSalary
+                                                ?.referred_subscriptions
+                                                ?.length == 0 ? (
+                                                <Table.Body className="!rounded-none">
+                                                    <Table.Row className="text-lg text-center py-3 font-bold !rounded-t-none">
+                                                        <Table.Cell className="!rounded-t-none">
+                                                            لا توجد اشتراكات
+                                                        </Table.Cell>
+                                                    </Table.Row>
+                                                </Table.Body>
+                                            ) : (
+                                                <>
+                                                    <Table.Head>
+                                                        <Table.HeadCell>
+                                                            كود الاشتراك
+                                                        </Table.HeadCell>
+                                                        <Table.HeadCell>
+                                                            تاريخ بدأ الاشتراك
+                                                        </Table.HeadCell>
+                                                        <Table.HeadCell>
+                                                            القيمة
+                                                        </Table.HeadCell>
+                                                    </Table.Head>
+                                                    <Table.Body>
+                                                        {currentSalary.referred_subscriptions.map(
+                                                            (sub) => (
+                                                                <Table.Row
+                                                                    key={sub.id}
+                                                                    className="bg-white font-medium text-gray-900"
+                                                                >
+                                                                    <Table.Cell>
+                                                                        {sub.id ? (
+                                                                            sub.id
+                                                                        ) : (
+                                                                            <span className="text-red-600">
+                                                                                غير
+                                                                                مسجل
+                                                                            </span>
+                                                                        )}
+                                                                    </Table.Cell>
+                                                                    <Table.Cell>
+                                                                        {sub.start_date ? (
+                                                                            sub.start_date
+                                                                        ) : (
+                                                                            <span className="text-red-600">
+                                                                                غير
+                                                                                مسجل
+                                                                            </span>
+                                                                        )}
+                                                                    </Table.Cell>
+                                                                    <Table.Cell>
+                                                                        {sub.total_price ? (
+                                                                            sub.total_price
+                                                                        ) : (
+                                                                            <span className="text-red-600">
+                                                                                غير
+                                                                                مسجل
+                                                                            </span>
+                                                                        )}
+                                                                    </Table.Cell>
+                                                                </Table.Row>
+                                                            )
+                                                        )}
+                                                        <Table.Row className="font-bold text-lg">
+                                                            <Table.Cell
+                                                                colSpan={2}
+                                                            >
+                                                                الإجمالى
+                                                            </Table.Cell>
+                                                            <Table.Cell>
+                                                                {currentSalary?.total_subscriptions_price ||
+                                                                    0}
+                                                            </Table.Cell>
+                                                        </Table.Row>
+                                                        <Table.Row className="font-bold text-lg">
+                                                            <Table.Cell
+                                                                colSpan={2}
+                                                            >
+                                                                النسبة
+                                                            </Table.Cell>
+                                                            <Table.Cell>
+                                                                {currentSalary?.subscription_percent ||
+                                                                    null}{" "}
+                                                                %
+                                                            </Table.Cell>
+                                                        </Table.Row>
+                                                        <Table.Row className="font-bold text-lg">
+                                                            <Table.Cell
+                                                                colSpan={2}
+                                                            >
+                                                                الصافى
+                                                            </Table.Cell>
+                                                            <Table.Cell>
+                                                                {
+                                                                    currentSalary?.referred_subscriptions_net
+                                                                }
+                                                            </Table.Cell>
+                                                        </Table.Row>
+                                                    </Table.Body>
+                                                </>
                                             )}
-                                        </div>
-                                    )}
+                                        </Table>
+                                    </div>
 
-                                    {/* totals */}
+                                    {/* Totals */}
                                     <div className="w-full h-px my-3 bg-gray-200 border-0"></div>
                                     <div className="totals mt-2 ">
                                         <h1 className="font-bold text-xl mb-4 lg:mb-8">
@@ -842,7 +948,9 @@ const SalariesForm = () => {
                                                     currentSalary.total_deductions
                                                 ) == 0
                                                     ? "لا توجد"
-                                                    : currentSalary.total_deductions}
+                                                    : currentSalary.total_deductions.toFixed(
+                                                          2
+                                                      )}
                                             </span>
                                         </p>
                                         <p className="mt-2 ms-10">
@@ -851,22 +959,32 @@ const SalariesForm = () => {
                                             </span>
                                             <span className="text-primary font-bold">
                                                 {Number(
-                                                    currentSalary.bonuses
+                                                    currentSalary.total_extra
                                                 ) == 0
                                                     ? "لا توجد"
-                                                    : currentSalary.bonuses}
+                                                    : currentSalary.total_extra.toFixed(
+                                                          2
+                                                      )}
                                             </span>
                                         </p>
                                         <p className="mt-2 ms-10">
                                             <span className="inline-block text-black font-bold pe-1 min-w-40">
-                                                السلفة :{" "}
+                                                اشتراكات خاصة :{" "}
                                             </span>
                                             <span className="text-primary font-bold">
-                                                {Number(
-                                                    currentSalary.advance_payment
-                                                ) == 0
-                                                    ? "لا توجد"
-                                                    : currentSalary.advance_payment}
+                                                {
+                                                    currentSalary?.private_trainings_net
+                                                }
+                                            </span>
+                                        </p>
+                                        <p className="mt-2 ms-10">
+                                            <span className="inline-block text-black font-bold pe-1 min-w-40">
+                                                اشتراكات اخرى :{" "}
+                                            </span>
+                                            <span className="text-primary font-bold">
+                                                {
+                                                    currentSalary?.referred_subscriptions_net
+                                                }
                                             </span>
                                         </p>
                                         <p className="mt-2 ms-10">
@@ -874,7 +992,9 @@ const SalariesForm = () => {
                                                 المرتب النهائى :{" "}
                                             </span>
                                             <span className="text-primary font-bold">
-                                                {currentSalary.total_salary}
+                                                {currentSalary.total_salary.toFixed(
+                                                    2
+                                                )}
                                             </span>
                                         </p>
                                     </div>
