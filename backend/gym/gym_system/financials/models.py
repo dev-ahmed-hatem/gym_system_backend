@@ -1,7 +1,6 @@
 from django.db import models
 from users.models import Employee
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.utils.timezone import datetime
 from decimal import Decimal
 from subscriptions.models import Subscription
 
@@ -44,9 +43,6 @@ class Salary(models.Model):
     vacations = models.IntegerField(default=0)
     working_hours = models.IntegerField(default=8)
     working_days = models.IntegerField(default=26)
-
-    # subscriptions_list
-    # private_list
 
     class Meta:
         unique_together = ('employee', 'month', 'year')
@@ -113,7 +109,41 @@ class Salary(models.Model):
 
     @property
     def available_advance(self):
-        days = datetime.today().day
-        current_salary = days * self.working_hours * self.hourly_rate
-        current_salary = current_salary + self.bonuses - self.deductions * self.hourly_rate
-        return current_salary * Decimal(0.4)
+        return self.base_salary * Decimal(0.5)
+
+
+class Advance(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='advances')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateField(auto_now_add=True)
+    total_repaid = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    fully_paid = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["fully_paid"]
+
+    def __str__(self):
+        return f"Advance of {self.amount} for {self.employee.name}"
+
+    def remaining_balance(self):
+        return self.amount - self.total_repaid
+
+    def check_fully_paid(self):
+        if self.remaining_balance() <= 0:
+            self.fully_paid = True
+            self.save()
+
+
+class AdvancePayment(models.Model):
+    advance = models.ForeignKey(Advance, on_delete=models.CASCADE, related_name='payments')
+    payment_date = models.DateField(auto_now_add=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Payment of {self.amount} on {self.payment_date}"
+
+    def save(self, *args, **kwargs):
+        self.advance.total_repaid += self.amount
+        self.advance.check_fully_paid()
+        self.advance.save()
+        super().save(*args, **kwargs)

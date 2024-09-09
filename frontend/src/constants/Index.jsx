@@ -35,7 +35,12 @@ import EmployeeSettings from "../components/settings/employee-settings/EmployeeS
 import ProductCategories from "../components/settings/product-categories/ProductCategories";
 import FinancialItems from "../components/settings/financial-items/FinancialItems";
 import AddClient from "../components/clients/AddClient";
-import { GiMoneyStack, GiPayMoney, GiReceiveMoney } from "react-icons/gi";
+import {
+    GiMoneyStack,
+    GiPayMoney,
+    GiReceiveMoney,
+    GiTakeMyMoney,
+} from "react-icons/gi";
 import Blocklist from "../components/clients/Blocklist";
 import ClientSearch from "../components/clients/ClientSearch";
 import { BiSolidCategory, BiSolidOffer } from "react-icons/bi";
@@ -60,6 +65,7 @@ import ConfirmSales from "../components/shop/sales/ConfirmSales";
 import Offers from "../components/settings/offers/Offers";
 import GymData from "../components/settings/gym-data/GymData";
 import Birthdays from "../components/reports/birthdays/Birthdays";
+import Advance from "../components/financials/advances/Advance";
 
 export const routes = [
     {
@@ -424,6 +430,26 @@ export const routes = [
                         id: 1,
                         value: "تخصيص المرتبات",
                         name: "financials.change_salary",
+                    },
+                ],
+            },
+            {
+                id: 4,
+                title: "السلفات",
+                name: "salaries",
+                url: "/financials/advance",
+                icon: <GiTakeMyMoney />,
+                element: <Advance />,
+                permissions: [
+                    {
+                        id: 1,
+                        value: "استخراج",
+                        name: "financials.add_advance",
+                    },
+                    {
+                        id: 2,
+                        value: "عرض",
+                        name: "financials.view_advance",
                     },
                 ],
             },

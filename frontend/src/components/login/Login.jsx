@@ -167,7 +167,6 @@ const Login = () => {
                                 type="submit"
                                 color={"primary"}
                                 disabled={post}
-                                className="w-fit h-10 flex justify-center items-center"
                                 size={"xl"}
                                 isProcessing={post}
                                 processingSpinner={
@@ -181,10 +180,7 @@ const Login = () => {
                 </div>
 
                 {/* left logo */}
-                <div
-                    className="logo w-full md:w-1/2 h-[30%] md:h-full flex justify-center items-center overflow-hidden"
-                    // bg-gradient-to-l from-primary-400 to-primary-200 "
-                >
+                <div className="logo w-full md:w-1/2 h-[30%] md:h-full flex justify-center items-center overflow-hidden">
                     <img
                         className="w-full md:h-full object-cover"
                         src={gymData?.logo}

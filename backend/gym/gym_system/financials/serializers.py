@@ -36,7 +36,6 @@ class SalaryReadSerializer(serializers.ModelSerializer):
     total_salary = serializers.SerializerMethodField()
     total_deductions = serializers.SerializerMethodField()
     total_extra = serializers.SerializerMethodField()
-    available_advance = serializers.SerializerMethodField()
     employee = EmployeeReadSerializer()
     referred_subscriptions = serializers.SerializerMethodField()
     private_trainings = serializers.SerializerMethodField()
@@ -45,6 +44,8 @@ class SalaryReadSerializer(serializers.ModelSerializer):
 
     referred_subscriptions_net = serializers.SerializerMethodField()
     private_trainings_net = serializers.SerializerMethodField()
+
+    available_advance = serializers.SerializerMethodField()
 
     class Meta:
         model = Salary
@@ -61,9 +62,6 @@ class SalaryReadSerializer(serializers.ModelSerializer):
 
     def get_total_extra(self, obj):
         return obj.total_extra
-
-    def get_available_advance(self, obj):
-        return obj.available_advance
 
     def get_referred_subscriptions(self, obj):
         return obj.referred_subscriptions
@@ -83,10 +81,32 @@ class SalaryReadSerializer(serializers.ModelSerializer):
     def get_private_trainings_net(self, obj):
         return obj.private_trainings_net
 
+    def get_available_advance(self, obj):
+        return obj.available_advance
+
 
 class SalaryWriteSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='salary-detail')
 
     class Meta:
         model = Salary
+        fields = '__all__'
+
+
+class AdvanceReadSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='advance-detail')
+    employee = EmployeeReadSerializer()
+    employee_display = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Advance
+        fields = '__all__'
+
+    def get_employee_display(self, obj):
+        return f"{obj.employee.id} - {obj.employee.name}"
+
+
+class AdvanceWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Advance
         fields = '__all__'

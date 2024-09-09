@@ -1005,7 +1005,7 @@ const SalariesForm = () => {
                                             type="submit"
                                             color={"primary"}
                                             disabled={post}
-                                            className="w-32 h-10 flex justify-center items-center"
+                                            // className="w-32 h-10 flex justify-center items-center"
                                             size={"xl"}
                                             isProcessing={post}
                                             processingSpinner={

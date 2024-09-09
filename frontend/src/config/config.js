@@ -33,6 +33,8 @@ const endpoints = {
     financial_item_list: `${api_base_url}api/financials/financial-item/?`,
     transaction_list: `${api_base_url}api/financials/transaction/?`,
     salary_list: `${api_base_url}api/financials/salary/?`,
+    advance_list: `${api_base_url}api/financials/advance/?`,
+    employee_advance_info: `${api_base_url}api/financials/employee-advance-info?`,
 
     // clients routing
     client_list: `${api_base_url}api/clients/client/?`,

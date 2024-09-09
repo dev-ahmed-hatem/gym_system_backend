@@ -104,7 +104,6 @@ def daily_reports(request):
     incomes = Transaction.objects.filter(date=day, category__financial_type="incomes")
 
     # Filter Subscriptions
-    # subscriptions = Subscription.objects.filter(start_date=day)
     subscriptions = SubscriptionPlan.objects.annotate(
         num_subscriptions=Count('subscriptions', filter=Q(subscriptions__start_date=day))).filter(
         num_subscriptions__gt=0)
