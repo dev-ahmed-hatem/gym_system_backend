@@ -99,11 +99,25 @@ class AdvancePaymentSerializer(serializers.ModelSerializer):
         model = AdvancePayment
         fields = '__all__'
 
+    def create(self, validated_data):
+        advance_payment = super(AdvancePaymentSerializer, self).create(validated_data)
+
+        # create transaction
+        financial_item, _ = FinancialItem.objects.get_or_create(name="سداد سلفة", financial_type="incomes",
+                                                                system_related=True)
+        transaction = Transaction.objects.create(category=financial_item,
+                                                 date=now().astimezone(settings.CAIRO_TZ).date(),
+                                                 amount=advance_payment.amount
+                                                 )
+        transaction.save()
+        return advance_payment
+
 
 class AdvanceReadSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='advance-detail')
     payments = serializers.SerializerMethodField()
     employee_display = serializers.SerializerMethodField()
+    remaining_payments = serializers.SerializerMethodField()
 
     class Meta:
         model = Advance
@@ -117,6 +131,10 @@ class AdvanceReadSerializer(serializers.ModelSerializer):
         payments_serialized = AdvancePaymentSerializer(payments, context={'request': self.context.get("request")},
                                                        many=True).data
         return payments_serialized
+
+    def get_remaining_payments(self, obj):
+        remainging = obj.amount - obj.total_repaid
+        return remainging
 
 
 class AdvanceWriteSerializer(serializers.ModelSerializer):

@@ -86,6 +86,11 @@ class AdvanceViewSet(ModelViewSet):
         return queryset
 
 
+class AdvancePaymentViewSet(ModelViewSet):
+    queryset = AdvancePayment.objects.all()
+    serializer_class = AdvancePaymentSerializer
+
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def employee_advance_info(request):

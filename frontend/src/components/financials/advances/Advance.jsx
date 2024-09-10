@@ -46,7 +46,7 @@ const Advance = () => {
         if (permissions.view) {
             get_current_advances();
         }
-    }, [data, searchParam, pageNumber]);
+    }, [searchParam, pageNumber]);
 
     return (
         <>

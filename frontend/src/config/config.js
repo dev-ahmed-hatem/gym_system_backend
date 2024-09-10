@@ -34,6 +34,7 @@ const endpoints = {
     transaction_list: `${api_base_url}api/financials/transaction/?`,
     salary_list: `${api_base_url}api/financials/salary/?`,
     advance_list: `${api_base_url}api/financials/advance/?`,
+    advance_payment_list: `${api_base_url}api/financials/advance-payment/?`,
     employee_advance_info: `${api_base_url}api/financials/employee-advance-info?`,
 
     // clients routing

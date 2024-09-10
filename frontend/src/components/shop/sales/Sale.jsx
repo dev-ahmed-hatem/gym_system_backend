@@ -51,7 +51,7 @@ const Sale = () => {
         if (permissions.view) {
             get_current_sales();
         }
-    }, [data, searchParam, pageNumber, date]);
+    }, [searchParam, pageNumber, date]);
 
     return (
         <>

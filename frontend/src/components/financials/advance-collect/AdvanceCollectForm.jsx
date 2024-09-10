@@ -1,37 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import { Label, Button, TextInput } from "flowbite-react";
 import { MdSubscriptions } from "react-icons/md";
 import { useForm } from "react-hook-form";
-import endpoints from "../../../config/config";
-import { fetch_list_data } from "../../../config/actions";
+import { get_advance_data } from "./utils";
 
-const AdvanceCollectForm = ({ setFetchError, setData }) => {
-    const [post, setPost] = useState(false);
-
+const AdvanceCollectForm = ({ setFetchError, setData, post, setPost }) => {
     const {
         register,
         handleSubmit,
         trigger,
         formState: { errors },
     } = useForm();
-
-    const get_advance_data = (code, setData, setFetchError, setPost) => {
-        setData(null);
-        if (setPost) {
-            setPost(true);
-        }
-        const url = `${endpoints.advance_list}code=${code}`;
-
-        fetch_list_data({
-            searchURL: url,
-            setData: setData,
-            setFetchError: setFetchError,
-            setLoading: (bool) => {
-                if (setPost) setPost(bool);
-            },
-        });
-    };
 
     const onSubmit = (data) => {
         get_advance_data(data.code, setData, setFetchError, setPost);

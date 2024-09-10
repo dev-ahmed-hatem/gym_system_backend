@@ -3,6 +3,8 @@ import { usePermission } from "../../../providers/PermissionProvider";
 import AdvanceCollectForm from "./AdvanceCollectForm";
 import ViewGroup from "../../groups/ViewGroup";
 import { Table } from "flowbite-react";
+import AdvancePaymentForm from "./AdvancePaymentForm";
+import { get_advance_data } from "./utils";
 
 const AdvanceCollect = () => {
     //////////////////////////////// permissions ////////////////////////////////
@@ -18,6 +20,7 @@ const AdvanceCollect = () => {
     //////////////////////////////// list data ////////////////////////////////
     const [fetchError, setFetchError] = useState(null);
     const [data, setData] = useState(null);
+    const [post, setPost] = useState(false);
 
     return (
         <>
@@ -25,6 +28,8 @@ const AdvanceCollect = () => {
             <AdvanceCollectForm
                 setFetchError={setFetchError}
                 setData={setData}
+                post={post}
+                setPost={setPost}
             />
 
             {/* table data */}
@@ -48,7 +53,18 @@ const AdvanceCollect = () => {
                         </ViewGroup>
                     ) : (
                         <>
-                            <span>{data.results[0].id}</span>
+                            {/* Advance payment form */}
+                            <AdvancePaymentForm
+                                advance_info={data?.results[0]}
+                                callBack={() => {
+                                    get_advance_data(
+                                        data?.results[0].id,
+                                        setData,
+                                        setFetchError,
+                                        setPost
+                                    );
+                                }}
+                            />
 
                             {/* Payments history */}
                             <ViewGroup title={"سجل السداد للسلفة"}>

@@ -3,12 +3,12 @@ from users.models import Employee
 from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import Decimal
 from subscriptions.models import Subscription
-from datetime import datetime
+from django.utils.timezone import now
 from django.conf import settings
 
 
 def current_date():
-    return settings.CAIRO_TZ.localize(datetime.now()).date()
+    return now().astimezone(settings.CAIRO_TZ).date()
 
 
 class FinancialItem(models.Model):

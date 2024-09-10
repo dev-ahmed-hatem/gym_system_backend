@@ -285,6 +285,7 @@ const AdvanceForm = ({ callBack }) => {
                                                     : "primary"
                                             }
                                             {...register("amount", {
+                                                required: "أدخل المبلغ",
                                                 min: {
                                                     value: 1,
                                                     message: "أدخل قيمة السلفة",
