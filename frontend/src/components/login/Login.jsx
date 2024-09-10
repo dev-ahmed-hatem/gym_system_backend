@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Label, TextInput, Button } from "flowbite-react";
 import { HiUser, HiLockClosed } from "react-icons/hi";
 import { useForm } from "react-hook-form";
@@ -41,6 +41,7 @@ const Login = () => {
         formState: { errors },
         reset,
     } = useForm();
+    const username = useRef(null);
 
     const onSubmit = (data) => {
         setPost(true);
@@ -66,6 +67,9 @@ const Login = () => {
                 console.log(error);
                 setLoginError(true);
                 reset();
+                if (username) {
+                    username.current.focus();
+                }
             })
             .finally(() => {
                 setPost(false);
@@ -124,8 +128,12 @@ const Login = () => {
                                 {...register("username", {
                                     required: "أدخل اسم المستخدم",
                                 })}
-                                // onBlur={() => trigger("username")}
+                                onBlur={() => trigger("username")}
                                 autoFocus
+                                ref={(e) => {
+                                    register("username").ref(e); // Assign react-hook-form's ref
+                                    username.current = e; // Assign custom useRef
+                                }}
                             />
                             {errors.username && (
                                 <p className="error-message">

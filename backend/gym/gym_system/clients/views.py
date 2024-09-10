@@ -1,4 +1,4 @@
-from datetime import datetime
+import pytz
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -28,13 +28,15 @@ class ClientViewSet(ModelViewSet):
         if from_date and to_date:
             from_date = datetime.strptime(from_date, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0)
             to_date = datetime.strptime(to_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=999999)
-            
+
             local_from = settings.CAIRO_TZ.localize(from_date)
             local_to = settings.CAIRO_TZ.localize(to_date)
 
+            utc_from = local_from.astimezone(pytz.UTC)
+            utc_to = local_to.astimezone(pytz.UTC)
+
             queryset = queryset.filter(
-                Q(created_at__gte=local_from) &
-                Q(created_at__lte=local_to)
+                Q(created_at__range=(utc_from, utc_to))
             )
 
         if search:
@@ -70,9 +72,12 @@ class AttendanceViewSet(ModelViewSet):
 
             local_from = settings.CAIRO_TZ.localize(from_date)
             local_to = settings.CAIRO_TZ.localize(to_date)
+
+            utc_from = local_from.astimezone(pytz.UTC)
+            utc_to = local_to.astimezone(pytz.UTC)
+
             queryset = queryset.filter(
-                Q(timestamp__gte=local_from) &
-                Q(timestamp__lte=local_to)
+                Q(timestamp__range=(utc_from, utc_to))
             )
         return queryset
 
@@ -92,7 +97,7 @@ def scanner_code(request):
 
     try:
         client = Client.objects.get(id=code)
-        active_subscriptions = client.subscriptions.filter(end_date__gte=now().date())
+        active_subscriptions = client.subscriptions.filter(end_date__gte=now().astimezone(settings.CAIRO_TZ).date())
         serilized_subscriptions = SubscriptionReadSerializer(active_subscriptions, context={"request": request},
                                                              many=True).data
         serialized_client = ClientReadSerializer(client, context={"request": request}).data

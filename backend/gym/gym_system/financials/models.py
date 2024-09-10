@@ -3,6 +3,12 @@ from users.models import Employee
 from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import Decimal
 from subscriptions.models import Subscription
+from datetime import datetime
+from django.conf import settings
+
+
+def current_date():
+    return settings.CAIRO_TZ.localize(datetime.now()).date()
 
 
 class FinancialItem(models.Model):
@@ -115,7 +121,7 @@ class Salary(models.Model):
 class Advance(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='advances')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField(default=current_date)
     total_repaid = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     fully_paid = models.BooleanField(default=False)
 
@@ -136,7 +142,7 @@ class Advance(models.Model):
 
 class AdvancePayment(models.Model):
     advance = models.ForeignKey(Advance, on_delete=models.CASCADE, related_name='payments')
-    payment_date = models.DateField(auto_now_add=True)
+    date = models.DateField(default=current_date)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):

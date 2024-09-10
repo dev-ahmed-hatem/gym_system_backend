@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.timezone import timedelta
+from django.utils.timezone import timedelta, now
 from datetime import datetime
 from django.conf import settings
 
@@ -54,7 +54,7 @@ class Subscription(models.Model):
     def freeze(self, freeze_date=None):
         if self.plan.freezable and self.freeze_days_used < self.plan.freeze_no:
             if not freeze_date:
-                freeze_date = datetime.now().date()
+                freeze_date = now().astimezone(settings.CAIRO_TZ).date()
             self.freeze_start_date = freeze_date
             self.is_frozen = True
             self.save()
@@ -69,12 +69,12 @@ class Subscription(models.Model):
     def unfreeze(self):
         if self.is_frozen:
             self.is_frozen = False
-            self.unfreeze_date = datetime.now().date()
+            self.unfreeze_date = now().astimezone(settings.CAIRO_TZ).date()
             self.save()
 
     def is_expired(self):
-        return settings.CAIRO_TZ.localize(datetime.now()).date() > self.end_date
+        return now().astimezone(settings.CAIRO_TZ).date() > self.end_date
 
     @classmethod
     def get_active_subscriptions(cls):
-        return cls.objects.filter(end_date__gte=settings.CAIRO_TZ.localize(datetime.now()).date())
+        return cls.objects.filter(end_date__gte=now().astimezone(settings.CAIRO_TZ).date())

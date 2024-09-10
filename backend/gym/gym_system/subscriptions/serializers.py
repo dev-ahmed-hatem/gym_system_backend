@@ -3,6 +3,7 @@ from rest_framework.relations import HyperlinkedIdentityField
 from users.serializers import EmployeeReadSerializer
 from financials.models import FinancialItem, Transaction
 from django.utils.timezone import now
+from django.conf import settings
 from .models import *
 
 
@@ -82,7 +83,7 @@ class SubscriptionWriteSerializer(serializers.ModelSerializer):
         financial_item, _ = FinancialItem.objects.get_or_create(name="إيرادات اشتراكات", financial_type="incomes",
                                                                 system_related=True)
         transaction = Transaction.objects.create(category=financial_item,
-                                                 date=now().date(),
+                                                 date=now().astimezone(settings.CAIRO_TZ).date(),
                                                  amount=total_price
                                                  )
         transaction.save()

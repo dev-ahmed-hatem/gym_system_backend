@@ -1,4 +1,3 @@
-from django.utils.timezone import datetime
 from rest_framework import serializers
 from .models import *
 from subscriptions.models import SubscriptionPlan, Subscription
@@ -7,7 +6,7 @@ from financials.models import FinancialItem, Transaction
 from users.models import Employee
 from users.serializers import UserSerializer
 from django.conf import settings
-from django.utils.timezone import now
+from django.utils.timezone import now, datetime
 
 
 class ClientReadSerializer(serializers.ModelSerializer):
@@ -67,7 +66,7 @@ class ClientWriteSerializer(serializers.ModelSerializer):
             if start_date:
                 start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
             else:
-                start_date = datetime.now().date()
+                start_date = now().astimezone(settings.CAIRO_TZ).date()
 
             client_sub = Subscription.objects.create(plan=plan,
                                                      client=client,
@@ -78,7 +77,7 @@ class ClientWriteSerializer(serializers.ModelSerializer):
             financial_item, _ = FinancialItem.objects.get_or_create(name="إيرادات اشتراكات", financial_type="incomes",
                                                                     system_related=True)
             transaction = Transaction.objects.create(category=financial_item,
-                                                     date=now().date(),
+                                                     date=now().astimezone(settings.CAIRO_TZ).date(),
                                                      amount=client_sub.plan.price
                                                      )
 

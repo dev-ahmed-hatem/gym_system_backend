@@ -46,13 +46,21 @@ const Advance = () => {
         if (permissions.view) {
             get_current_advances();
         }
-    }, [searchParam, pageNumber]);
+    }, [data, searchParam, pageNumber]);
 
     return (
         <>
             {/* add form */}
             {permissions.add ? (
-                <AdvanceForm />
+                <AdvanceForm
+                    callBack={() => {
+                        setSearchParam(null);
+                        setPageNumber(null);
+                        if (permissions.view) {
+                            get_current_advances();
+                        }
+                    }}
+                />
             ) : (
                 <ErrorGroup
                     title={"استخراج سلفة"}

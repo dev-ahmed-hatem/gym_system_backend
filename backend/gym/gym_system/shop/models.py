@@ -1,6 +1,7 @@
 from django.db import models
 from clients.models import Client
-from django.utils.timezone import now, localdate
+from django.utils.timezone import now
+from django.conf import settings
 from financials.models import FinancialItem, Transaction
 from subscriptions.models import SubscriptionPlan
 
@@ -59,7 +60,7 @@ class Sale(models.Model):
                                                                     system_related=True)
             transaction = Transaction.objects.create(category=financial_item,
                                                      amount=self.after_discount,
-                                                     date=now().date(),
+                                                     date=now().astimezone(settings.CAIRO_TZ).date(),
                                                      )
             transaction.save()
         else:
@@ -104,6 +105,5 @@ class Offer(models.Model):
             return f"Offer on Plan: {self.plan.name}"
         return "Offer"
 
-
     def is_active(self):
-        return self.start_date <= localdate(now()) <= self.end_date
+        return self.start_date <= now().astimezone(settings.CAIRO_TZ).date() <= self.end_date

@@ -8,6 +8,7 @@ from rest_framework.decorators import api_view, permission_classes, action
 from django.utils.timezone import datetime, now
 from django.conf import settings
 from financials.models import FinancialItem, Transaction
+import pytz
 
 
 class ProductCategoryViewSet(ModelViewSet):
@@ -50,8 +51,16 @@ class SaleViewSet(ModelViewSet):
         if search:
             queryset = queryset.filter(id__icontains=search)
         if date:
-            local_date = settings.CAIRO_TZ.localize(datetime.strptime(date, '%Y-%m-%d')).date()
-            queryset = queryset.filter(created_at__date=local_date)
+            from_date = datetime.strptime(date, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0)
+            to_date = datetime.strptime(date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=999999)
+
+            local_from = settings.CAIRO_TZ.localize(from_date)
+            local_to = settings.CAIRO_TZ.localize(to_date)
+
+            utc_from = local_from.astimezone(pytz.UTC)
+            utc_to = local_to.astimezone(pytz.UTC)
+
+            queryset = queryset.filter(created_at__range=(utc_from, utc_to))
         return queryset
 
     @action(methods=['get'], detail=True)
@@ -102,7 +111,7 @@ def add_stock(request):
     financial_item, _ = FinancialItem.objects.get_or_create(name="مصاريف منتجات", financial_type="expenses",
                                                             system_related=True)
     transaction = Transaction.objects.create(category=financial_item,
-                                             date=now().date(),
+                                             date=now().astimezone(settings.CAIRO_TZ).date(),
                                              amount=product.cost_price * int(amount)
                                              )
     transaction.save()

@@ -66,6 +66,8 @@ import Offers from "../components/settings/offers/Offers";
 import GymData from "../components/settings/gym-data/GymData";
 import Birthdays from "../components/reports/birthdays/Birthdays";
 import Advance from "../components/financials/advances/Advance";
+import { AiFillMoneyCollect } from "react-icons/ai";
+import AdvanceCollect from "../components/financials/advance-collect/AdvanceCollect";
 
 export const routes = [
     {
@@ -436,7 +438,7 @@ export const routes = [
             {
                 id: 4,
                 title: "السلفات",
-                name: "salaries",
+                name: "advances",
                 url: "/financials/advance",
                 icon: <GiTakeMyMoney />,
                 element: <Advance />,
@@ -451,7 +453,21 @@ export const routes = [
                         value: "عرض",
                         name: "financials.view_advance",
                     },
+                    {
+                        id: 3,
+                        value: "سداد",
+                        name: "financials.change_advance",
+                    },
                 ],
+            },
+            {
+                id: 5,
+                title: "السداد",
+                name: "advance-collect",
+                url: "/financials/advance-collect",
+                icon: <AiFillMoneyCollect />,
+                element: <AdvanceCollect />,
+                permissions: "unadjustable",
             },
         ],
     },

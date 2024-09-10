@@ -4,6 +4,7 @@ import {
     Select as FlowbiteSelect,
     Datepicker,
     TextInput,
+    Checkbox,
 } from "flowbite-react";
 import axios from "../../config/axiosconfig";
 import { useForm, Controller } from "react-hook-form";
@@ -87,12 +88,10 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
         trigger,
         formState: { errors },
         setError,
-        clearErrors,
         reset,
         control,
         watch,
         setValue,
-        getValues,
     } = useForm({ defaultValues: transformValues(defaultValues) });
     const formFunction = defaultValues ? "edit" : "add";
 
@@ -503,53 +502,59 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                                 )}
                             />
                         </div>
-                        <div className="w-full">
-                            <div>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        className="me-4"
-                                        checked={discount}
-                                        onChange={() => setDiscount(!discount)}
-                                    />
-                                    الخصم
-                                </label>
-                            </div>
-                            {discount && (
-                                <>
-                                    <div className="mb-6">
-                                        <label>
-                                            نسبة الخصم :
-                                            <TextInput
-                                                id="discount"
-                                                type="number"
-                                                className="inline-block mx-3"
-                                                rightIcon={FaPercent}
-                                                placeholder="الخصم"
-                                                color={"primary"}
-                                                value={discountPercent}
-                                                onChange={(e) =>
-                                                    setDiscountPercent(
-                                                        parseFloat(
-                                                            e.target.value
-                                                        ) || 0
-                                                    )
-                                                }
-                                                min={0}
-                                                max={100}
-                                            />
-                                        </label>
-                                    </div>
+                        {formFunction == "add" && (
+                            <div className="w-full">
+                                <div>
+                                    <label>
+                                        <Checkbox
+                                            color={"yellow"}
+                                            type="checkbox"
+                                            className="me-4"
+                                            checked={discount}
+                                            onChange={() =>
+                                                setDiscount(!discount)
+                                            }
+                                        />
+                                        الخصم
+                                    </label>
+                                </div>
+                                {discount && (
+                                    <>
+                                        <div className="mb-6">
+                                            <label>
+                                                نسبة الخصم :
+                                                <TextInput
+                                                    id="discount"
+                                                    type="number"
+                                                    className="inline-block mx-3"
+                                                    rightIcon={FaPercent}
+                                                    placeholder="الخصم"
+                                                    color={"primary"}
+                                                    value={discountPercent}
+                                                    onChange={(e) =>
+                                                        setDiscountPercent(
+                                                            parseFloat(
+                                                                e.target.value
+                                                            ) || 0
+                                                        )
+                                                    }
+                                                    min={0}
+                                                    max={100}
+                                                />
+                                            </label>
+                                        </div>
 
-                                    <div>
-                                        <label>
-                                            الصافى :{" "}
-                                            {discountedPrice.toFixed(2)} جنيه
-                                        </label>
-                                    </div>
-                                </>
-                            )}
-                        </div>
+                                        <div>
+                                            <label>
+                                                الصافى :{" "}
+                                                {discountedPrice.toFixed(2)}{" "}
+                                                جنيه
+                                            </label>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        )}
 
                         {/* totals */}
                         <div className="w-full h-px my-3 bg-gray-200 border-0"></div>

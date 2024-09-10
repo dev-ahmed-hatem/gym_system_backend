@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-    TextInput,
-    Label,
-    Button,
-    Select as FlowbiteSelect,
-    Table,
-} from "flowbite-react";
+import { TextInput, Label, Button } from "flowbite-react";
 import Select from "react-select";
 import Loading from "../../groups/Loading";
 import { useForm } from "react-hook-form";
 import endpoints from "../../../config/config";
-import { FaInfoCircle, FaMoneyBill, FaPercentage } from "react-icons/fa";
+import { FaInfoCircle, FaMoneyBill } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
 import { useToast } from "../../../providers/ToastProvider";
 import { useDrawer } from "../../../providers/DrawerProvider";
@@ -20,7 +14,7 @@ import {
 } from "../../../config/actions";
 import style from "../../../assets/rect-select-style";
 
-const ConfirmUpdate = ({ postData, setPostData, callBack, closeDrawer }) => {
+const ConfirmAdvance = ({ postData, setPostData, callBack, closeDrawer }) => {
     return (
         <div
             className={`wrapper p-4 my-2 bg-white rounded border-t-4 border-primary shadow-lg`}
@@ -69,7 +63,7 @@ const ConfirmUpdate = ({ postData, setPostData, callBack, closeDrawer }) => {
     );
 };
 
-const AdvanceForm = () => {
+const AdvanceForm = ({ callBack }) => {
     //////////////////////////////// providers ////////////////////////////////
     const { showDrawer, closeDrawer } = useDrawer();
     const { showToast } = useToast();
@@ -98,10 +92,12 @@ const AdvanceForm = () => {
         showDrawer(
             "تأكيد ",
             FaInfoCircle,
-            <ConfirmUpdate
+            <ConfirmAdvance
                 postData={data}
                 setPostData={setPostData}
-                callBack={() => {}}
+                callBack={() => {
+                    if (callBack) callBack();
+                }}
                 closeDrawer={closeDrawer}
             />
         );

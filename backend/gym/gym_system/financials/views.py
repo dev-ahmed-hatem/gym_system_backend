@@ -2,10 +2,9 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from django.utils.timezone import datetime
+from django.utils.timezone import datetime, now
 from django.db.models import Q
 from rest_framework.decorators import api_view, permission_classes
-from datetime import datetime
 from django.conf import settings
 from .serializers import *
 from .models import *
@@ -44,7 +43,7 @@ class TransactionViewSet(ModelViewSet):
         if type:
             queryset = queryset.filter(category__financial_type=type)
         if date:
-            queryset = queryset.filter(date=datetime.strptime(date, '%Y-%m-%d'))
+            queryset = queryset.filter(date=datetime.strptime(date, '%Y-%m-%d').date())
         return queryset
 
 
@@ -75,6 +74,11 @@ class AdvanceViewSet(ModelViewSet):
         return AdvanceReadSerializer
 
     def get_queryset(self):
+        # return a subscription with code param
+        sub_code = self.request.query_params.get('code', None)
+        if sub_code is not None:
+            return Advance.objects.filter(pk=sub_code)
+
         queryset = super().get_queryset()
         search = self.request.query_params.get('search', None)
         if search:
@@ -90,8 +94,8 @@ def employee_advance_info(request):
     response_data = {}
     employee_advances = Advance.objects.filter(employee=employee)
     current_advance = employee_advances.filter(fully_paid=False).first()
-    now = settings.CAIRO_TZ.localize(datetime.now())
-    current_salary = Salary.objects.filter(employee=employee, year=now.year, month=now.month).first()
+    today = now().astimezone(settings.CAIRO_TZ)
+    current_salary = Salary.objects.filter(employee=employee, year=today.year, month=today.month).first()
     current_salary = SalaryReadSerializer(current_salary, context={'request': request}).data
     response_data['current_salary'] = current_salary
     response_data['current_advance'] = AdvanceReadSerializer(current_advance, context={

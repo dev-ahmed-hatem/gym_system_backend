@@ -116,7 +116,7 @@ const Stats = () => {
             ) : (
                 <>
                     {data && (
-                        <div className="font mt-10 text-center flex flex-wrap gap-3">
+                        <div className="font mt-10 text-center flex justify-center lg:justify-start flex-wrap gap-3">
                             {statistics.map((stat, index) => (
                                 <StatCard
                                     key={index}

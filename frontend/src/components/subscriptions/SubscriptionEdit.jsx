@@ -68,16 +68,18 @@ const SubscriptionEdit = () => {
                             />
 
                             {/* freeze options */}
-                            <SubscriptionFreeze
-                                sub={data?.results[0]}
-                                callBack={() => {
-                                    get_subscription_data(
-                                        data?.results[0].id,
-                                        setData,
-                                        setFetchError
-                                    );
-                                }}
-                            />
+                            {!data?.results[0]?.is_expired && (
+                                <SubscriptionFreeze
+                                    sub={data?.results[0]}
+                                    callBack={() => {
+                                        get_subscription_data(
+                                            data?.results[0].id,
+                                            setData,
+                                            setFetchError
+                                        );
+                                    }}
+                                />
+                            )}
                         </>
                     )}
                 </>

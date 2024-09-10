@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from .models import *
 from users.serializers import EmployeeReadSerializer
-from django.utils.timezone import datetime
+from django.utils.timezone import now
+from django.conf import settings
 from decimal import Decimal
 
 
@@ -93,9 +94,15 @@ class SalaryWriteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class AdvancePaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdvancePayment
+        fields = '__all__'
+
+
 class AdvanceReadSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='advance-detail')
-    employee = EmployeeReadSerializer()
+    payments = serializers.SerializerMethodField()
     employee_display = serializers.SerializerMethodField()
 
     class Meta:
@@ -105,8 +112,27 @@ class AdvanceReadSerializer(serializers.ModelSerializer):
     def get_employee_display(self, obj):
         return f"{obj.employee.id} - {obj.employee.name}"
 
+    def get_payments(self, obj):
+        payments = obj.payments.all()
+        payments_serialized = AdvancePaymentSerializer(payments, context={'request': self.context.get("request")},
+                                                       many=True).data
+        return payments_serialized
+
 
 class AdvanceWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Advance
         fields = '__all__'
+
+    def create(self, validated_data):
+        advance = super(AdvanceWriteSerializer, self).create(validated_data)
+
+        # create transaction
+        financial_item, _ = FinancialItem.objects.get_or_create(name="سلفة لموظف", financial_type="expenses",
+                                                                system_related=True)
+        transaction = Transaction.objects.create(category=financial_item,
+                                                 date=now().astimezone(settings.CAIRO_TZ).date(),
+                                                 amount=advance.amount
+                                                 )
+        transaction.save()
+        return advance
