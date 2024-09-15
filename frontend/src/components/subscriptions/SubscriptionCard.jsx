@@ -38,6 +38,12 @@ const SubscriptionCard = ({ sub }) => {
                     {sub?.end_date}
                 </span>
             </p>
+            <p>
+                أيام الحضور:{" "}
+                <span className="text-primary font-bold ms-2">
+                    {sub?.attendance_days}
+                </span>
+            </p>
             <p className="state absolute top-5 left-8">
                 {sub?.is_expired ? (
                     <span className="bg-secondary-500 w-20 h-12 flex justify-center items-center rounded-lg text-white font-bold">

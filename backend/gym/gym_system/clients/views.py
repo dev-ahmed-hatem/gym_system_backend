@@ -5,7 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import api_view
 from cryptography.fernet import Fernet
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Q, F
 from .serializers import *
 from subscriptions.serializers import SubscriptionReadSerializer
 from .models import *
@@ -81,6 +81,13 @@ class AttendanceViewSet(ModelViewSet):
             )
         return queryset
 
+    def destroy(self, request, *args, **kwargs):
+        attendance = self.get_object()
+        subscription = attendance.subscription
+        subscription.attendance_days -= 1
+        subscription.save()
+        return super().destroy(self, request, *args, **kwargs)
+
 
 @api_view(['POST'])
 def scanner_code(request):
@@ -97,7 +104,17 @@ def scanner_code(request):
 
     try:
         client = Client.objects.get(id=code)
-        active_subscriptions = client.subscriptions.filter(end_date__gte=now().astimezone(settings.CAIRO_TZ).date())
+        current_date = now().astimezone(settings.CAIRO_TZ).date()
+
+        active_subscriptions = client.subscriptions.filter(
+            start_date__lte=current_date,
+            end_date__gte=current_date,
+            is_frozen=False
+        ).exclude(
+            Q(plan__is_duration=False) &
+            Q(attendance_days__gte=F('plan__classes_no'))
+        )
+
         serilized_subscriptions = SubscriptionReadSerializer(active_subscriptions, context={"request": request},
                                                              many=True).data
         serialized_client = ClientReadSerializer(client, context={"request": request}).data

@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.timezone import timedelta, now
 from datetime import datetime
 from django.conf import settings
+from django.db.models import Q, F
 
 
 class SubscriptionPlan(models.Model):
@@ -13,19 +14,24 @@ class SubscriptionPlan(models.Model):
 
     name = models.CharField(max_length=100)
     price = models.FloatField(default=0)
-    days = models.IntegerField(default=30)
+    days = models.IntegerField(default=30, null=True, blank=True)
     subscription_type = models.CharField(max_length=12, choices=SUBSCRIPTION_TYPE_CHOICES)
     description = models.TextField(default='', blank=True, null=True)
     freezable = models.BooleanField(default=False)
-    freeze_no = models.IntegerField(default=7)
+    freeze_no = models.IntegerField(default=7, null=True)
     invitations = models.IntegerField(default=0)
     for_students = models.BooleanField(default=False)
-    validity = models.IntegerField(default=30)
+    validity = models.IntegerField(default=30, null=True)
     is_duration = models.BooleanField(default=True)
     classes_no = models.IntegerField(default=8, blank=True, null=True)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if self.is_duration:
+            self.validity = self.days
+        return super(SubscriptionPlan, self).save(*args, **kwargs)
 
 
 class Subscription(models.Model):
@@ -42,6 +48,8 @@ class Subscription(models.Model):
     is_frozen = models.BooleanField(default=False)
     unfreeze_date = models.DateField(null=True, blank=True)
     total_price = models.FloatField(default=0, null=True, blank=True)
+
+    attendance_days = models.IntegerField(default=0, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.plan.is_duration:
@@ -73,8 +81,16 @@ class Subscription(models.Model):
             self.save()
 
     def is_expired(self):
-        return now().astimezone(settings.CAIRO_TZ).date() > self.end_date
+        time_expiration = now().astimezone(settings.CAIRO_TZ).date() > self.end_date
+        classes_expiration = False
+        if not self.plan.is_duration and self.attendance_days >= self.plan.classes_no:
+            classes_expiration = True
+        return classes_expiration or time_expiration
 
     @classmethod
     def get_active_subscriptions(cls):
-        return cls.objects.filter(end_date__gte=now().astimezone(settings.CAIRO_TZ).date())
+        current_date = now().astimezone(settings.CAIRO_TZ).date()
+        return cls.objects.filter(
+            start_date__lte=current_date,
+            end_date__gte=current_date).exclude(Q(plan__is_duration=False) &
+                                                Q(attendance_days__gte=F('plan__classes_no')))

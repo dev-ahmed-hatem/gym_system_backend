@@ -311,7 +311,23 @@ export const routes = [
         name: "barcode",
         url: "/barcode",
         icon: <FaBarcode />,
-        permissions: "unadjustable",
+        permissions: [
+            {
+                id: 1,
+                value: "تسجيل حضور",
+                name: "clients.add_attendance",
+            },
+            {
+                id: 2,
+                value: "عرض السجل",
+                name: "clients.view_attendance",
+            },
+            {
+                id: 3,
+                value: "حذف حضور",
+                name: "clients.delete_attendance",
+            },
+        ],
         children: [
             {
                 id: 1,
@@ -437,7 +453,7 @@ export const routes = [
             },
             {
                 id: 4,
-                title: "السلفات",
+                title: "السلف",
                 name: "advances",
                 url: "/financials/advance",
                 icon: <GiTakeMyMoney />,

@@ -43,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['id_number']
+    REQUIRED_FIELDS = ['phone', 'national_id']
 
     def has_perm(self, perm, obj=None):
         if self.is_superuser:

@@ -6,8 +6,22 @@ import axios from "../../config/axiosconfig";
 import endpoints from "../../config/config";
 import SubscriptionsPrompt from "./SubscriptionsPrompt";
 import { FaInfoCircle } from "react-icons/fa";
+import { usePermission } from "../../providers/PermissionProvider";
+import ErrorGroup from "../groups/ErrorGroup";
 
 const Scanner = () => {
+    //////////////////////////////// permissions ////////////////////////////////
+    const { set_page_permissions } = usePermission();
+    const permissions = set_page_permissions("clients", "attendance");
+
+    if (!permissions.add)
+        return (
+            <ErrorGroup
+                title={"تسجيل حضور"}
+                message={"ليس لديك صلاحية"}
+            />
+        );
+
     const scannerRef = useRef(null);
     const [scanResult, setScanResult] = useState(null);
     const [scanError, setScanError] = useState(null);

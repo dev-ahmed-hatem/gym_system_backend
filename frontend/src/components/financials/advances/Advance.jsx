@@ -70,7 +70,7 @@ const Advance = () => {
 
             {/* table data */}
             {permissions.view ? (
-                <ViewGroup title={"سجل السلفات"}>
+                <ViewGroup title={"سجل السلف"}>
                     {loading ? (
                         <Loading />
                     ) : fetchError ? (
@@ -187,7 +187,7 @@ const Advance = () => {
                     )}
                 </ViewGroup>
             ) : (
-                <ErrorGroup title={"سجل السلفات"} message={"ليس لديك صلاحية"} />
+                <ErrorGroup title={"سجل السلف"} message={"ليس لديك صلاحية"} />
             )}
         </>
     );

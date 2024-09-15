@@ -1,14 +1,27 @@
 import React, { useState } from "react";
-import { Table } from "flowbite-react";
+import { Button, Table } from "flowbite-react";
 import Loading from "../groups/Loading";
 import ViewGroup from "../groups/ViewGroup";
 import BarcodeReportForm from "./BarcodeReportForm";
+import { usePermission } from "../../providers/PermissionProvider";
+import ErrorGroup from "../groups/ErrorGroup";
+import { MdDelete } from "react-icons/md";
+import ConfirmDelete from "../groups/ConfirmDelete";
+import { useDrawer } from "../../providers/DrawerProvider";
 
 const BarcodeReport = ({ client }) => {
+    //////////////////////////////// permissions ////////////////////////////////
+    const { set_page_permissions } = usePermission();
+    const permissions = set_page_permissions("clients", "attendance");
+
+    if (!permissions.view)
+        return <ErrorGroup title={"سجل الحضور"} message={"ليس لديك صلاحية"} />;
+
     //////////////////////////////// list data ////////////////////////////////
     const [loading, setLoading] = useState(false);
     const [fetchError, setFetchError] = useState(null);
     const [data, setData] = useState(null);
+    const { showDrawer, closeDrawer } = useDrawer();
 
     return (
         <>
@@ -59,6 +72,11 @@ const BarcodeReport = ({ client }) => {
                                                 <Table.HeadCell>
                                                     الوقت
                                                 </Table.HeadCell>
+                                                {permissions.delete && (
+                                                    <Table.HeadCell>
+                                                        إجراءات
+                                                    </Table.HeadCell>
+                                                )}
                                             </Table.Head>
                                             <Table.Body className="text-center">
                                                 {data.map((attendance) => {
@@ -130,6 +148,47 @@ const BarcodeReport = ({ client }) => {
                                                                     </span>
                                                                 )}
                                                             </Table.Cell>
+                                                            {permissions.delete && (
+                                                                <Table.Cell>
+                                                                    <Button
+                                                                        type="button"
+                                                                        color={
+                                                                            "failure"
+                                                                        }
+                                                                        onClick={() =>
+                                                                            showDrawer(
+                                                                                "إلغاء الحضور",
+                                                                                MdDelete,
+                                                                                <ConfirmDelete
+                                                                                    deleteURL={
+                                                                                        attendance.url
+                                                                                    }
+                                                                                    deletePrompt={
+                                                                                        " هل أنت متأكد تريد حذف الحضور"
+                                                                                    }
+                                                                                    itemName={
+                                                                                        ""
+                                                                                    }
+                                                                                    closeDrawer={
+                                                                                        closeDrawer
+                                                                                    }
+                                                                                    callBack={() => {
+                                                                                        setData(
+                                                                                            null
+                                                                                        );
+                                                                                    }}
+                                                                                    toastMessage={
+                                                                                        "تم حذف الحضور بنجاح"
+                                                                                    }
+                                                                                />
+                                                                            )
+                                                                        }
+                                                                        className="w-20 h-10 flex justify-center items-center"
+                                                                    >
+                                                                        حذف
+                                                                    </Button>
+                                                                </Table.Cell>
+                                                            )}
                                                         </Table.Row>
                                                     );
                                                 })}

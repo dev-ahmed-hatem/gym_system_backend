@@ -106,3 +106,11 @@ class AttendanceWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attendance
         fields = '__all__'
+
+    def create(self, validated_data):
+        attendance = super().create(validated_data)
+        subscription = validated_data.pop('subscription', None)
+        if subscription:
+            subscription.attendance_days += 1
+            subscription.save()
+        return attendance

@@ -38,3 +38,16 @@ offers:
 3- check product stock with order confirmation
 4- salaries
 5- loans
+
+/////// new
+
+barcode registeration:
+    - display client photo
+    - display subscription data (end date - subscription id)
+    - barcode with client id - mobile number - camera - barcode scanner
+    - can remove attendance in case of service cancelation
+
+
+employee report within duration:
+    - finanical report
+    - advances
