@@ -25,7 +25,7 @@ axiosInstance.interceptors.response.use(
     },
     async (error) => {
         const originalRequest = error.config;
-        console.log(error);
+        // console.log(error);
 
         // check if the token expired and perform refresh
         if (error.response.status == 401 && !originalRequest._retry) {

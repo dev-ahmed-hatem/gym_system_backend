@@ -33,7 +33,7 @@ const SubscriptionsPrompt = ({ subscriptions, client, callBack }) => {
 
     return (
         <div>
-            <h1 className="font-bold text-text text-base lg:text-lg my-3">
+            <h1 className="text-text text-base lg:text-lg my-3">
                 اسم العميل :{" "}
                 <span className="text-primary font-bold ms-2 me-3 lg:me-5">
                     {client.name}
@@ -44,7 +44,7 @@ const SubscriptionsPrompt = ({ subscriptions, client, callBack }) => {
                 <br />
                 <p className="flex justify-between items-center pe-6 md:pe-10">
                     صورة العميل :{" "}
-                    <span className="text-primary font-bold ms-2">
+                    <span className="text-primary ms-2">
                         {client.photo ? (
                             <img
                                 src={client.photo}

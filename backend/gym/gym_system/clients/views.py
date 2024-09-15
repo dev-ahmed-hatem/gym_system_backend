@@ -91,19 +91,26 @@ class AttendanceViewSet(ModelViewSet):
 
 @api_view(['POST'])
 def scanner_code(request):
-    code: str = request.data['code']
+    code: str = request.data.get('code')
+    mobile = request.data.get('mobile')
+    print(request.data)
     try:
-        if code.isdigit():
+        if mobile:
+            code = int(mobile)
+        elif code.isdigit():
             code = int(code)
         else:
             fernet = Fernet(settings.FERNET_KEY.encode())
             data = fernet.decrypt(code.encode())
             code = data.decode()
     except:
-        return Response({'error': 'كود غير صالح'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'رقم غير موجود' if mobile else 'كود غير صالح'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        client = Client.objects.get(id=code)
+        if mobile:
+            client = Client.objects.get(Q(phone=mobile) | Q(phone2=mobile))
+        else:
+            client = Client.objects.get(id=code)
         current_date = now().astimezone(settings.CAIRO_TZ).date()
 
         active_subscriptions = client.subscriptions.filter(
@@ -119,6 +126,6 @@ def scanner_code(request):
                                                              many=True).data
         serialized_client = ClientReadSerializer(client, context={"request": request}).data
     except Client.DoesNotExist:
-        return Response({'error': 'كود عميل غير موجود'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'عميل غير موجود'}, status=status.HTTP_404_NOT_FOUND)
 
     return Response({'code': code, "client": serialized_client, "subscriptions": serilized_subscriptions})

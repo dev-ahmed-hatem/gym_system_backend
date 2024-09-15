@@ -22,7 +22,6 @@ const FormGroup = ({ title, onSubmit, formFunction, post, children }) => {
                             type="submit"
                             color={formFunction == "add" ? "primary" : "accent"}
                             disabled={post}
-                            // className="w-32 h-10 flex justify-center items-center"
                             size={"xl"}
                             isProcessing={post}
                             processingSpinner={
