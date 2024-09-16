@@ -16,7 +16,7 @@ class Client(models.Model):
     ]
 
     name = models.CharField(max_length=100)
-    national_id = models.CharField(max_length=20, unique=True)
+    national_id = models.CharField(max_length=20, blank=True, null=True)  # unique
     gander = models.CharField(max_length=6, choices=GENDER_CHOICES, default='male')
     birth_date = models.DateField(blank=True, null=True)
     age = models.PositiveIntegerField(blank=True, null=True)
@@ -44,6 +44,8 @@ class Client(models.Model):
         if self.barcode:
             if os.path.isfile(self.barcode.path):
                 os.remove(self.barcode.path)
+        if self.photo:
+            self.photo.delete(save=False)
         super().delete(*args, **kwargs)
 
     def generate_qr_code(self):

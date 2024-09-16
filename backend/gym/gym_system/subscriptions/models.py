@@ -18,7 +18,7 @@ class SubscriptionPlan(models.Model):
     subscription_type = models.CharField(max_length=12, choices=SUBSCRIPTION_TYPE_CHOICES)
     description = models.TextField(default='', blank=True, null=True)
     freezable = models.BooleanField(default=False)
-    freeze_no = models.IntegerField(default=7, null=True)
+    freeze_no = models.IntegerField(default=7, null=True, blank=True)
     invitations = models.IntegerField(default=0)
     for_students = models.BooleanField(default=False)
     validity = models.IntegerField(default=30, null=True)

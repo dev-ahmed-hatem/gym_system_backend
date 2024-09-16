@@ -82,6 +82,7 @@ const ClientIdForm = () => {
                             },
                         })}
                         onBlur={() => trigger("code")}
+                        autoFocus
                     />
                     {errors.code && (
                         <p className="error-message">{errors.code.message}</p>

@@ -38,7 +38,6 @@ const SearchField = ({
                     className="block w-full lg:max-w-md p-2 ps-10 text-base text-gray-900 border border-gray-300
                      rounded-lg bg-gray-50  focus:ring-primary"
                     placeholder={placeholder ? placeholder : "بحث ..."}
-                    required
                     onChange={onChange}
                 />
             </div>

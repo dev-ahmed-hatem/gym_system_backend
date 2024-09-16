@@ -133,8 +133,8 @@ const Scanner = () => {
                             <div className="flex flex-wrap max-h-12 min-w-full justify-center mt-5">
                                 <Button
                                     color={"primary"}
-                                    className="w-44 h-14 flex justify-center items-center text-lg"
                                     size={"xl"}
+                                    className="w-44 h-16 flex justify-center items-center text-lg"
                                     onClick={displayReader}
                                 >
                                     فتح الكاميرا
