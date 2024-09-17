@@ -16,6 +16,7 @@ class ClientReadSerializer(serializers.ModelSerializer):
     barcode = serializers.SerializerMethodField(read_only=True)
     subscriptions = serializers.SerializerMethodField()
     date_created = serializers.SerializerMethodField(read_only=True)
+    trainer = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Client
@@ -37,6 +38,12 @@ class ClientReadSerializer(serializers.ModelSerializer):
 
     def get_date_created(self, obj):
         return f"{obj.created_at.astimezone(settings.CAIRO_TZ):%Y-%m-%d - %H:%M:%S}"
+
+    def get_trainer(self, obj):
+        subs = Subscription.get_active_subscriptions().filter(client=obj).order_by('start_date')
+        if subs.exists() and subs.last().trainer:
+            return subs.last().trainer.name
+        return None
 
 
 class ClientWriteSerializer(serializers.ModelSerializer):

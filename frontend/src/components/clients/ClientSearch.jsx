@@ -466,10 +466,7 @@ const ClientSearch = () => {
                                         <span>
                                             {currentClient?.trainer ? (
                                                 <span>
-                                                    {
-                                                        currentClient.trainer
-                                                            ?.name
-                                                    }
+                                                    {currentClient.trainer}
                                                 </span>
                                             ) : (
                                                 <span className="text-secondary">

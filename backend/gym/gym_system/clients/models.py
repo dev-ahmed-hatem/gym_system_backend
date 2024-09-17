@@ -1,3 +1,5 @@
+from datetime import datetime
+from django.conf import settings
 import qrcode
 import os
 from django.db import models
@@ -36,6 +38,22 @@ class Client(models.Model):
 
     def __str__(self):
         return self.name
+
+    def calaulate_age(self):
+        if self.birth_date and not self.age:
+            today = datetime.now().astimezone(settings.CAIRO_TZ).date()
+            age = today.year - self.birth_date.year
+
+            month_diff = today.month - self.birth_date.month
+            day_diff = today.day - self.birth_date.day
+
+            if (month_diff < 0 or (monthDifference == 0 and day_diff < 0)):
+                age -= 1
+            self.age = age
+
+    def save(self, *args, **kwargs):
+        self.calaulate_age()
+        super(Client, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         if self.qr_code:
