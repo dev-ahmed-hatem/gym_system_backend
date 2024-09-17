@@ -21,7 +21,7 @@ class Client(models.Model):
     national_id = models.CharField(max_length=20, blank=True, null=True)  # unique
     gander = models.CharField(max_length=6, choices=GENDER_CHOICES, default='male')
     birth_date = models.DateField(blank=True, null=True)
-    age = models.PositiveIntegerField(blank=True, null=True)
+    age = models.PositiveIntegerField(blank=True, null=True, default=0)
     phone = models.CharField(max_length=15)
     phone2 = models.CharField(max_length=15, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
@@ -39,20 +39,20 @@ class Client(models.Model):
     def __str__(self):
         return self.name
 
-    def calaulate_age(self):
-        if self.birth_date and not self.age:
+    def calculate_age(self):
+        if self.birth_date and self.age is None:
             today = datetime.now().astimezone(settings.CAIRO_TZ).date()
             age = today.year - self.birth_date.year
 
             month_diff = today.month - self.birth_date.month
             day_diff = today.day - self.birth_date.day
 
-            if (month_diff < 0 or (monthDifference == 0 and day_diff < 0)):
+            if (month_diff < 0 or (month_diff == 0 and day_diff < 0)):
                 age -= 1
-            self.age = age
+            self.age = max(age, 0)
 
     def save(self, *args, **kwargs):
-        self.calaulate_age()
+        self.calculate_age()
         super(Client, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):

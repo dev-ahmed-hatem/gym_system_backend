@@ -487,10 +487,10 @@ const ClientSearch = () => {
                                         <span>
                                             {currentClient?.added_by ? (
                                                 <span>
-                                                    {
+                                                    {currentClient.added_by
+                                                        ?.name ??
                                                         currentClient.added_by
-                                                            ?.username
-                                                    }
+                                                            ?.username}
                                                 </span>
                                             ) : (
                                                 <span className="text-secondary">
