@@ -77,7 +77,7 @@ const ClientIdForm = () => {
                         {...register("code", {
                             required: "أدخل كود العميل",
                             pattern: {
-                                value: /^[1-9]\d*$/,
+                                value: /^[0-9]\d*$/,
                                 message: "أدخل رقم صحيح موجب",
                             },
                         })}

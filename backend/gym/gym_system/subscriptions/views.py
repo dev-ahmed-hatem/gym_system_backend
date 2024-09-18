@@ -5,7 +5,8 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from django.utils.timezone import datetime
+from django.utils.timezone import datetime, now
+from django.conf import Settings
 
 
 class SubscriptionPlanViewSet(ModelViewSet):
@@ -81,8 +82,10 @@ class SubscriptionViewSet(ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def expired(self, request):
-        active_subscriptions = Subscription.get_active_subscriptions()
-        expired_subscriptions = Subscription.objects.filter(~Q(id__in=active_subscriptions)).order_by('-end_date')
+        # active_subscriptions = Subscription.get_active_subscriptions()
+        # expired_subscriptions = Subscription.objects.filter(~Q(id__in=active_subscriptions)).order_by('-end_date')
+        current_date = now().astimezone(settings.CAIRO_TZ).date()
+        expired_subscriptions = Subscription.objects.exclude(end_date__gte=current_date).order_by('-end_date')
         page = self.paginate_queryset(expired_subscriptions)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
