@@ -22,8 +22,19 @@ class ClientViewSet(ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         search = self.request.query_params.get('search', None)
+        client = self.request.query_params.get('client', None)
         from_date = self.request.query_params.get('from', None)
         to_date = self.request.query_params.get('to', None)
+
+        if client is not None:
+            if client.isdigit():
+                queryset = Client.objects.filter(id=client)
+                if queryset.exists():
+                    return queryset
+                else:
+                    return queryset.none()
+            else:
+                search = client
 
         if from_date and to_date:
             from_date = datetime.strptime(from_date, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0)

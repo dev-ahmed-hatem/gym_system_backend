@@ -38,7 +38,7 @@ const ClientSearch = () => {
 
     const get_current_clients = () => {
         const searchURL = `${endpoints.client_list}${
-            searchParam ? `&search=${searchParam}` : ""
+            searchParam ? `&client=${searchParam}` : ""
         }${pageNumber ? `&page=${pageNumber}` : ""}
         `;
 
