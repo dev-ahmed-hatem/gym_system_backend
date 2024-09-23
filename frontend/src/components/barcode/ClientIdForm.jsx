@@ -19,7 +19,6 @@ const ClientIdForm = () => {
     const {
         register,
         handleSubmit,
-        trigger,
         formState: { errors },
     } = useForm();
 

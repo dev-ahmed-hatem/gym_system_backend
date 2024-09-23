@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { HiCheck } from "react-icons/hi";
 import { Toast } from "flowbite-react";
+import { BiX } from "react-icons/bi";
 
 const ToastContext = createContext();
 let timeOut;
@@ -60,7 +61,11 @@ const ToastProvider = ({ children }) => {
                                     : "bg-green-100 text-green-500"
                             } me-2`}
                         >
-                            <HiCheck className="h-5 w-5" />
+                            {toastError ? (
+                                <BiX className="h-5 w-5" />
+                            ) : (
+                                <HiCheck className="h-5 w-5" />
+                            )}
                         </div>
                         <div className="ml-3 text-base text-gray-800 font-bold">
                             {toast}
