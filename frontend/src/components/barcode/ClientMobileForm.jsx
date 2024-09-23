@@ -67,22 +67,21 @@ const ClientMobileForm = () => {
             >
                 <div className="w-full lg:max-w-md lg:w-[30%]">
                     <div className="mb-2 block">
-                        <Label htmlFor="mobile" value="رقم الهاتف :" />
+                        <Label htmlFor="mobile" value="رقم الموبايل :" />
                     </div>
                     <TextInput
                         id="mobile"
                         type="tel"
                         rightIcon={HiDeviceMobile}
-                        placeholder="رقم الهاتف"
+                        placeholder="رقم الموبايل"
                         color={errors.phone ? "failure" : "primary"}
                         {...register("phone", {
-                            required: "هذا الحقل مطلوب",
+                            required: "أدخل رقم الموبايل",
                             pattern: {
                                 value: /^[0-9]+$/,
                                 message: "رقم الموبايل لا يحتوى على حروف",
                             },
                         })}
-                        onBlur={() => trigger("phone")}
                     />
                     {errors.phone && (
                         <p className="error-message">{errors.phone.message}</p>

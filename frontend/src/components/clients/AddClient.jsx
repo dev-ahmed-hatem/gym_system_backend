@@ -12,6 +12,8 @@ import ConfirmDelete from "../groups/ConfirmDelete";
 import ErrorGroup from "../groups/ErrorGroup";
 import { usePermission } from "../../providers/PermissionProvider";
 import { useDrawer } from "../../providers/DrawerProvider";
+import { CiBarcode } from "react-icons/ci";
+import ChangeIdForm from "./ChangeIdForm";
 
 const AddClient = () => {
     //////////////////////////////// providers ////////////////////////////////
@@ -36,7 +38,20 @@ const AddClient = () => {
     const [pageNumber, setPageNumber] = useState(1);
 
     const handleDrawer = (drawerFunction, item) => {
-        if (drawerFunction == "edit") {
+        if (drawerFunction == "change_id") {
+            showDrawer(
+                "تعديل كود عميل",
+                MdEdit,
+                <ChangeIdForm
+                    postURL={item.url}
+                    client={item}
+                    callBack={() => {
+                        get_current_clients();
+                        closeDrawer();
+                    }}
+                />
+            );
+        } else if (drawerFunction == "edit") {
             showDrawer(
                 "تعديل عميل",
                 MdEdit,
@@ -193,15 +208,26 @@ const AddClient = () => {
                                                         <Table.Cell>
                                                             <span className="flex text-xl gap-x-3">
                                                                 {permissions.change && (
-                                                                    <MdEdit
-                                                                        className="text-accent cursor-pointer"
-                                                                        onClick={() => {
-                                                                            handleDrawer(
-                                                                                "edit",
-                                                                                client
-                                                                            );
-                                                                        }}
-                                                                    />
+                                                                    <>
+                                                                        <CiBarcode
+                                                                            className="cursor-pointer"
+                                                                            onClick={() => {
+                                                                                handleDrawer(
+                                                                                    "change_id",
+                                                                                    client
+                                                                                );
+                                                                            }}
+                                                                        />
+                                                                        <MdEdit
+                                                                            className="text-accent cursor-pointer"
+                                                                            onClick={() => {
+                                                                                handleDrawer(
+                                                                                    "edit",
+                                                                                    client
+                                                                                );
+                                                                            }}
+                                                                        />
+                                                                    </>
                                                                 )}
                                                                 {permissions.delete && (
                                                                     <MdDelete

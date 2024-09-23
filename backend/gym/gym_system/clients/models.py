@@ -1,5 +1,4 @@
 from datetime import datetime
-from django.conf import settings
 import qrcode
 import os
 from django.db import models
@@ -16,9 +15,11 @@ class Client(models.Model):
         ('male', 'Male'),
         ('female', 'Female'),
     ]
+    custom_pk = models.AutoField(primary_key=True)
 
+    id = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=100)
-    national_id = models.CharField(max_length=20, blank=True, null=True)  # unique
+    national_id = models.CharField(max_length=20, blank=True, null=True)
     gander = models.CharField(max_length=6, choices=GENDER_CHOICES, default='male')
     birth_date = models.DateField(blank=True, null=True)
     age = models.PositiveIntegerField(blank=True, null=True, default=0)
@@ -47,7 +48,7 @@ class Client(models.Model):
             month_diff = today.month - self.birth_date.month
             day_diff = today.day - self.birth_date.day
 
-            if (month_diff < 0 or (month_diff == 0 and day_diff < 0)):
+            if month_diff < 0 or (month_diff == 0 and day_diff < 0):
                 age -= 1
             self.age = max(age, 0)
 

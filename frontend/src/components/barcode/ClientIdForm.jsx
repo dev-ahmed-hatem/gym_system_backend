@@ -81,7 +81,6 @@ const ClientIdForm = () => {
                                 message: "أدخل رقم صحيح موجب",
                             },
                         })}
-                        onBlur={() => trigger("code")}
                         autoFocus
                     />
                     {errors.code && (

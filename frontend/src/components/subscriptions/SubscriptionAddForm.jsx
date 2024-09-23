@@ -5,6 +5,7 @@ import {
     Datepicker,
     TextInput,
     Checkbox,
+    Spinner,
 } from "flowbite-react";
 import axios from "../../config/axiosconfig";
 import { useForm, Controller } from "react-hook-form";
@@ -76,6 +77,7 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
     const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState(false);
     const [submitError, setSubmitError] = useState(false);
+    const [currentSearch, setCurrentSearch] = useState(null);
     const [post, setPost] = useState(false);
     const { showToast } = useToast();
 
@@ -92,6 +94,7 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
         control,
         watch,
         setValue,
+        clearErrors,
     } = useForm({ defaultValues: transformValues(defaultValues) });
     const formFunction = defaultValues ? "edit" : "add";
 
@@ -137,25 +140,34 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                 break;
         }
         const options = [];
-        const url = `${endpoint}page_size=20&ordering=-id${
-            search_word ? `&search=${search_word}` : ""
-        }`;
+        let url;
+        if (key === "clients") {
+            url = `${endpoint}page_size=20&ordering=-id${
+                search_word ? `&client=${search_word}` : ""
+            }`;
+        } else {
+            url = `${endpoint}page_size=20&ordering=-id${
+                search_word ? `&search=${search_word}` : ""
+            }`;
+        }
 
         axios
             .get(url)
             .then((response) => {
                 response.data.results.map((instance) => {
-                    let option = {};
+                    let option = {},
+                        label;
 
                     // add (emp type) beside the label in case of trainers
-                    const label =
-                        key === "trainers"
-                            ? `${instance.name} ${
-                                  instance?.emp_type?.name
-                                      ? `(${instance.emp_type.name})`
-                                      : ""
-                              }`
-                            : `${instance.name}`;
+                    if (key === "trainers") {
+                        label = `${instance.name} (${
+                            instance?.emp_type?.name || ""
+                        })`;
+                    } else if (key === "clients") {
+                        label = `${instance.id} - ${instance.name}`;
+                    } else {
+                        label = `${instance.name}`;
+                    }
                     option.label = label;
 
                     // add duration or classes number in case of plans
@@ -183,6 +195,7 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
             })
             .finally(() => {
                 setLoading(false);
+                setCurrentSearch(null);
             });
     };
 
@@ -250,7 +263,7 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                         {formFunction == "add" && (
                             <>
                                 <div className="w-full lg:max-w-md lg:w-[30%]">
-                                    <div className="mb-2 block">
+                                    <div className="mb-2 block h-[26px]">
                                         <Label
                                             htmlFor="sub_type"
                                             value="نوع الاشتراك :"
@@ -286,11 +299,19 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                                     )}
                                 </div>
                                 <div className="w-full lg:max-w-md lg:w-[30%]">
-                                    <div className="mb-2 block">
+                                    <div className="mb-2 block h-[26px]">
                                         <Label
                                             htmlFor="client"
                                             value="العميل :"
                                         />
+                                        {currentSearch == "clients" && (
+                                            <span className="ms-6">
+                                                <Spinner
+                                                    size={"md"}
+                                                    color="primary"
+                                                />
+                                            </span>
+                                        )}
                                     </div>
 
                                     <Controller
@@ -309,6 +330,9 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                                                         dataList.clients || []
                                                     }
                                                     onInputChange={(value) => {
+                                                        setCurrentSearch(
+                                                            "clients"
+                                                        );
                                                         fetchData(
                                                             "clients",
                                                             value
@@ -333,11 +357,19 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                                     />
                                 </div>
                                 <div className="w-full lg:max-w-md lg:w-[30%]">
-                                    <div className="mb-2 block">
+                                    <div className="mb-2 block h-[26px]">
                                         <Label
                                             htmlFor="plan"
                                             value="الاشتراك :"
                                         />
+                                        {currentSearch == "plans" && (
+                                            <span className="ms-6">
+                                                <Spinner
+                                                    size={"md"}
+                                                    color="primary"
+                                                />
+                                            </span>
+                                        )}
                                     </div>
 
                                     <Controller
@@ -358,6 +390,9 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                                                         dataList.plans || []
                                                     }
                                                     onInputChange={(value) => {
+                                                        setCurrentSearch(
+                                                            "plans"
+                                                        );
                                                         fetchData(
                                                             "plans",
                                                             value
@@ -370,6 +405,14 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                                                     {...field}
                                                     styles={style(errors.plan)}
                                                     onChange={(value) => {
+                                                        if (value) {
+                                                            clearErrors("plan");
+                                                        } else {
+                                                            setError("plan", {
+                                                                message:
+                                                                    "يجب اختيار اشتراك",
+                                                            });
+                                                        }
                                                         setValue("plan", value);
                                                         if (!startDate) {
                                                             setValue(
@@ -393,8 +436,13 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                             </>
                         )}
                         <div className="w-full lg:max-w-md lg:w-[30%]">
-                            <div className="mb-2 block">
+                            <div className="mb-2 block h-[26px]">
                                 <Label htmlFor="trainer" value="المدرب :" />
+                                {currentSearch == "trainers" && (
+                                    <span className="ms-6">
+                                        <Spinner size={"md"} color="primary" />
+                                    </span>
+                                )}
                             </div>
 
                             <Controller
@@ -410,6 +458,7 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                                             placeholder="بحث ..."
                                             options={dataList.trainers || []}
                                             onInputChange={(value) => {
+                                                setCurrentSearch("trainers");
                                                 fetchData("trainers", value);
                                             }}
                                             value={field.value}
@@ -429,11 +478,16 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                             />
                         </div>
                         <div className="w-full lg:max-w-md lg:w-[30%]">
-                            <div className="mb-2 block">
+                            <div className="mb-2 block h-[26px]">
                                 <Label
                                     htmlFor="referrer"
                                     value="اشتراك بواسطة :"
                                 />
+                                {currentSearch == "referrers" && (
+                                    <span className="ms-6">
+                                        <Spinner size={"md"} color="primary" />
+                                    </span>
+                                )}
                             </div>
 
                             <Controller
@@ -449,6 +503,7 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                                             placeholder="بحث ..."
                                             options={dataList.trainers || []}
                                             onInputChange={(value) => {
+                                                setCurrentSearch("referrers");
                                                 fetchData("trainers", value);
                                             }}
                                             value={field.value}
@@ -468,7 +523,7 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
                             />
                         </div>
                         <div className="w-full lg:max-w-md lg:w-[30%]">
-                            <div className="mb-2 block">
+                            <div className="mb-2 block h-[26px]">
                                 <Label
                                     htmlFor="start_date"
                                     value="تاريخ بدأ الاشتراك :"

@@ -1,6 +1,6 @@
 from django.db import models
-from django.utils.timezone import timedelta, now
-from datetime import datetime
+from django.utils.timezone import now
+from datetime import timedelta
 from django.conf import settings
 from django.db.models import Q, F
 

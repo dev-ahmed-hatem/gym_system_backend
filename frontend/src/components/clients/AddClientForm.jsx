@@ -20,6 +20,7 @@ import style from "../../assets/rect-select-style";
 import { defaultFormSubmission } from "../../config/actions";
 import { calculateAge } from "../../utils";
 import { useToast } from "../../providers/ToastProvider";
+import { CiBarcode } from "react-icons/ci";
 
 const AddClientForm = ({ postURL, defaultValues, callBack }) => {
     const [post, setPost] = useState(false);
@@ -147,6 +148,30 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
                 formFunction={formFunction}
                 post={post}
             >
+                <div className="w-full lg:max-w-md lg:w-[30%]">
+                    <div className="mb-2 block">
+                        <Label htmlFor="id" value="كود العميل :" />
+                    </div>
+                    <TextInput
+                        id="id"
+                        type="number"
+                        rightIcon={CiBarcode}
+                        placeholder="كود العميل"
+                        color={errors.id ? "failure" : "primary"}
+                        {...register("id", {
+                            required: "هذا الحقل مطلوب",
+                            pattern: {
+                                value: /^[0-9]+$/,
+                                message: "كود العميل لا يحتوى على حروف",
+                            },
+                        })}
+                        onBlur={() => trigger("id")}
+                        disabled={formFunction == "edit"}
+                    />
+                    {errors.id && (
+                        <p className="error-message">{errors.id.message}</p>
+                    )}
+                </div>
                 <div className="w-full lg:max-w-md lg:w-[30%]">
                     <div className="mb-2 block">
                         <Label htmlFor="name" value="اسم العميل :" />
@@ -354,40 +379,6 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
                     <>
                         <div className="w-full lg:max-w-md lg:w-[30%]">
                             <div className="mb-2 block">
-                                <Label htmlFor="trainer" value="المدرب :" />
-                            </div>
-
-                            <Controller
-                                name="trainer"
-                                control={control}
-                                render={({ field }) => (
-                                    <>
-                                        <Select
-                                            isClearable
-                                            noOptionsMessage={() =>
-                                                "لا يوجد نتائج مطابقة"
-                                            }
-                                            placeholder="بحث ..."
-                                            options={trainersList || []}
-                                            onInputChange={fetchTrainers}
-                                            value={field.value}
-                                            onBlur={() => {
-                                                trigger("trainer");
-                                            }}
-                                            {...field}
-                                            styles={style(errors.trainer)}
-                                        ></Select>
-                                        {errors.trainer && (
-                                            <p className="error-message">
-                                                {errors.trainer.message}
-                                            </p>
-                                        )}
-                                    </>
-                                )}
-                            />
-                        </div>
-                        <div className="w-full lg:max-w-md lg:w-[30%]">
-                            <div className="mb-2 block">
                                 <Label
                                     htmlFor="subscription_plan"
                                     value="اشتراك ابتدائى :"
@@ -425,6 +416,40 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
                                                     errors.subscription_plan
                                                         .message
                                                 }
+                                            </p>
+                                        )}
+                                    </>
+                                )}
+                            />
+                        </div>
+                        <div className="w-full lg:max-w-md lg:w-[30%]">
+                            <div className="mb-2 block">
+                                <Label htmlFor="trainer" value="المدرب :" />
+                            </div>
+
+                            <Controller
+                                name="trainer"
+                                control={control}
+                                render={({ field }) => (
+                                    <>
+                                        <Select
+                                            isClearable
+                                            noOptionsMessage={() =>
+                                                "لا يوجد نتائج مطابقة"
+                                            }
+                                            placeholder="بحث ..."
+                                            options={trainersList || []}
+                                            onInputChange={fetchTrainers}
+                                            value={field.value}
+                                            onBlur={() => {
+                                                trigger("trainer");
+                                            }}
+                                            {...field}
+                                            styles={style(errors.trainer)}
+                                        ></Select>
+                                        {errors.trainer && (
+                                            <p className="error-message">
+                                                {errors.trainer.message}
                                             </p>
                                         )}
                                     </>

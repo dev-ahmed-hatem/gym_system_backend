@@ -128,7 +128,6 @@ const Login = () => {
                                 {...register("username", {
                                     required: "أدخل اسم المستخدم",
                                 })}
-                                onBlur={() => trigger("username")}
                                 autoFocus
                                 ref={(e) => {
                                     register("username").ref(e); // Assign react-hook-form's ref
@@ -155,7 +154,6 @@ const Login = () => {
                                 {...register("password", {
                                     required: "أدخل كلمة المرور",
                                 })}
-                                // onBlur={() => trigger("password")}
                             />
                             {errors.password && (
                                 <p className="error-message">

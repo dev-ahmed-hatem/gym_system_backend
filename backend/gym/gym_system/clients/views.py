@@ -1,8 +1,9 @@
 import pytz
+import os
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
 from cryptography.fernet import Fernet
 from django.conf import settings
 from django.db.models import Q, F
@@ -58,6 +59,27 @@ class ClientViewSet(ModelViewSet):
                 Q(phone__icontains=search) |
                 Q(phone2__icontains=search))
         return queryset
+
+    @action(detail=True, methods=['PATCH'])
+    def change_id(self, request, pk=None):
+        client = self.get_object()
+        new_id = request.data.get('new_id')
+        try:
+            c = Client.objects.get(id=new_id)
+            if c:
+                return Response({"new_id": "كود غير متاح"}, status=status.HTTP_400_BAD_REQUEST)
+        except Client.DoesNotExist:
+            client.id = new_id
+            if client.qr_code:
+                if os.path.isfile(client.qr_code.path):
+                    os.remove(client.qr_code.path)
+            if client.barcode:
+                if os.path.isfile(client.barcode.path):
+                    os.remove(client.barcode.path)
+            client.generate_barcode()
+            client.generate_qr_code()
+            client.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AttendanceViewSet(ModelViewSet):
