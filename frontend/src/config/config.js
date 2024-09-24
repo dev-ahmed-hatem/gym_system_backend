@@ -28,6 +28,7 @@ const endpoints = {
     subscription_plan_list: `${api_base_url}api/subscriptions/subscription-plan/?`,
     subscription_list: `${api_base_url}api/subscriptions/subscription/?`,
     subscription_base: `${api_base_url}api/subscriptions/subscription/`,
+    subscription_invitations: `${api_base_url}api/subscriptions/subscription-invitations/?`,
 
     // financials routing
     financial_item_list: `${api_base_url}api/financials/financial-item/?`,

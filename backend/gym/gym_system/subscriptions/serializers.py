@@ -1,3 +1,4 @@
+from clients.models import Client
 from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
 from users.serializers import EmployeeReadSerializer
@@ -76,7 +77,11 @@ class SubscriptionWriteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        subscription = super(SubscriptionWriteSerializer, self).create(validated_data)
+        validated_data.pop('client')
+        client_id = self.initial_data.get('client')
+        client = Client.objects.get(id=client_id)
+        subscription = Subscription.objects.create(**validated_data, client=client)
+        # subscription.save()
         total_price = self.initial_data.get('total_price')
 
         # create transaction
@@ -88,3 +93,15 @@ class SubscriptionWriteSerializer(serializers.ModelSerializer):
                                                  )
         transaction.save()
         return subscription
+
+
+class InvitationSerializer(serializers.ModelSerializer):
+    url = HyperlinkedIdentityField(view_name='invitation-detail', lookup_field='pk', read_only=True)
+    is_valid = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Invitation
+        fields = '__all__'
+
+    def get_is_valid(self, obj):
+        return obj.is_valid()

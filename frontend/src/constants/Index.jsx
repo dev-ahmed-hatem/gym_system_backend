@@ -68,6 +68,8 @@ import Birthdays from "../components/reports/birthdays/Birthdays";
 import Advance from "../components/financials/advances/Advance";
 import { AiFillMoneyCollect } from "react-icons/ai";
 import AdvanceCollect from "../components/financials/advance-collect/AdvanceCollect";
+import Invitations from "../components/barcode/invitations/Invitations";
+import { FcInvite } from "react-icons/fc";
 
 export const routes = [
     {
@@ -327,6 +329,11 @@ export const routes = [
                 value: "حذف حضور",
                 name: "clients.delete_attendance",
             },
+            {
+                id: 4,
+                value: "إنشاء دعوات",
+                name: "subscriptions.add_invitation",
+            },
         ],
         children: [
             {
@@ -356,6 +363,16 @@ export const routes = [
                         client={true}
                         key={"attendance-client-report"}
                     />
+                ),
+            },
+            {
+                id: 4,
+                title: "الدعوات",
+                name: "invitations",
+                url: "/barcode/invitations",
+                icon: <FcInvite />,
+                element: (
+                    <Invitations />
                 ),
             },
         ],

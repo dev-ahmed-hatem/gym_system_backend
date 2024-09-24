@@ -125,8 +125,7 @@ class AttendanceViewSet(ModelViewSet):
 @api_view(['POST'])
 def scanner_code(request):
     code: str = request.data.get('code')
-    mobile = request.data.get('mobile')
-    print(request.data)
+    mobile: str = request.data.get('mobile')
     try:
         if mobile:
             code = int(mobile)
@@ -155,10 +154,10 @@ def scanner_code(request):
             Q(attendance_days__gte=F('plan__classes_no'))
         )
 
-        serilized_subscriptions = SubscriptionReadSerializer(active_subscriptions, context={"request": request},
-                                                             many=True).data
+        serialized_subscriptions = SubscriptionReadSerializer(active_subscriptions, context={"request": request},
+                                                              many=True).data
         serialized_client = ClientReadSerializer(client, context={"request": request}).data
     except Client.DoesNotExist:
         return Response({'error': 'عميل غير موجود'}, status=status.HTTP_404_NOT_FOUND)
 
-    return Response({'code': code, "client": serialized_client, "subscriptions": serilized_subscriptions})
+    return Response({'code': code, "client": serialized_client, "subscriptions": serialized_subscriptions})

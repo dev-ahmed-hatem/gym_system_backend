@@ -40,7 +40,8 @@ theme.button.color = {
     green: "bg-green-500 hover:bg-green-700 text-white",
 };
 
-theme.button.size.xl = "px-4 py-2 text-base min-w-36 h-10 flex justify-center items-center";
+theme.button.size.xl =
+    "px-4 py-2 text-base min-w-36 h-10 flex justify-center items-center";
 
 // ToggleSwitch
 theme.toggleSwitch.toggle.base =

@@ -50,6 +50,7 @@ class Subscription(models.Model):
     total_price = models.FloatField(default=0, null=True, blank=True)
 
     attendance_days = models.IntegerField(default=0, null=True, blank=True)
+    invitations_used = models.IntegerField(default=0, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.plan.is_duration:
@@ -94,3 +95,19 @@ class Subscription(models.Model):
             start_date__lte=current_date,
             end_date__gte=current_date).exclude(Q(plan__is_duration=False) &
                                                 Q(attendance_days__gte=F('plan__classes_no')))
+
+
+class Invitation(models.Model):
+    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
+    code = models.CharField(max_length=100, unique=True, blank=True, null=True)
+    is_used = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_valid(self):
+        return now().astimezone(settings.CAIRO_TZ).date() <= self.subscription.end_date and not self.is_used
+
+    def save(self, *args, **kwargs):
+        super(Invitation, self).save(*args, **kwargs)
+        if not self.code and self.id:
+            self.code = f"i-{self.id}"
+            self.save()

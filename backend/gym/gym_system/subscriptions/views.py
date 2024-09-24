@@ -1,8 +1,11 @@
+from users import permissions
+
 from .models import *
 from .serializers import *
 from django.db.models import Q
 from rest_framework import status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from django.utils.timezone import datetime, now
@@ -82,8 +85,6 @@ class SubscriptionViewSet(ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def expired(self, request):
-        # active_subscriptions = Subscription.get_active_subscriptions()
-        # expired_subscriptions = Subscription.objects.filter(~Q(id__in=active_subscriptions)).order_by('-end_date')
         current_date = now().astimezone(settings.CAIRO_TZ).date()
         expired_subscriptions = Subscription.objects.exclude(end_date__gte=current_date).order_by('-end_date')
         page = self.paginate_queryset(expired_subscriptions)
@@ -104,3 +105,34 @@ class SubscriptionViewSet(ModelViewSet):
 
         serializer = SubscriptionReadSerializer(frozen_subscriptions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class InvitationViewSet(ModelViewSet):
+    queryset = Invitation.objects.all()
+    serializer_class = InvitationSerializer
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def subscription_invitations(request):
+    subscription_id = request.data.get('sub_id', None)
+    if subscription_id:
+        try:
+            subscription = Subscription.objects.get(pk=subscription_id)
+            subscription_serialized = SubscriptionReadSerializer(subscription, context={"request": request}).data
+            invitations = Invitation.objects.filter(subscription=subscription)
+            invitation_serialized = InvitationSerializer(invitations, context={"request": request}, many=True).data
+            is_blocked = subscription.client.is_blocked
+            editable = not subscription.is_expired() and not is_blocked and subscription.invitations_used < subscription.plan.invitations
+            response_data = {
+                "subscription": subscription_serialized,
+                "invitations": invitation_serialized,
+                "is_blocked": is_blocked,
+                "editable": editable
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        except Subscription.DoesNotExist:
+            return Response({"error": "كود اشتراك غير موجود"}, status=status.HTTP_404_NOT_FOUND)
+    else:
+        return Response({"detail": "Subscription id must be provided"}, status=status.HTTP_400_BAD_REQUEST)
