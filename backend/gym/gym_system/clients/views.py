@@ -97,7 +97,7 @@ class AttendanceViewSet(ModelViewSet):
         client = self.request.query_params.get('client', None)
 
         if client is not None:
-            queryset = queryset.filter(client=int(client))
+            queryset = queryset.filter(client__id__exact=int(client))
 
         if from_date and to_date:
             from_date = datetime.strptime(from_date, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0)

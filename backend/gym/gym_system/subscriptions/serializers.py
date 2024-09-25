@@ -81,7 +81,6 @@ class SubscriptionWriteSerializer(serializers.ModelSerializer):
         client_id = self.initial_data.get('client')
         client = Client.objects.get(id=client_id)
         subscription = Subscription.objects.create(**validated_data, client=client)
-        # subscription.save()
         total_price = self.initial_data.get('total_price')
 
         # create transaction

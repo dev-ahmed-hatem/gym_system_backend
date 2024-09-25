@@ -115,7 +115,10 @@ class AttendanceWriteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        attendance = super().create(validated_data)
+        validated_data.pop('client', None)
+        client_id = self.initial_data.get('client')
+        client = Client.objects.get(id=client_id)
+        attendance = Attendance.objects.create(**validated_data, client=client)
         subscription = validated_data.pop('subscription', None)
         if subscription:
             subscription.attendance_days += 1
