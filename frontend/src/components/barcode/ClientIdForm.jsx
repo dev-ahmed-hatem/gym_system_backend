@@ -9,6 +9,7 @@ import endpoints from "../../config/config";
 import { useToast } from "../../providers/ToastProvider";
 import axios from "../../config/axiosconfig";
 import { useDrawer } from "../../providers/DrawerProvider";
+import InvitationPrompt from "./InvitationPrompt";
 
 const ClientIdForm = () => {
     const [post, setPost] = useState(false);
@@ -20,6 +21,7 @@ const ClientIdForm = () => {
         register,
         handleSubmit,
         formState: { errors },
+        reset,
     } = useForm();
 
     const onSubmit = (data) => {
@@ -31,21 +33,34 @@ const ClientIdForm = () => {
                 .then((response) => {
                     audio.play();
                     showDrawer(
-                        "تسجيل حضور ",
+                        `تسجيل حضور${
+                            response?.data?.invitation ? " دعوة" : ""
+                        }`,
                         FaInfoCircle,
-                        <SubscriptionsPrompt
-                            subscriptions={response.data.subscriptions}
-                            client={response.data.client}
-                            callBack={() => {
-                                closeDrawer();
-                            }}
-                        />
+                        response.data.invitation ? (
+                            <InvitationPrompt
+                                invitation={response.data.invitation}
+                                subscription={response.data.subscription}
+                                callBack={() => {
+                                    closeDrawer();
+                                }}
+                            />
+                        ) : (
+                            <SubscriptionsPrompt
+                                subscriptions={response.data.subscriptions}
+                                client={response.data.client}
+                                callBack={() => {
+                                    closeDrawer();
+                                }}
+                            />
+                        )
                     );
                 })
                 .catch((error) => {
                     showToast(error.response.data.error, true);
                 })
                 .finally(() => {
+                    reset();
                     setPost(false);
                 });
         };
@@ -57,7 +72,7 @@ const ClientIdForm = () => {
         <div
             className={`wrapper p-4 my-8 bg-white rounded border-t-4 border-primary shadow-lg`}
         >
-            <h1 className="font-bold text-text text-lg">بحث بكود العميل :</h1>
+            <h1 className="font-bold text-text text-lg">بحث الباركود :</h1>
             <hr className="h-px my-3 bg-gray-200 border-0"></hr>
             <form
                 onSubmit={handleSubmit(onSubmit)}
@@ -69,15 +84,15 @@ const ClientIdForm = () => {
                     </div>
                     <TextInput
                         id="code"
-                        type="number"
+                        type="text"
                         rightIcon={MdOutlinePermIdentity}
                         placeholder="الكود"
                         color={errors.code ? "failure" : "primary"}
                         {...register("code", {
                             required: "أدخل كود العميل",
                             pattern: {
-                                value: /^[0-9]\d*$/,
-                                message: "أدخل رقم صحيح موجب",
+                                value: /^[0-9]\d*$|^i-\d+$/,
+                                message: "كود غير صالح",
                             },
                         })}
                         autoFocus

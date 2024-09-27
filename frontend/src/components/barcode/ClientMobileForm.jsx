@@ -20,7 +20,7 @@ const ClientMobileForm = () => {
     const {
         register,
         handleSubmit,
-        trigger,
+        reset,
         formState: { errors },
     } = useForm();
 
@@ -29,7 +29,7 @@ const ClientMobileForm = () => {
 
         const checkCode = async (mobile) => {
             axios
-                .post(endpoints.scanner_code, { mobile: mobile })
+                .post(endpoints.scanner_mobile, { mobile: mobile })
                 .then((response) => {
                     audio.play();
                     showDrawer(
@@ -49,6 +49,7 @@ const ClientMobileForm = () => {
                 })
                 .finally(() => {
                     setPost(false);
+                    reset();
                 });
         };
 

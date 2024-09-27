@@ -104,7 +104,9 @@ class Invitation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def is_valid(self):
-        return now().astimezone(settings.CAIRO_TZ).date() <= self.subscription.end_date and not self.is_used
+        return (not self.subscription.is_expired()
+                and not self.is_used
+                and self.subscription.invitations_used < self.subscription.plan.invitations)
 
     def save(self, *args, **kwargs):
         super(Invitation, self).save(*args, **kwargs)

@@ -10,4 +10,5 @@ router.register("attendance", AttendanceViewSet, basename="attendance")
 urlpatterns = [
     path('', include(router.urls)),
     path('scanner-code/', scanner_code, name='scanner-code'),
+    path('scanner-mobile/', scanner_mobile, name='scanner-mobile'),
 ]

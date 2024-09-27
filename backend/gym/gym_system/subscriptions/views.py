@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from django.utils.timezone import datetime, now
 from django.conf import Settings
+from django.core.mail import send_mail
 
 
 class SubscriptionPlanViewSet(ModelViewSet):
@@ -136,3 +137,41 @@ def subscription_invitations(request):
             return Response({"error": "كود اشتراك غير موجود"}, status=status.HTTP_404_NOT_FOUND)
     else:
         return Response({"detail": "Subscription id must be provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def send_invitation_mail(request):
+    email = request.data.get('email', None)
+    url = request.data.get('url', None)
+    message = f"""مرحباً،
+نود دعوتك للاستفادة من دعوة خاصة لزيارة PRO GYM
+يمكنك استخدام الرابط أدناه للدخول إلى الدعوة والاستفادة من مميزاتنا الحصرية:
+                    
+{url}
+                    
+لأي استفسار، لا تتردد في التواصل معنا.
+نتطلع لرؤيتك قريباً في PRO GYM!"""
+
+    send_mail(
+
+        'دعوة خاصة لزيارة PRO GYM',
+        message,
+        'PRO GYM',
+        [email],
+        fail_silently=False,
+    )
+
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["POST"])
+def invitation_data(request):
+    key = request.data.get('key', None)
+    fernet = Fernet(settings.FERNET_KEY.encode())
+    decrypted_code = fernet.decrypt(key.encode()).decode()
+    try:
+        invitation = Invitation.objects.get(code=decrypted_code)
+        invitation_serialized = InvitationSerializer(invitation, context={"request": request}).data
+        return Response({**invitation_serialized, "end_date": invitation.subscription.end_date}, status.HTTP_200_OK)
+    except Invitation.DoesNotExist:
+        return Response({"error": "invalid invitation code"}, status=status.HTTP_404_NOT_FOUND)

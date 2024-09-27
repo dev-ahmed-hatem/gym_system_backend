@@ -7,8 +7,10 @@ from rest_framework.decorators import api_view, action
 from cryptography.fernet import Fernet
 from django.conf import settings
 from django.db.models import Q, F
+from subscriptions.models import Invitation
+
 from .serializers import *
-from subscriptions.serializers import SubscriptionReadSerializer
+from subscriptions.serializers import SubscriptionReadSerializer, InvitationSerializer
 from .models import *
 
 
@@ -117,47 +119,79 @@ class AttendanceViewSet(ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         attendance = self.get_object()
         subscription = attendance.subscription
-        subscription.attendance_days -= 1
+        if attendance.guest:
+            inv = Invitation.objects.get(code=attendance.invitation_code)
+            inv.is_used = False
+            inv.save()
+            subscription.invitations_used -= 1
+        else:
+            subscription.attendance_days -= 1
         subscription.save()
         return super().destroy(self, request, *args, **kwargs)
+
+
+def get_client_active_subscriptions(client: Client):
+    current_date = now().astimezone(settings.CAIRO_TZ).date()
+
+    active_subscriptions = client.subscriptions.filter(
+        start_date__lte=current_date,
+        end_date__gte=current_date,
+        is_frozen=False
+    ).exclude(
+        Q(plan__is_duration=False) &
+        Q(attendance_days__gte=F('plan__classes_no'))
+    )
+    return active_subscriptions
 
 
 @api_view(['POST'])
 def scanner_code(request):
     code: str = request.data.get('code')
-    mobile: str = request.data.get('mobile')
-    try:
-        if mobile:
-            code = int(mobile)
-        elif code.isdigit():
+    if code.startswith("i-"):
+        try:
+            invitation = Invitation.objects.get(code=code)
+            invitation_serialized = InvitationSerializer(invitation, context={'request': request}).data
+            subscription = SubscriptionReadSerializer(invitation.subscription, context={'request': request}).data
+            return Response({"invitation": invitation_serialized,
+                             "subscription": {"is_blocked": invitation.subscription.client.is_blocked, **subscription}})
+        except Invitation.DoesNotExist:
+            return Response({'error': 'كود دعوة غير صالج'}, status=status.HTTP_400_BAD_REQUEST)
+    if code.isdigit():
+        try:
             code = int(code)
-        else:
-            fernet = Fernet(settings.FERNET_KEY.encode())
-            data = fernet.decrypt(code.encode())
-            code = data.decode()
-    except:
-        return Response({'error': 'رقم غير موجود' if mobile else 'كود غير صالح'}, status=status.HTTP_400_BAD_REQUEST)
+        except ValueError:
+            return Response({"error": "قيمة غير صالحة"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        fernet = Fernet(settings.FERNET_KEY.encode())
+        data = fernet.decrypt(code.encode())
+        code = data.decode()
 
     try:
-        if mobile:
-            client = Client.objects.get(Q(phone=mobile) | Q(phone2=mobile))
-        else:
-            client = Client.objects.get(id=code)
-        current_date = now().astimezone(settings.CAIRO_TZ).date()
-
-        active_subscriptions = client.subscriptions.filter(
-            start_date__lte=current_date,
-            end_date__gte=current_date,
-            is_frozen=False
-        ).exclude(
-            Q(plan__is_duration=False) &
-            Q(attendance_days__gte=F('plan__classes_no'))
-        )
-
-        serialized_subscriptions = SubscriptionReadSerializer(active_subscriptions, context={"request": request},
+        client = Client.objects.get(id=code)
+        active_subscriptions = get_client_active_subscriptions(client)
+        serialized_subscriptions = SubscriptionReadSerializer(active_subscriptions,
+                                                              context={"request": request},
                                                               many=True).data
         serialized_client = ClientReadSerializer(client, context={"request": request}).data
+
+        return Response({'code': code, "client": serialized_client, "subscriptions": serialized_subscriptions})
+
     except Client.DoesNotExist:
         return Response({'error': 'عميل غير موجود'}, status=status.HTTP_404_NOT_FOUND)
 
-    return Response({'code': code, "client": serialized_client, "subscriptions": serialized_subscriptions})
+
+@api_view(['POST'])
+def scanner_mobile(request):
+    mobile: str = request.data.get('mobile')
+    try:
+        client = Client.objects.get(Q(phone=mobile) | Q(phone2=mobile))
+        active_subscriptions = get_client_active_subscriptions(client)
+        serialized_subscriptions = SubscriptionReadSerializer(active_subscriptions,
+                                                              context={"request": request},
+                                                              many=True).data
+        serialized_client = ClientReadSerializer(client, context={"request": request}).data
+
+        return Response({"client": serialized_client, "subscriptions": serialized_subscriptions})
+
+    except Client.DoesNotExist:
+        return Response({'error': 'عميل غير موجود'}, status=status.HTTP_404_NOT_FOUND)

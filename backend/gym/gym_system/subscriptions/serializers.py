@@ -6,6 +6,7 @@ from financials.models import FinancialItem, Transaction
 from django.utils.timezone import now
 from django.conf import settings
 from .models import *
+from cryptography.fernet import Fernet
 
 
 class SubscriptionPlanSerializer(serializers.ModelSerializer):
@@ -97,6 +98,7 @@ class SubscriptionWriteSerializer(serializers.ModelSerializer):
 class InvitationSerializer(serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='invitation-detail', lookup_field='pk', read_only=True)
     is_valid = serializers.SerializerMethodField()
+    key = serializers.SerializerMethodField()
 
     class Meta:
         model = Invitation
@@ -104,3 +106,8 @@ class InvitationSerializer(serializers.ModelSerializer):
 
     def get_is_valid(self, obj):
         return obj.is_valid()
+
+    def get_key(self, obj):
+        fernet = Fernet(settings.FERNET_KEY.encode())
+        encrypted_key = fernet.encrypt(obj.code.encode())
+        return encrypted_key.decode()

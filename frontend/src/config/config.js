@@ -28,7 +28,10 @@ const endpoints = {
     subscription_plan_list: `${api_base_url}api/subscriptions/subscription-plan/?`,
     subscription_list: `${api_base_url}api/subscriptions/subscription/?`,
     subscription_base: `${api_base_url}api/subscriptions/subscription/`,
+    invitation_list: `${api_base_url}api/subscriptions/invitation/?`,
     subscription_invitations: `${api_base_url}api/subscriptions/subscription-invitations/?`,
+    send_invitation_mail: `${api_base_url}api/subscriptions/send-invitation-mail/?`,
+    invitation_data: `${api_base_url}api/subscriptions/invitation-data/?`,
 
     // financials routing
     financial_item_list: `${api_base_url}api/financials/financial-item/?`,
@@ -41,6 +44,7 @@ const endpoints = {
     // clients routing
     client_list: `${api_base_url}api/clients/client/?`,
     scanner_code: `${api_base_url}api/clients/scanner-code/?`,
+    scanner_mobile: `${api_base_url}api/clients/scanner-mobile/?`,
     attendance: `${api_base_url}api/clients/attendance/?`,
 
     // shop routing

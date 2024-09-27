@@ -106,6 +106,8 @@ class Client(models.Model):
 
 
 class Attendance(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, blank=True, null=True)
+    guest = models.CharField(max_length=100, blank=True, null=True)
+    invitation_code = models.CharField(max_length=100, blank=True, null=True)
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import *
-from subscriptions.models import SubscriptionPlan, Subscription
+from subscriptions.models import SubscriptionPlan, Subscription, Invitation
 from subscriptions.serializers import SubscriptionReadSerializer
 from financials.models import FinancialItem, Transaction
 from users.models import Employee
@@ -115,12 +115,23 @@ class AttendanceWriteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        validated_data.pop('client', None)
-        client_id = self.initial_data.get('client')
-        client = Client.objects.get(id=client_id)
-        attendance = Attendance.objects.create(**validated_data, client=client)
-        subscription = validated_data.pop('subscription', None)
-        if subscription:
+        guest_name = self.initial_data.get("guest_name")
+        subscription = validated_data.get('subscription', None)
+        if guest_name:
+            attendance = Attendance.objects.create(**validated_data, guest=guest_name)
+            inv_id = self.initial_data.get("invitation")
+            if inv_id:
+                invitation = Invitation.objects.get(id=inv_id)
+                attendance.invitation_code = invitation.code
+                invitation.is_used = True
+                subscription.invitations_used += 1
+                invitation.save()
+                attendance.save()
+        else:
+            validated_data.pop('client', None)
+            client_id = self.initial_data.get('client')
+            client = Client.objects.get(id=client_id)
+            attendance = Attendance.objects.create(**validated_data, client=client)
             subscription.attendance_days += 1
-            subscription.save()
+        subscription.save()
         return attendance

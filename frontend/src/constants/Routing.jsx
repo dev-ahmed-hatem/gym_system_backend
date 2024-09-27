@@ -4,6 +4,7 @@ import NotFound from "../NotFound";
 import Main from "../components/main";
 import { routes } from "./Index";
 import Login from "../components/login/Login";
+import { InvitationReceipt } from "../components/barcode/invitations/InvitationReceipt";
 
 export const browserRoutes = [
     {
@@ -20,6 +21,11 @@ export const browserRoutes = [
     {
         path: "/logout",
         element: <Main />,
+        errorElement: <NotFound />,
+    },
+    {
+        path: "/invitation-receipt/:key",
+        element: <InvitationReceipt />,
         errorElement: <NotFound />,
     },
 ];

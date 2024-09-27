@@ -88,28 +88,14 @@ const BarcodeReport = ({ client }) => {
                                                             <Table.Cell>
                                                                 {attendance
                                                                     ?.client
-                                                                    ?.name ? (
-                                                                    attendance
-                                                                        .client
-                                                                        .name
-                                                                ) : (
-                                                                    <span className="text-red-600">
-                                                                        غير مسجل
-                                                                    </span>
-                                                                )}
+                                                                    ?.name ||
+                                                                    attendance.guest}
                                                             </Table.Cell>
                                                             <Table.Cell className="text-center">
                                                                 {attendance
                                                                     ?.client
-                                                                    ?.id ? (
-                                                                    attendance
-                                                                        .client
-                                                                        .id
-                                                                ) : (
-                                                                    <span className="text-red-600">
-                                                                        غير مسجل
-                                                                    </span>
-                                                                )}
+                                                                    ?.id ||
+                                                                    `دعوة   ${attendance.invitation_code}`}
                                                             </Table.Cell>
                                                             <Table.Cell>
                                                                 {attendance
