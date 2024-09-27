@@ -42,7 +42,7 @@ const InvitationView = ({ inv, callBack }) => {
 
     const send = (data) => {
         const url = `${location.origin}/invitation-receipt/${inv.key}/`;
-        if (data.phone) {
+        if (whatsapp) {
             window.open(
                 `https://wa.me/${data.phone}?text=${encodeURIComponent(
                     `مرحباً، نود دعوتك للاستفادة من دعوة خاصة لزيارة PRO GYM

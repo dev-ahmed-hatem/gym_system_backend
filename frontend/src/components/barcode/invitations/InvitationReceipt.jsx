@@ -31,6 +31,19 @@ export const InvitationReceipt = () => {
     useEffect(() => {
         get_gym_data().then(({ gym_data }) => {
             setGymData(gym_data);
+            const link = document.querySelector("link[rel~='icon']");
+            const title = document.querySelector("title");
+            if (title) {
+                title.innerHTML = gym_data?.title + " Invitation";
+            }
+            if (link) {
+                link.href = gym_data?.logo;
+            } else {
+                const newLink = document.createElement("link");
+                newLink.rel = "icon";
+                newLink.href = gym_data?.logo;
+                document.head.appendChild(newLink);
+            }
             fetch_invitation_data(key);
         });
     }, []);
@@ -80,31 +93,45 @@ export const InvitationReceipt = () => {
                             className="text-primary font-bold ms-2 inline-block h-[130px]"
                         />
                     </div>
-                    <p className="text-lg my-6">
-                        مرحباً بك في
-                        <span className="text-accent font-bold"> PRO GYM</span>،
-                        ونتطلع لاستقبالك لتجربة رياضية مميزة وفريدة من نوعها
-                    </p>
-                    <div className="text-lg my-6">
-                        تفاصيل الدعوة:
-                        <ul className="list-disc">
-                            <li className="ms-10">
-                                هذه الدعوة صالحة للاستخدام مرة واحدة
-                            </li>
-                            <li className="ms-10">
-                                الدعوة صالحة حتى:{" "}
+                    {invitation.is_valid ? (
+                        <>
+                            <p className="text-lg my-6">
+                                مرحباً بك في
                                 <span className="text-accent font-bold">
-                                    {invitation.end_date}
+                                    {" "}
+                                    PRO GYM
                                 </span>
-                            </li>
-                        </ul>
-                    </div>
-                    <p className="text-lg my-6">
-                        يرجى التأكد من إحضار الدعوة معك عند الحضور، حيث ستحتاج
-                        إلى استخدامها لتسجيل الدخول. <br />
-                        نتمنى لك وقتاً ممتعاً ونتطلع لرؤيتك قريباً في{" "}
-                        <span className="text-accent font-bold">PRO GYM</span>
-                    </p>
+                                ، ونتطلع لاستقبالك لتجربة رياضية مميزة وفريدة من
+                                نوعها
+                            </p>
+                            <div className="text-lg my-6">
+                                تفاصيل الدعوة:
+                                <ul className="list-disc">
+                                    <li className="ms-10">
+                                        هذه الدعوة صالحة للاستخدام مرة واحدة
+                                    </li>
+                                    <li className="ms-10">
+                                        الدعوة صالحة حتى:{" "}
+                                        <span className="text-accent font-bold">
+                                            {invitation.end_date}
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <p className="text-lg my-6">
+                                يرجى التأكد من إحضار الدعوة معك عند الحضور، حيث
+                                ستحتاج إلى استخدامها لتسجيل الدخول. <br />
+                                نتمنى لك وقتاً ممتعاً ونتطلع لرؤيتك قريباً في{" "}
+                                <span className="text-accent font-bold">
+                                    PRO GYM
+                                </span>
+                            </p>
+                        </>
+                    ) : (
+                        <p className="text-xl text-center text-red-600 font-bold">
+                            دعوة غير صالحة
+                        </p>
+                    )}
                 </div>
             )}
         </>
