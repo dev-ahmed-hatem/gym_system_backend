@@ -220,7 +220,7 @@ ${url}
                     </div>
                 )}
 
-                <div className="flex flex-wrap max-h-12 min-w-full justify-center" key={whatsapp}>
+                <div className="flex flex-wrap max-h-12 min-w-full justify-center">
                     <Button
                         type="submit"
                         color={"primary"}
