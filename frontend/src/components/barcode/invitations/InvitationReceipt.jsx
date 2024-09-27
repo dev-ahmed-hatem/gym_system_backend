@@ -61,7 +61,7 @@ export const InvitationReceipt = () => {
                     وجهة غير صحيحة
                 </p>
             ) : (
-                <div className="max-w-md m-auto text-white bg-primary">
+                <div className="max-w-[400px] m-auto text-white bg-primary flex justify-center flex-col">
                     {/* <header className="h-16 bg-primary flex items-center justify-center">
                         <h1 className="text-accent font-bold text-2xl lg:block ">
                             {gymData?.title}
