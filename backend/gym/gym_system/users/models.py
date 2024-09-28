@@ -168,6 +168,7 @@ class Moderator(models.Model):
 
     def save(self, *args, **kwargs):
         self.user.is_moderator = True
+        self.user.name = self.employee.name
         self.user.save()
         super().save(*args, **kwargs)
 

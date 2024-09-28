@@ -460,17 +460,17 @@ const ClientSearch = () => {
                                 {/* trainer */}
                                 <Table.Row>
                                     <Table.Cell>
-                                        <span className="me-3">المدرب : </span>
+                                        <span className="me-3">
+                                            تمت الإضافة فى :{" "}
+                                        </span>
                                     </Table.Cell>
                                     <Table.Cell>
                                         <span>
-                                            {currentClient?.trainer ? (
-                                                <span>
-                                                    {currentClient.trainer}
-                                                </span>
+                                            {currentClient?.date_created ? (
+                                                currentClient.date_created
                                             ) : (
-                                                <span className="text-secondary">
-                                                    بدون مدرب
+                                                <span className="text-red-600">
+                                                    غير مسجل
                                                 </span>
                                             )}
                                         </span>
