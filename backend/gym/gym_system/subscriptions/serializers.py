@@ -75,10 +75,11 @@ class SubscriptionWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subscription
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ["client"]
 
     def create(self, validated_data):
-        validated_data.pop('client')
+        # validated_data.pop('client')
         client_id = self.initial_data.get('client')
         client = Client.objects.get(id=client_id)
         subscription = Subscription.objects.create(**validated_data, client=client)

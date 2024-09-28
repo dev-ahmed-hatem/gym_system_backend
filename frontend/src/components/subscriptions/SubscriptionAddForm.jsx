@@ -142,7 +142,7 @@ const SubscriptionAddForm = ({ postURL, defaultValues, callBack }) => {
         const options = [];
         let url;
         if (key === "clients") {
-            url = `${endpoint}page_size=20&ordering=-id${
+            url = `${endpoint}page_size=20&ordering=-created_at${
                 search_word ? `&client=${search_word}` : ""
             }`;
         } else {
