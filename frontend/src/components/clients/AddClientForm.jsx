@@ -248,7 +248,7 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
                         placeholder="رقم الهوية"
                         color={errors.national_id ? "failure" : "primary"}
                         {...register("national_id", {
-                            required: "هذا الحقل مطلوب",
+                            // required: "هذا الحقل مطلوب",
                             pattern: {
                                 value: /^[0-9]+$/,
                                 message: "رقم الهوية لا يحتوى على حروف",
