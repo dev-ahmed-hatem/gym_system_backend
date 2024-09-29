@@ -21,6 +21,7 @@ import { defaultFormSubmission } from "../../config/actions";
 import { calculateAge } from "../../utils";
 import { useToast } from "../../providers/ToastProvider";
 import { CiBarcode } from "react-icons/ci";
+import Loading from "../groups/Loading";
 
 const AddClientForm = ({ postURL, defaultValues, callBack }) => {
     const [post, setPost] = useState(false);
@@ -29,6 +30,9 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
     const [currentPlan, setCurrentPlan] = useState(null);
     const [trainersList, setTrainersList] = useState(null);
     const [subscriptionsList, setSubscriptionsList] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [fetchError, setFetchError] = useState(false);
+    const [nextId, setNextId] = useState(null);
     const { showToast } = useToast();
 
     const {
@@ -94,9 +98,25 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
             });
     };
 
+    const get_next_client_id = () => {
+        setLoading(true);
+        axios
+            .get(endpoints.next_id)
+            .then((response) => {
+                setNextId(response.data.id);
+            })
+            .catch((error) => {
+                setFetchError(error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    };
+
     useEffect(() => {
         fetchTrainers();
         fetchSubscriptions();
+        get_next_client_id();
     }, []);
 
     const onSubmit = (data) => {
@@ -135,7 +155,10 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
             showToast: showToast,
             message: { add: "تم إضافة عميل جديد", edit: "تم تعديل العميل" },
             reset: reset,
-            callBack: callBack,
+            callBack: () => {
+                if (callBack) callBack();
+                if (formFunction === "add") get_next_client_id();
+            },
             setError: setError,
         });
     };
@@ -148,391 +171,449 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
                 formFunction={formFunction}
                 post={post}
             >
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label htmlFor="id" value="كود العميل :" />
-                    </div>
-                    <TextInput
-                        id="id"
-                        type="number"
-                        rightIcon={CiBarcode}
-                        placeholder="كود العميل"
-                        color={errors.id ? "failure" : "primary"}
-                        {...register("id", {
-                            required: "هذا الحقل مطلوب",
-                            pattern: {
-                                value: /^[0-9]+$/,
-                                message: "كود العميل لا يحتوى على حروف",
-                            },
-                        })}
-                        onBlur={() => trigger("id")}
-                        disabled={formFunction == "edit"}
-                    />
-                    {errors.id && (
-                        <p className="error-message">{errors.id.message}</p>
-                    )}
-                </div>
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label htmlFor="name" value="اسم العميل :" />
-                    </div>
-                    <TextInput
-                        id="name"
-                        type="text"
-                        rightIcon={HiUser}
-                        placeholder="اسم العميل"
-                        color={errors.name ? "failure" : "primary"}
-                        {...register("name", {
-                            required: "هذا الحقل مطلوب",
-                        })}
-                        onBlur={() => trigger("name")}
-                    />
-
-                    {errors.name && (
-                        <p className="error-message">{errors.name.message}</p>
-                    )}
-                </div>
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label htmlFor="mobile" value="رقم الهاتف :" />
-                    </div>
-                    <TextInput
-                        id="mobile"
-                        type="tel"
-                        rightIcon={HiDeviceMobile}
-                        placeholder="رقم الهاتف"
-                        color={errors.phone ? "failure" : "primary"}
-                        {...register("phone", {
-                            required: "هذا الحقل مطلوب",
-                            pattern: {
-                                value: /^[0-9]+$/,
-                                message: "رقم الموبايل لا يحتوى على حروف",
-                            },
-                        })}
-                        onBlur={() => trigger("phone")}
-                    />
-                    {errors.phone && (
-                        <p className="error-message">{errors.phone.message}</p>
-                    )}
-                </div>
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label htmlFor="mobile2" value="رقم الهاتف الإضافى :" />
-                    </div>
-                    <TextInput
-                        id="mobile2"
-                        type="tel"
-                        rightIcon={HiDeviceMobile}
-                        placeholder="رقم الهاتف الإضافى (اختيارى)"
-                        color={errors.phone2 ? "failure" : "primary"}
-                        {...register("phone2", {
-                            pattern: {
-                                value: /^[0-9]+$/,
-                                message: "رقم الموبايل لا يحتوى على حروف",
-                            },
-                        })}
-                        onBlur={() => trigger("phone2")}
-                    />
-                    {errors.phone2 && (
-                        <p className="error-message">{errors.phone2.message}</p>
-                    )}
-                </div>
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label htmlFor="id-num" value="رقم الهوية :" />
-                    </div>
-                    <TextInput
-                        id="id-num"
-                        type="text"
-                        rightIcon={HiMiniIdentification}
-                        placeholder="رقم الهوية"
-                        color={errors.national_id ? "failure" : "primary"}
-                        {...register("national_id", {
-                            // required: "هذا الحقل مطلوب",
-                            pattern: {
-                                value: /^[0-9]+$/,
-                                message: "رقم الهوية لا يحتوى على حروف",
-                            },
-                        })}
-                        onBlur={() => trigger("national_id")}
-                    />
-                    {errors.national_id && (
-                        <p className="error-message">
-                            {errors.national_id.message}
-                        </p>
-                    )}
-                </div>
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label htmlFor="gander" value="النوع :" />
-                    </div>
-                    <FlowbiteSelect
-                        id="gander"
-                        type="select"
-                        placeholder="النوع"
-                        color={errors.gander ? "failure" : "primary"}
-                        {...register("gander", {
-                            required: "هذا الحقل مطلوب",
-                        })}
-                        onBlur={() => trigger("gander")}
-                    >
-                        <option value={"male"} key={0}>
-                            ذكر
-                        </option>
-                        <option value={"female"} key={1}>
-                            أنثى
-                        </option>
-                    </FlowbiteSelect>
-                    {errors.gander && (
-                        <p className="error-message">{errors.gander.message}</p>
-                    )}
-                </div>
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label htmlFor="birth_date" value="تاريخ الميلاد :" />
-                    </div>
-                    <Controller
-                        name="birth_date"
-                        control={control}
-                        render={({ field }) => (
-                            <Datepicker
-                                selected={field.value}
-                                id="birth_date"
-                                language="ar"
-                                labelClearButton="مسح"
-                                labelTodayButton="اليوم"
-                                placeholder="تاريخ الميلاد"
-                                color={"primary"}
-                                onSelectedDateChanged={(date) => {
-                                    calculateAge({
-                                        birth: date,
-                                        setAge: setAge,
-                                    });
-                                    field.onChange(
-                                        date.toLocaleDateString("en-CA")
-                                    );
-                                }}
-                                defaultDate={
-                                    new Date(
-                                        defaultValues?.birth_date ||
-                                            "1970-01-01"
-                                    )
-                                }
-                            />
-                        )}
-                    />
-                </div>
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label htmlFor="age" value="السن :" />
-                    </div>
-                    <TextInput
-                        id="age"
-                        type="number"
-                        rightIcon={SlCalender}
-                        color={errors.age ? "failure" : "primary"}
-                        {...register("age", {})}
-                        onBlur={() => trigger("age")}
-                        value={age ? age : ""}
-                        disabled
-                    />
-                    {errors.age && (
-                        <p className="error-message">{errors.age.message}</p>
-                    )}
-                </div>
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label htmlFor="email" value="البريد الالكترونى :" />
-                    </div>
-                    <TextInput
-                        id="email"
-                        type="email"
-                        rightIcon={MdEmail}
-                        color={errors.email ? "failure" : "primary"}
-                        {...register("email", {
-                            pattern: {
-                                value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
-                                message: "بريد الكترونى غير صالح",
-                            },
-                        })}
-                        placeholder="البريد الالكترونى"
-                        onBlur={() => trigger("email")}
-                    />
-                    {errors.email && (
-                        <p className="error-message">{errors.email.message}</p>
-                    )}
-                </div>
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label htmlFor="address" value="العنوان :" />
-                    </div>
-                    <TextInput
-                        id="address"
-                        rightIcon={FaAddressCard}
-                        color={"primary"}
-                        {...register("address", {})}
-                        placeholder="العنوان"
-                    />
-                </div>
-
-                {formFunction === "add" && (
+                {loading ? (
+                    <Loading className={`w-full text-center`} />
+                ) : fetchError ? (
+                    <p className="text-lg text-center text-red-600 py-4 w-full m-auto">
+                        خطأ في تحميل البيانات
+                    </p>
+                ) : (
                     <>
                         <div className="w-full lg:max-w-md lg:w-[30%]">
                             <div className="mb-2 block">
-                                <Label
-                                    htmlFor="subscription_plan"
-                                    value="اشتراك ابتدائى :"
-                                />
+                                <Label htmlFor="id" value="كود العميل :" />
                             </div>
-
-                            <Controller
-                                name="subscription_plan"
-                                control={control}
-                                render={({ field }) => (
-                                    <>
-                                        <Select
-                                            isClearable
-                                            noOptionsMessage={() =>
-                                                "لا يوجد نتائج مطابقة"
-                                            }
-                                            placeholder="بحث ..."
-                                            options={subscriptionsList || []}
-                                            onInputChange={fetchSubscriptions}
-                                            value={field.value}
-                                            onBlur={() => {
-                                                trigger("subscription_plan");
-                                            }}
-                                            {...field}
-                                            styles={style(
-                                                errors.subscription_plan
-                                            )}
-                                            onChange={(plan) => {
-                                                setCurrentPlan(plan);
-                                            }}
-                                        ></Select>
-                                        {errors.subscription_plan && (
-                                            <p className="error-message">
-                                                {
-                                                    errors.subscription_plan
-                                                        .message
-                                                }
-                                            </p>
-                                        )}
-                                    </>
-                                )}
+                            <TextInput
+                                id="id"
+                                type="number"
+                                rightIcon={CiBarcode}
+                                placeholder="كود العميل"
+                                color={errors.id ? "failure" : "primary"}
+                                {...register("id", {
+                                    required: "هذا الحقل مطلوب",
+                                    pattern: {
+                                        value: /^[0-9]+$/,
+                                        message: "كود العميل لا يحتوى على حروف",
+                                    },
+                                })}
+                                onBlur={() => trigger("id")}
+                                disabled={formFunction == "edit"}
+                                defaultValue={nextId ?? null}
                             />
+                            {errors.id && (
+                                <p className="error-message">
+                                    {errors.id.message}
+                                </p>
+                            )}
                         </div>
                         <div className="w-full lg:max-w-md lg:w-[30%]">
                             <div className="mb-2 block">
-                                <Label htmlFor="trainer" value="المدرب :" />
+                                <Label htmlFor="name" value="اسم العميل :" />
                             </div>
-
-                            <Controller
-                                name="trainer"
-                                control={control}
-                                render={({ field }) => (
-                                    <>
-                                        <Select
-                                            isClearable
-                                            noOptionsMessage={() =>
-                                                "لا يوجد نتائج مطابقة"
-                                            }
-                                            placeholder="بحث ..."
-                                            options={trainersList || []}
-                                            onInputChange={fetchTrainers}
-                                            value={field.value}
-                                            onBlur={() => {
-                                                trigger("trainer");
-                                            }}
-                                            {...field}
-                                            styles={style(errors.trainer)}
-                                        ></Select>
-                                        {errors.trainer && (
-                                            <p className="error-message">
-                                                {errors.trainer.message}
-                                            </p>
-                                        )}
-                                    </>
-                                )}
+                            <TextInput
+                                id="name"
+                                type="text"
+                                rightIcon={HiUser}
+                                placeholder="اسم العميل"
+                                color={errors.name ? "failure" : "primary"}
+                                {...register("name", {
+                                    required: "هذا الحقل مطلوب",
+                                })}
+                                onBlur={() => trigger("name")}
                             />
+
+                            {errors.name && (
+                                <p className="error-message">
+                                    {errors.name.message}
+                                </p>
+                            )}
+                        </div>
+                        <div className="w-full lg:max-w-md lg:w-[30%]">
+                            <div className="mb-2 block">
+                                <Label htmlFor="mobile" value="رقم الهاتف :" />
+                            </div>
+                            <TextInput
+                                id="mobile"
+                                type="tel"
+                                rightIcon={HiDeviceMobile}
+                                placeholder="رقم الهاتف"
+                                color={errors.phone ? "failure" : "primary"}
+                                {...register("phone", {
+                                    required: "هذا الحقل مطلوب",
+                                    pattern: {
+                                        value: /^[0-9]+$/,
+                                        message:
+                                            "رقم الموبايل لا يحتوى على حروف",
+                                    },
+                                })}
+                                onBlur={() => trigger("phone")}
+                            />
+                            {errors.phone && (
+                                <p className="error-message">
+                                    {errors.phone.message}
+                                </p>
+                            )}
                         </div>
                         <div className="w-full lg:max-w-md lg:w-[30%]">
                             <div className="mb-2 block">
                                 <Label
-                                    htmlFor="start_date"
-                                    value="تاريخ بدأ الاشتراك :"
+                                    htmlFor="mobile2"
+                                    value="رقم الهاتف الإضافى :"
+                                />
+                            </div>
+                            <TextInput
+                                id="mobile2"
+                                type="tel"
+                                rightIcon={HiDeviceMobile}
+                                placeholder="رقم الهاتف الإضافى (اختيارى)"
+                                color={errors.phone2 ? "failure" : "primary"}
+                                {...register("phone2", {
+                                    pattern: {
+                                        value: /^[0-9]+$/,
+                                        message:
+                                            "رقم الموبايل لا يحتوى على حروف",
+                                    },
+                                })}
+                                onBlur={() => trigger("phone2")}
+                            />
+                            {errors.phone2 && (
+                                <p className="error-message">
+                                    {errors.phone2.message}
+                                </p>
+                            )}
+                        </div>
+                        <div className="w-full lg:max-w-md lg:w-[30%]">
+                            <div className="mb-2 block">
+                                <Label htmlFor="id-num" value="رقم الهوية :" />
+                            </div>
+                            <TextInput
+                                id="id-num"
+                                type="text"
+                                rightIcon={HiMiniIdentification}
+                                placeholder="رقم الهوية"
+                                color={
+                                    errors.national_id ? "failure" : "primary"
+                                }
+                                {...register("national_id", {
+                                    // required: "هذا الحقل مطلوب",
+                                    pattern: {
+                                        value: /^[0-9]+$/,
+                                        message: "رقم الهوية لا يحتوى على حروف",
+                                    },
+                                })}
+                                onBlur={() => trigger("national_id")}
+                            />
+                            {errors.national_id && (
+                                <p className="error-message">
+                                    {errors.national_id.message}
+                                </p>
+                            )}
+                        </div>
+                        <div className="w-full lg:max-w-md lg:w-[30%]">
+                            <div className="mb-2 block">
+                                <Label htmlFor="gander" value="النوع :" />
+                            </div>
+                            <FlowbiteSelect
+                                id="gander"
+                                type="select"
+                                placeholder="النوع"
+                                color={errors.gander ? "failure" : "primary"}
+                                {...register("gander", {
+                                    required: "هذا الحقل مطلوب",
+                                })}
+                                onBlur={() => trigger("gander")}
+                            >
+                                <option value={"male"} key={0}>
+                                    ذكر
+                                </option>
+                                <option value={"female"} key={1}>
+                                    أنثى
+                                </option>
+                            </FlowbiteSelect>
+                            {errors.gander && (
+                                <p className="error-message">
+                                    {errors.gander.message}
+                                </p>
+                            )}
+                        </div>
+                        <div className="w-full lg:max-w-md lg:w-[30%]">
+                            <div className="mb-2 block">
+                                <Label
+                                    htmlFor="birth_date"
+                                    value="تاريخ الميلاد :"
                                 />
                             </div>
                             <Controller
-                                name="start_date"
+                                name="birth_date"
                                 control={control}
                                 render={({ field }) => (
                                     <Datepicker
                                         selected={field.value}
-                                        id="start_date"
+                                        id="birth_date"
                                         language="ar"
                                         labelClearButton="مسح"
                                         labelTodayButton="اليوم"
-                                        placeholder="تاريخ بدأ الاشتراك"
+                                        placeholder="تاريخ الميلاد"
                                         color={"primary"}
                                         onSelectedDateChanged={(date) => {
+                                            calculateAge({
+                                                birth: date,
+                                                setAge: setAge,
+                                            });
                                             field.onChange(
                                                 date.toLocaleDateString("en-CA")
                                             );
                                         }}
-                                        defaultDate={new Date()}
+                                        defaultDate={
+                                            new Date(
+                                                defaultValues?.birth_date ||
+                                                    "1970-01-01"
+                                            )
+                                        }
                                     />
                                 )}
                             />
                         </div>
-                    </>
-                )}
-
-                <div className="w-full lg:max-w-md lg:w-[30%]">
-                    <div className="mb-2 block">
-                        <Label htmlFor="photo" value="الصورة :" />
-                    </div>
-                    <CustomFileInput
-                        register={register}
-                        setValue={setValue}
-                        name={"photo"}
-                        error={errors.photo ? "صورة غير صالحة" : null}
-                        selectedFile={selectedFile}
-                        setSelectedFile={setSelectedFile}
-                        onBlur={() => {
-                            trigger("photo");
-                        }}
-                    />
-                </div>
-
-                {formFunction === "edit" && (
-                    <div className="w-full lg:max-w-md lg:w-[30%]">
-                        <div className="mb-2 block">
-                            <Label value="الصورة الحالية :" />
-                        </div>
-                        {defaultValues?.photo ? (
-                            <img
-                                src={defaultValues.photo}
-                                width={100}
-                                height={100}
-                                alt=""
+                        <div className="w-full lg:max-w-md lg:w-[30%]">
+                            <div className="mb-2 block">
+                                <Label htmlFor="age" value="السن :" />
+                            </div>
+                            <TextInput
+                                id="age"
+                                type="number"
+                                rightIcon={SlCalender}
+                                color={errors.age ? "failure" : "primary"}
+                                {...register("age", {})}
+                                onBlur={() => trigger("age")}
+                                value={age ? age : ""}
+                                disabled
                             />
-                        ) : (
-                            <p className="error-message">لا توجد صورة</p>
-                        )}
-                    </div>
-                )}
+                            {errors.age && (
+                                <p className="error-message">
+                                    {errors.age.message}
+                                </p>
+                            )}
+                        </div>
+                        <div className="w-full lg:max-w-md lg:w-[30%]">
+                            <div className="mb-2 block">
+                                <Label
+                                    htmlFor="email"
+                                    value="البريد الالكترونى :"
+                                />
+                            </div>
+                            <TextInput
+                                id="email"
+                                type="email"
+                                rightIcon={MdEmail}
+                                color={errors.email ? "failure" : "primary"}
+                                {...register("email", {
+                                    pattern: {
+                                        value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
+                                        message: "بريد الكترونى غير صالح",
+                                    },
+                                })}
+                                placeholder="البريد الالكترونى"
+                                onBlur={() => trigger("email")}
+                            />
+                            {errors.email && (
+                                <p className="error-message">
+                                    {errors.email.message}
+                                </p>
+                            )}
+                        </div>
+                        <div className="w-full lg:max-w-md lg:w-[30%]">
+                            <div className="mb-2 block">
+                                <Label htmlFor="address" value="العنوان :" />
+                            </div>
+                            <TextInput
+                                id="address"
+                                rightIcon={FaAddressCard}
+                                color={"primary"}
+                                {...register("address", {})}
+                                placeholder="العنوان"
+                            />
+                        </div>
 
-                {formFunction === "add" && currentPlan && (
-                    <div className="w-full my-3">
-                        <p>
-                            سيتم إضافة إيراد بقيمة{" "}
-                            <span className="text-primary font-bold mx-2">
-                                {currentPlan?.price.toFixed(2)}{" "}
-                            </span>
-                            بتاريخ اليوم
-                        </p>
-                    </div>
+                        {formFunction === "add" && (
+                            <>
+                                <div className="w-full lg:max-w-md lg:w-[30%]">
+                                    <div className="mb-2 block">
+                                        <Label
+                                            htmlFor="subscription_plan"
+                                            value="اشتراك ابتدائى :"
+                                        />
+                                    </div>
+
+                                    <Controller
+                                        name="subscription_plan"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <>
+                                                <Select
+                                                    isClearable
+                                                    noOptionsMessage={() =>
+                                                        "لا يوجد نتائج مطابقة"
+                                                    }
+                                                    placeholder="بحث ..."
+                                                    options={
+                                                        subscriptionsList || []
+                                                    }
+                                                    onInputChange={
+                                                        fetchSubscriptions
+                                                    }
+                                                    value={field.value}
+                                                    onBlur={() => {
+                                                        trigger(
+                                                            "subscription_plan"
+                                                        );
+                                                    }}
+                                                    {...field}
+                                                    styles={style(
+                                                        errors.subscription_plan
+                                                    )}
+                                                    onChange={(plan) => {
+                                                        setCurrentPlan(plan);
+                                                    }}
+                                                ></Select>
+                                                {errors.subscription_plan && (
+                                                    <p className="error-message">
+                                                        {
+                                                            errors
+                                                                .subscription_plan
+                                                                .message
+                                                        }
+                                                    </p>
+                                                )}
+                                            </>
+                                        )}
+                                    />
+                                </div>
+                                <div className="w-full lg:max-w-md lg:w-[30%]">
+                                    <div className="mb-2 block">
+                                        <Label
+                                            htmlFor="trainer"
+                                            value="المدرب :"
+                                        />
+                                    </div>
+
+                                    <Controller
+                                        name="trainer"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <>
+                                                <Select
+                                                    isClearable
+                                                    noOptionsMessage={() =>
+                                                        "لا يوجد نتائج مطابقة"
+                                                    }
+                                                    placeholder="بحث ..."
+                                                    options={trainersList || []}
+                                                    onInputChange={
+                                                        fetchTrainers
+                                                    }
+                                                    value={field.value}
+                                                    onBlur={() => {
+                                                        trigger("trainer");
+                                                    }}
+                                                    {...field}
+                                                    styles={style(
+                                                        errors.trainer
+                                                    )}
+                                                ></Select>
+                                                {errors.trainer && (
+                                                    <p className="error-message">
+                                                        {errors.trainer.message}
+                                                    </p>
+                                                )}
+                                            </>
+                                        )}
+                                    />
+                                </div>
+                                <div className="w-full lg:max-w-md lg:w-[30%]">
+                                    <div className="mb-2 block">
+                                        <Label
+                                            htmlFor="start_date"
+                                            value="تاريخ بدأ الاشتراك :"
+                                        />
+                                    </div>
+                                    <Controller
+                                        name="start_date"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <Datepicker
+                                                selected={field.value}
+                                                id="start_date"
+                                                language="ar"
+                                                labelClearButton="مسح"
+                                                labelTodayButton="اليوم"
+                                                placeholder="تاريخ بدأ الاشتراك"
+                                                color={"primary"}
+                                                onSelectedDateChanged={(
+                                                    date
+                                                ) => {
+                                                    field.onChange(
+                                                        date.toLocaleDateString(
+                                                            "en-CA"
+                                                        )
+                                                    );
+                                                }}
+                                                defaultDate={new Date()}
+                                            />
+                                        )}
+                                    />
+                                </div>
+                            </>
+                        )}
+
+                        <div className="w-full lg:max-w-md lg:w-[30%]">
+                            <div className="mb-2 block">
+                                <Label htmlFor="photo" value="الصورة :" />
+                            </div>
+                            <CustomFileInput
+                                register={register}
+                                setValue={setValue}
+                                name={"photo"}
+                                error={errors.photo ? "صورة غير صالحة" : null}
+                                selectedFile={selectedFile}
+                                setSelectedFile={setSelectedFile}
+                                onBlur={() => {
+                                    trigger("photo");
+                                }}
+                            />
+                        </div>
+
+                        {formFunction === "edit" && (
+                            <div className="w-full lg:max-w-md lg:w-[30%]">
+                                <div className="mb-2 block">
+                                    <Label value="الصورة الحالية :" />
+                                </div>
+                                {defaultValues?.photo ? (
+                                    <img
+                                        src={defaultValues.photo}
+                                        width={100}
+                                        height={100}
+                                        alt=""
+                                    />
+                                ) : (
+                                    <p className="error-message">
+                                        لا توجد صورة
+                                    </p>
+                                )}
+                            </div>
+                        )}
+
+                        {formFunction === "add" && currentPlan && (
+                            <div className="w-full my-3">
+                                <p>
+                                    سيتم إضافة إيراد بقيمة{" "}
+                                    <span className="text-primary font-bold mx-2">
+                                        {currentPlan?.price.toFixed(2)}{" "}
+                                    </span>
+                                    بتاريخ اليوم
+                                </p>
+                            </div>
+                        )}
+                    </>
                 )}
             </FormGroup>
         </>

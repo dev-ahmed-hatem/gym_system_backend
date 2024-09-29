@@ -46,6 +46,7 @@ const endpoints = {
     scanner_code: `${api_base_url}api/clients/scanner-code/?`,
     scanner_mobile: `${api_base_url}api/clients/scanner-mobile/?`,
     attendance: `${api_base_url}api/clients/attendance/?`,
+    next_id: `${api_base_url}api/clients/next-id/?`,
 
     // shop routing
     product_category_list: `${api_base_url}api/shop/product-category/?`,

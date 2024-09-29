@@ -130,6 +130,18 @@ class AttendanceViewSet(ModelViewSet):
         return super().destroy(self, request, *args, **kwargs)
 
 
+@api_view(["GET"])
+def get_next_client_id(request):
+    last_id = Client.objects.order_by("-created_at").first().id
+    next_id = int(last_id) + 1
+    while True:
+        try:
+            Client.objects.get(id=next_id)
+            next_id += 1
+        except Client.DoesNotExist:
+            return Response({"id": next_id}, status=status.HTTP_200_OK)
+
+
 def get_client_active_subscriptions(client: Client):
     current_date = now().astimezone(settings.CAIRO_TZ).date()
 
