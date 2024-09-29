@@ -112,7 +112,8 @@ class AttendanceReadSerializer(serializers.ModelSerializer):
 class AttendanceWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attendance
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ["client"]
 
     def create(self, validated_data):
         guest_name = self.initial_data.get("guest_name")
@@ -128,7 +129,7 @@ class AttendanceWriteSerializer(serializers.ModelSerializer):
                 invitation.save()
                 attendance.save()
         else:
-            validated_data.pop('client', None)
+            # validated_data.pop('client', None)
             client_id = self.initial_data.get('client')
             client = Client.objects.get(id=client_id)
             attendance = Attendance.objects.create(**validated_data, client=client)
