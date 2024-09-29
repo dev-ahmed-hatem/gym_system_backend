@@ -83,6 +83,7 @@ const Scanner = () => {
                         <SubscriptionsPrompt
                             subscriptions={response.data.subscriptions}
                             client={response.data.client}
+                            is_attended={response.data.is_attended}
                             callBack={() => {
                                 resumeScanning();
                                 closeDrawer();

@@ -5,7 +5,12 @@ import axios from "../../config/axiosconfig";
 import endpoints from "../../config/config";
 import { useToast } from "../../providers/ToastProvider";
 
-const SubscriptionsPrompt = ({ subscriptions, client, callBack }) => {
+const SubscriptionsPrompt = ({
+    subscriptions,
+    client,
+    is_attended,
+    callBack,
+}) => {
     const [post, setPost] = useState(false);
     const [selected, setSelected] = useState(subscriptions[0]?.id);
     const { showToast } = useToast();
@@ -111,6 +116,11 @@ const SubscriptionsPrompt = ({ subscriptions, client, callBack }) => {
                             </Label>
                         </div>
                     ))}
+                    {is_attended && (
+                        <p className="text-base lg:text-lg text-center text-red-600 py-4">
+                            يوجد تسجيل الحضور اليوم لهذا العميل
+                        </p>
+                    )}
                     <div className="flex flex-wrap max-h-12 min-w-full justify-center">
                         <Button
                             color={"primary"}

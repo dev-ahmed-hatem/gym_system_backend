@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import { Label, Button, TextInput } from "flowbite-react";
-import { MdOutlinePermIdentity } from "react-icons/md";
 import { useForm } from "react-hook-form";
 import SubscriptionsPrompt from "./SubscriptionsPrompt";
 import { FaInfoCircle } from "react-icons/fa";
@@ -38,6 +37,7 @@ const ClientMobileForm = () => {
                         <SubscriptionsPrompt
                             subscriptions={response.data.subscriptions}
                             client={response.data.client}
+                            is_attended={response.data.is_attended}
                             callBack={() => {
                                 closeDrawer();
                             }}

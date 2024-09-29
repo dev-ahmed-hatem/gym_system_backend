@@ -144,6 +144,14 @@ def get_client_active_subscriptions(client: Client):
     return active_subscriptions
 
 
+def is_client_attended_today(client: Client):
+    current_date = now().astimezone(settings.CAIRO_TZ).date()
+    attendances = Attendance.objects.filter(client=client)
+    for attendance in attendances:
+        if attendance.timestamp.astimezone(settings.CAIRO_TZ).date() == current_date:
+            return True
+
+
 @api_view(['POST'])
 def scanner_code(request):
     code: str = request.data.get('code')
@@ -173,8 +181,10 @@ def scanner_code(request):
                                                               context={"request": request},
                                                               many=True).data
         serialized_client = ClientReadSerializer(client, context={"request": request}).data
+        is_attended = is_client_attended_today(client)
 
-        return Response({'code': code, "client": serialized_client, "subscriptions": serialized_subscriptions})
+        return Response({'code': code, "client": serialized_client, "subscriptions": serialized_subscriptions,
+                         "is_attended": is_attended})
 
     except Client.DoesNotExist:
         return Response({'error': 'عميل غير موجود'}, status=status.HTTP_404_NOT_FOUND)
@@ -190,8 +200,10 @@ def scanner_mobile(request):
                                                               context={"request": request},
                                                               many=True).data
         serialized_client = ClientReadSerializer(client, context={"request": request}).data
+        is_attended = is_client_attended_today(client)
 
-        return Response({"client": serialized_client, "subscriptions": serialized_subscriptions})
+        return Response(
+            {"client": serialized_client, "subscriptions": serialized_subscriptions, "is_attended": is_attended})
 
     except Client.DoesNotExist:
         return Response({'error': 'عميل غير موجود'}, status=status.HTTP_404_NOT_FOUND)
