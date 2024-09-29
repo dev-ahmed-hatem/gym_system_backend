@@ -118,7 +118,7 @@ const SubscriptionsPrompt = ({
                     ))}
                     {is_attended && (
                         <p className="text-base lg:text-lg text-center text-red-600 py-4">
-                            يوجد تسجيل الحضور اليوم لهذا العميل
+                            يوجد تسجيل حضور اليوم لهذا العميل
                         </p>
                     )}
                     <div className="flex flex-wrap max-h-12 min-w-full justify-center">
