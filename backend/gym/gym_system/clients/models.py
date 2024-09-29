@@ -54,7 +54,17 @@ class Client(models.Model):
 
     def save(self, *args, **kwargs):
         self.calculate_age()
+
+        initial_save = not self.id
         super(Client, self).save(*args, **kwargs)
+
+        if initial_save:
+            if not self.qr_code:
+                self.generate_qr_code()
+            if not self.barcode:
+                self.generate_barcode()
+                
+            super(Client, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         if self.qr_code:
