@@ -9,7 +9,7 @@ const SubscriptionEdit = () => {
     //////////////////////////////// permissions ////////////////////////////////
     const { set_page_permissions } = usePermission();
     const permissions = set_page_permissions("subscriptions", "subscription");
-    if (!permissions.change && !permissions.view) {
+    if (!permissions.change && !permissions.view && !permissions.delete) {
         return (
             <p className="text-lg text-center text-red-600 py-4">
                 ليس لديك صلاحيات هنا
@@ -65,10 +65,13 @@ const SubscriptionEdit = () => {
                                         setFetchError
                                     );
                                 }}
+                                deleteCallBack={() => {
+                                    setData(null)
+                                }}
                             />
 
                             {/* freeze options */}
-                            {!data?.results[0]?.is_expired && (
+                            {permissions.change && !data?.results[0]?.is_expired && (
                                 <SubscriptionFreeze
                                     sub={data?.results[0]}
                                     callBack={() => {

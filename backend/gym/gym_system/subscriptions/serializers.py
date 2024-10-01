@@ -1,6 +1,8 @@
 from clients.models import Client
 from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
+from rest_framework.response import Response
+from rest_framework import status
 from users.serializers import EmployeeReadSerializer
 from financials.models import FinancialItem, Transaction
 from django.utils.timezone import now
@@ -92,6 +94,8 @@ class SubscriptionWriteSerializer(serializers.ModelSerializer):
                                                  date=now().astimezone(settings.CAIRO_TZ).date(),
                                                  amount=total_price
                                                  )
+        subscription.transaction = transaction
+        subscription.save()
         transaction.save()
         return subscription
 

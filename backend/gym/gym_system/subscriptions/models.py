@@ -51,6 +51,7 @@ class Subscription(models.Model):
 
     attendance_days = models.IntegerField(default=0, null=True, blank=True)
     invitations_used = models.IntegerField(default=0, null=True, blank=True)
+    transaction = models.ForeignKey("financials.Transaction", on_delete=models.SET_NULL, blank=True, null=True, )
 
     def save(self, *args, **kwargs):
         if self.plan.is_duration:
@@ -59,6 +60,11 @@ class Subscription(models.Model):
             self.end_date = self.start_date + timedelta(days=self.plan.validity)
         self.end_date += timedelta(days=self.freeze_days_used)
         return super(Subscription, self).save(*args, **kwargs)
+
+    def delete(self, using=None, keep_parents=False):
+        if self.transaction:
+            self.transaction.delete()
+        super(Subscription, self).delete(using, keep_parents)
 
     def freeze(self, freeze_date=None):
         if self.plan.freezable and self.freeze_days_used < self.plan.freeze_no:
