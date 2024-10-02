@@ -8,8 +8,14 @@ import endpoints from "../../config/config";
 import { fetch_list_data } from "../../config/actions";
 import { usePermission } from "../../providers/PermissionProvider";
 import ErrorGroup from "../groups/ErrorGroup";
+import TablePagination from "../groups/TablePagination";
 
-const ClientFilterForm = ({ setLoading, setFetchError, setData }) => {
+const ClientFilterForm = ({
+    setLoading,
+    setFetchError,
+    setData,
+    pageNumber,
+}) => {
     const [post, setPost] = useState(false);
     const today = new Date().toLocaleDateString("en-CA");
     const {
@@ -34,16 +40,10 @@ const ClientFilterForm = ({ setLoading, setFetchError, setData }) => {
         }
     }, [from, to]);
 
-    const onSubmit = (data) => {
-        if (data.to < data.from) {
-            setError("to", {
-                type: "manual",
-                message: "تاريخ النهاية أقدم من تاريخ البداية",
-            });
-            return;
-        }
-
-        const url = `${endpoints.client_list}from=${data.from}&to=${data.to}&no_pagination=true`;
+    const get_current_clients = (data) => {
+        const url = `${endpoints.client_list}from=${
+            data ? data.from : from
+        }&to=${data ? data.to : to}${pageNumber ? `&page=${pageNumber}` : ""}`;
         setPost(true);
         setLoading(true);
 
@@ -57,6 +57,22 @@ const ClientFilterForm = ({ setLoading, setFetchError, setData }) => {
             },
         });
     };
+
+    const onSubmit = (data) => {
+        if (data.to < data.from) {
+            setError("to", {
+                type: "manual",
+                message: "تاريخ النهاية أقدم من تاريخ البداية",
+            });
+            return;
+        }
+
+        get_current_clients(data);
+    };
+
+    useEffect(() => {
+        get_current_clients();
+    }, [pageNumber]);
 
     return (
         <div
@@ -130,7 +146,6 @@ const ClientFilterForm = ({ setLoading, setFetchError, setData }) => {
                         <p className="error-message">{errors.to.message}</p>
                     )}
                 </div>
-
                 <div className="flex flex-wrap max-h-12 min-w-full justify-center">
                     <Button
                         type="submit"
@@ -156,6 +171,7 @@ const ClientFilter = () => {
     const [loading, setLoading] = useState(false);
     const [fetchError, setFetchError] = useState(null);
     const [data, setData] = useState(null);
+    const [pageNumber, setPageNumber] = useState(1);
 
     //////////////////////////////// permissions ////////////////////////////////
     const { set_page_permissions } = usePermission();
@@ -176,6 +192,7 @@ const ClientFilter = () => {
                 setLoading={setLoading}
                 setFetchError={setFetchError}
                 setData={setData}
+                pageNumber={pageNumber}
             />
 
             {/* table data */}
@@ -191,7 +208,7 @@ const ClientFilter = () => {
                         <>
                             <div className="table-wrapper w-full overflow-x-auto">
                                 <Table striped className="font-bold text-right">
-                                    {data.length == 0 ? (
+                                    {data.count == 0 ? (
                                         <Table.Body>
                                             <Table.Row className="text-lg text-center text-gray-800 py-3 font-bold bg-red-500">
                                                 <Table.Cell>
@@ -213,7 +230,7 @@ const ClientFilter = () => {
                                                 </Table.HeadCell>
                                             </Table.Head>
                                             <Table.Body>
-                                                {data.map((client) => {
+                                                {data.results.map((client) => {
                                                     return (
                                                         <Table.Row
                                                             key={client.id}
@@ -255,10 +272,22 @@ const ClientFilter = () => {
                                 </Table>
                             </div>
 
-                            <div className="flex justify-center text-lg">
-                                العدد : {data?.length}{" "}
-                                {data?.length > 10 ? "عميل" : "عملاء"}
-                            </div>
+                            {data.total_pages > 1 && (
+                                <TablePagination
+                                    totalPages={data.total_pages}
+                                    currentPage={data.current_page}
+                                    onPageChange={(page) => {
+                                        setPageNumber(page);
+                                    }}
+                                />
+                            )}
+
+                            {data.count > 0 && (
+                                <div className="flex justify-center text-lg">
+                                    العدد : {data?.count}{" "}
+                                    {data?.count > 10 ? "عميل" : "عملاء"}
+                                </div>
+                            )}
                         </>
                     )}
                 </ViewGroup>
