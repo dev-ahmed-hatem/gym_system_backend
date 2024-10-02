@@ -799,7 +799,7 @@ const SubscriptionAddForm = ({
                                         <AiOutlineLoading className="h-6 w-6 animate-spin" />
                                     }
                                 >
-                                    {formFunction == "add" ? "إضافة" : "تعديل"}
+                                    {formFunction == "add" ? "إضافة" : "حفظ"}
                                 </Button>
                             </div>
                         )}
