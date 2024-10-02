@@ -9,7 +9,7 @@ const SubscriptionEdit = () => {
     //////////////////////////////// permissions ////////////////////////////////
     const { set_page_permissions } = usePermission();
     const permissions = set_page_permissions("subscriptions", "subscription");
-    if (!permissions.change && !permissions.view && !permissions.delete) {
+    if (!permissions.change && !permissions.delete) {
         return (
             <p className="text-lg text-center text-red-600 py-4">
                 ليس لديك صلاحيات هنا
@@ -66,23 +66,24 @@ const SubscriptionEdit = () => {
                                     );
                                 }}
                                 deleteCallBack={() => {
-                                    setData(null)
+                                    setData(null);
                                 }}
                             />
 
                             {/* freeze options */}
-                            {permissions.change && !data?.results[0]?.is_expired && (
-                                <SubscriptionFreeze
-                                    sub={data?.results[0]}
-                                    callBack={() => {
-                                        get_subscription_data(
-                                            data?.results[0].id,
-                                            setData,
-                                            setFetchError
-                                        );
-                                    }}
-                                />
-                            )}
+                            {permissions.change &&
+                                !data?.results[0]?.is_expired && (
+                                    <SubscriptionFreeze
+                                        sub={data?.results[0]}
+                                        callBack={() => {
+                                            get_subscription_data(
+                                                data?.results[0].id,
+                                                setData,
+                                                setFetchError
+                                            );
+                                        }}
+                                    />
+                                )}
                         </>
                     )}
                 </>

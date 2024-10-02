@@ -3,18 +3,27 @@ import endpoints from "../../config/config";
 import SubscriptionAddForm from "./SubscriptionAddForm";
 import { usePermission } from "../../providers/PermissionProvider";
 
-const SubscriptionAdd = ({ defaultValues, postURL, callBack, deleteCallBack }) => {
+const SubscriptionAdd = ({
+    defaultValues,
+    postURL,
+    callBack,
+    deleteCallBack,
+}) => {
     //////////////////////////////// permissions ////////////////////////////////
     const { set_page_permissions } = usePermission();
     const permissions = set_page_permissions("subscriptions", "subscription");
-    if (!permissions.add & !permissions.change) {
+    if (
+        (!permissions.add && !permissions.change && !permissions.delete) ||
+        (!defaultValues && !permissions.add) ||
+        (defaultValues && !permissions.change && !permissions.delete)
+    ) {
         return (
             <p className="text-lg text-center text-red-600 py-4">
                 ليس لديك صلاحيات هنا
             </p>
         );
     }
-    
+
     return (
         <>
             {/* display subscription info in case of expired */}
@@ -91,7 +100,7 @@ const SubscriptionAdd = ({ defaultValues, postURL, callBack, deleteCallBack }) =
                     </div>
                 </div>
             ) : (
-                // add form 
+                // add form
                 <SubscriptionAddForm
                     postURL={postURL ? postURL : endpoints.subscription_list}
                     defaultValues={defaultValues}

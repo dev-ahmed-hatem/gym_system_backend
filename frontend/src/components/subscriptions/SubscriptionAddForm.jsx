@@ -301,8 +301,6 @@ const SubscriptionAddForm = ({
                         </p>
                     ) : (
                         <>
-                            {/* {formFunction == "add" && ( */}
-                            {/* <> */}
                             <div className="w-full lg:max-w-md lg:w-[30%]">
                                 <div className="mb-2 block h-[26px]">
                                     <Label
@@ -452,8 +450,6 @@ const SubscriptionAddForm = ({
                                     )}
                                 />
                             </div>
-                            {/* </> */}
-                            {/* )} */}
                             <div className="w-full lg:max-w-md lg:w-[30%]">
                                 <div className="mb-2 block h-[26px]">
                                     <Label htmlFor="trainer" value="المدرب :" />
@@ -598,7 +594,6 @@ const SubscriptionAddForm = ({
                                     )}
                                 />
                             </div>
-                            {/* {formFunction == "add" && ( */}
                             <div className="w-full">
                                 <div>
                                     <label>
@@ -650,7 +645,7 @@ const SubscriptionAddForm = ({
                                     </>
                                 )}
                             </div>
-                            {/* )} */}
+
                             {/* totals */}
                             <div className="w-full h-px my-3 bg-gray-200 border-0"></div>
                             <div className="totals mt-2 ">
