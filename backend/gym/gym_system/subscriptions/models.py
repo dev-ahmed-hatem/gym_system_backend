@@ -59,6 +59,9 @@ class Subscription(models.Model):
         else:
             self.end_date = self.start_date + timedelta(days=self.plan.validity)
         self.end_date += timedelta(days=self.freeze_days_used)
+        if self.transaction:
+            self.transaction.amount = self.total_price
+            self.transaction.save()
         return super(Subscription, self).save(*args, **kwargs)
 
     def delete(self, using=None, keep_parents=False):

@@ -301,204 +301,159 @@ const SubscriptionAddForm = ({
                         </p>
                     ) : (
                         <>
-                            {formFunction == "add" && (
-                                <>
-                                    <div className="w-full lg:max-w-md lg:w-[30%]">
-                                        <div className="mb-2 block h-[26px]">
-                                            <Label
-                                                htmlFor="sub_type"
-                                                value="نوع الاشتراك :"
+                            {/* {formFunction == "add" && ( */}
+                            {/* <> */}
+                            <div className="w-full lg:max-w-md lg:w-[30%]">
+                                <div className="mb-2 block h-[26px]">
+                                    <Label
+                                        htmlFor="sub_type"
+                                        value="نوع الاشتراك :"
+                                    />
+                                </div>
+                                <FlowbiteSelect
+                                    id="sub_type"
+                                    type="select"
+                                    color={
+                                        errors.sub_type ? "failure" : "primary"
+                                    }
+                                    onChange={(event) => {
+                                        setSubType(event.target.value);
+                                    }}
+                                    defaultValue={subType}
+                                >
+                                    <option value={"main"} key={0}>
+                                        أساسى
+                                    </option>
+                                    <option value={"sub"} key={1}>
+                                        إضافى
+                                    </option>
+                                    <option value={"locker"} key={2}>
+                                        لوكر
+                                    </option>
+                                </FlowbiteSelect>
+                                {errors.sub_type && (
+                                    <p className="error-message">
+                                        {errors.sub_type.message}
+                                    </p>
+                                )}
+                            </div>
+                            <div className="w-full lg:max-w-md lg:w-[30%]">
+                                <div className="mb-2 block h-[26px]">
+                                    <Label htmlFor="client" value="العميل :" />
+                                    {currentSearch == "clients" && (
+                                        <span className="ms-6">
+                                            <Spinner
+                                                size={"md"}
+                                                color="primary"
                                             />
-                                        </div>
-                                        <FlowbiteSelect
-                                            id="sub_type"
-                                            type="select"
-                                            color={
-                                                errors.sub_type
-                                                    ? "failure"
-                                                    : "primary"
-                                            }
-                                            onChange={(event) => {
-                                                setSubType(event.target.value);
-                                            }}
-                                            defaultValue={subType}
-                                        >
-                                            <option value={"main"} key={0}>
-                                                أساسى
-                                            </option>
-                                            <option value={"sub"} key={1}>
-                                                إضافى
-                                            </option>
-                                            <option value={"locker"} key={2}>
-                                                لوكر
-                                            </option>
-                                        </FlowbiteSelect>
-                                        {errors.sub_type && (
-                                            <p className="error-message">
-                                                {errors.sub_type.message}
-                                            </p>
-                                        )}
-                                    </div>
-                                    <div className="w-full lg:max-w-md lg:w-[30%]">
-                                        <div className="mb-2 block h-[26px]">
-                                            <Label
-                                                htmlFor="client"
-                                                value="العميل :"
-                                            />
-                                            {currentSearch == "clients" && (
-                                                <span className="ms-6">
-                                                    <Spinner
-                                                        size={"md"}
-                                                        color="primary"
-                                                    />
-                                                </span>
-                                            )}
-                                        </div>
+                                        </span>
+                                    )}
+                                </div>
 
-                                        <Controller
-                                            name="client"
-                                            control={control}
-                                            rules={{
-                                                required: "يجب اختيار عميل",
-                                            }}
-                                            render={({ field }) => (
-                                                <>
-                                                    <Select
-                                                        isClearable
-                                                        noOptionsMessage={() =>
-                                                            "لا يوجد نتائج مطابقة"
-                                                        }
-                                                        placeholder="بحث ..."
-                                                        options={
-                                                            dataList.clients ||
-                                                            []
-                                                        }
-                                                        onInputChange={(
-                                                            value
-                                                        ) => {
-                                                            setCurrentSearch(
-                                                                "clients"
-                                                            );
-                                                            fetchData(
-                                                                "clients",
-                                                                value
-                                                            );
-                                                        }}
-                                                        value={field.value}
-                                                        onBlur={() => {
-                                                            trigger("client");
-                                                        }}
-                                                        {...field}
-                                                        styles={style(
-                                                            errors.client
-                                                        )}
-                                                    ></Select>
-                                                    {errors.client && (
-                                                        <p className="error-message">
-                                                            {
-                                                                errors.client
-                                                                    .message
-                                                            }
-                                                        </p>
-                                                    )}
-                                                </>
+                                <Controller
+                                    name="client"
+                                    control={control}
+                                    rules={{
+                                        required: "يجب اختيار عميل",
+                                    }}
+                                    render={({ field }) => (
+                                        <>
+                                            <Select
+                                                isClearable
+                                                noOptionsMessage={() =>
+                                                    "لا يوجد نتائج مطابقة"
+                                                }
+                                                placeholder="بحث ..."
+                                                options={dataList.clients || []}
+                                                onInputChange={(value) => {
+                                                    setCurrentSearch("clients");
+                                                    fetchData("clients", value);
+                                                }}
+                                                value={field.value}
+                                                onBlur={() => {
+                                                    trigger("client");
+                                                }}
+                                                {...field}
+                                                styles={style(errors.client)}
+                                            ></Select>
+                                            {errors.client && (
+                                                <p className="error-message">
+                                                    {errors.client.message}
+                                                </p>
                                             )}
-                                        />
-                                    </div>
-                                    <div className="w-full lg:max-w-md lg:w-[30%]">
-                                        <div className="mb-2 block h-[26px]">
-                                            <Label
-                                                htmlFor="plan"
-                                                value="الاشتراك :"
+                                        </>
+                                    )}
+                                />
+                            </div>
+                            <div className="w-full lg:max-w-md lg:w-[30%]">
+                                <div className="mb-2 block h-[26px]">
+                                    <Label htmlFor="plan" value="الاشتراك :" />
+                                    {currentSearch == "plans" && (
+                                        <span className="ms-6">
+                                            <Spinner
+                                                size={"md"}
+                                                color="primary"
                                             />
-                                            {currentSearch == "plans" && (
-                                                <span className="ms-6">
-                                                    <Spinner
-                                                        size={"md"}
-                                                        color="primary"
-                                                    />
-                                                </span>
-                                            )}
-                                        </div>
+                                        </span>
+                                    )}
+                                </div>
 
-                                        <Controller
-                                            name="plan"
-                                            control={control}
-                                            rules={{
-                                                required: "يجب اختيار اشتراك",
-                                            }}
-                                            render={({ field }) => (
-                                                <>
-                                                    <Select
-                                                        isClearable
-                                                        noOptionsMessage={() =>
-                                                            "لا يوجد نتائج مطابقة"
-                                                        }
-                                                        placeholder="بحث ..."
-                                                        options={
-                                                            dataList.plans || []
-                                                        }
-                                                        onInputChange={(
-                                                            value
-                                                        ) => {
-                                                            setCurrentSearch(
-                                                                "plans"
-                                                            );
-                                                            fetchData(
-                                                                "plans",
-                                                                value
-                                                            );
-                                                        }}
-                                                        value={field.value}
-                                                        onBlur={() => {
-                                                            trigger("plan");
-                                                        }}
-                                                        {...field}
-                                                        styles={style(
-                                                            errors.plan
-                                                        )}
-                                                        onChange={(value) => {
-                                                            if (value) {
-                                                                clearErrors(
-                                                                    "plan"
-                                                                );
-                                                            } else {
-                                                                setError(
-                                                                    "plan",
-                                                                    {
-                                                                        message:
-                                                                            "يجب اختيار اشتراك",
-                                                                    }
-                                                                );
-                                                            }
-                                                            setValue(
-                                                                "plan",
-                                                                value
-                                                            );
-                                                            if (!startDate) {
-                                                                setValue(
-                                                                    "start_date",
-                                                                    new Date().toLocaleDateString(
-                                                                        "en-CA"
-                                                                    )
-                                                                );
-                                                            }
-                                                        }}
-                                                    ></Select>
-                                                    {errors.plan && (
-                                                        <p className="error-message">
-                                                            {
-                                                                errors.plan
-                                                                    .message
-                                                            }
-                                                        </p>
-                                                    )}
-                                                </>
+                                <Controller
+                                    name="plan"
+                                    control={control}
+                                    rules={{
+                                        required: "يجب اختيار اشتراك",
+                                    }}
+                                    render={({ field }) => (
+                                        <>
+                                            <Select
+                                                isClearable
+                                                noOptionsMessage={() =>
+                                                    "لا يوجد نتائج مطابقة"
+                                                }
+                                                placeholder="بحث ..."
+                                                options={dataList.plans || []}
+                                                onInputChange={(value) => {
+                                                    setCurrentSearch("plans");
+                                                    fetchData("plans", value);
+                                                }}
+                                                value={field.value}
+                                                onBlur={() => {
+                                                    trigger("plan");
+                                                }}
+                                                {...field}
+                                                styles={style(errors.plan)}
+                                                onChange={(value) => {
+                                                    if (value) {
+                                                        clearErrors("plan");
+                                                    } else {
+                                                        setError("plan", {
+                                                            message:
+                                                                "يجب اختيار اشتراك",
+                                                        });
+                                                    }
+                                                    setValue("plan", value);
+                                                    if (!startDate) {
+                                                        setValue(
+                                                            "start_date",
+                                                            new Date().toLocaleDateString(
+                                                                "en-CA"
+                                                            )
+                                                        );
+                                                    }
+                                                }}
+                                            ></Select>
+                                            {errors.plan && (
+                                                <p className="error-message">
+                                                    {errors.plan.message}
+                                                </p>
                                             )}
-                                        />
-                                    </div>
-                                </>
-                            )}
+                                        </>
+                                    )}
+                                />
+                            </div>
+                            {/* </> */}
+                            {/* )} */}
                             <div className="w-full lg:max-w-md lg:w-[30%]">
                                 <div className="mb-2 block h-[26px]">
                                     <Label htmlFor="trainer" value="المدرب :" />
@@ -643,61 +598,59 @@ const SubscriptionAddForm = ({
                                     )}
                                 />
                             </div>
-                            {formFunction == "add" && (
-                                <div className="w-full">
-                                    <div>
-                                        <label>
-                                            <Checkbox
-                                                color={"yellow"}
-                                                type="checkbox"
-                                                className="me-4"
-                                                checked={discount}
-                                                onChange={() =>
-                                                    setDiscount(!discount)
-                                                }
-                                            />
-                                            الخصم
-                                        </label>
-                                    </div>
-                                    {discount && (
-                                        <>
-                                            <div className="mb-6">
-                                                <label>
-                                                    نسبة الخصم :
-                                                    <TextInput
-                                                        id="discount"
-                                                        type="number"
-                                                        className="inline-block mx-3"
-                                                        rightIcon={FaPercent}
-                                                        placeholder="الخصم"
-                                                        color={"primary"}
-                                                        value={discountPercent}
-                                                        onChange={(e) =>
-                                                            setDiscountPercent(
-                                                                parseFloat(
-                                                                    e.target
-                                                                        .value
-                                                                ) || 0
-                                                            )
-                                                        }
-                                                        min={0}
-                                                        max={100}
-                                                    />
-                                                </label>
-                                            </div>
-
-                                            <div>
-                                                <label>
-                                                    الصافى :{" "}
-                                                    {discountedPrice.toFixed(2)}{" "}
-                                                    جنيه
-                                                </label>
-                                            </div>
-                                        </>
-                                    )}
+                            {/* {formFunction == "add" && ( */}
+                            <div className="w-full">
+                                <div>
+                                    <label>
+                                        <Checkbox
+                                            color={"yellow"}
+                                            type="checkbox"
+                                            className="me-4"
+                                            checked={discount}
+                                            onChange={() =>
+                                                setDiscount(!discount)
+                                            }
+                                        />
+                                        الخصم
+                                    </label>
                                 </div>
-                            )}
+                                {discount && (
+                                    <>
+                                        <div className="mb-6">
+                                            <label>
+                                                نسبة الخصم :
+                                                <TextInput
+                                                    id="discount"
+                                                    type="number"
+                                                    className="inline-block mx-3"
+                                                    rightIcon={FaPercent}
+                                                    placeholder="الخصم"
+                                                    color={"primary"}
+                                                    value={discountPercent}
+                                                    onChange={(e) =>
+                                                        setDiscountPercent(
+                                                            parseFloat(
+                                                                e.target.value
+                                                            ) || 0
+                                                        )
+                                                    }
+                                                    min={0}
+                                                    max={100}
+                                                />
+                                            </label>
+                                        </div>
 
+                                        <div>
+                                            <label>
+                                                الصافى :{" "}
+                                                {discountedPrice.toFixed(2)}{" "}
+                                                جنيه
+                                            </label>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                            {/* )} */}
                             {/* totals */}
                             <div className="w-full h-px my-3 bg-gray-200 border-0"></div>
                             <div className="totals mt-2 ">
