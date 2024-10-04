@@ -87,7 +87,6 @@ const SubscriptionAddForm = ({
     const { set_page_permissions } = usePermission();
     const permissions = set_page_permissions("subscriptions", "subscription");
 
-    const [blockedClient, setBlockedClient] = useState(false);
     const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState(false);
     const [submitError, setSubmitError] = useState(false);
@@ -246,13 +245,13 @@ const SubscriptionAddForm = ({
     }, [subType]);
 
     const onSubmit = (data) => {
-        setBlockedClient(false);
+        setSubmitError(null);
         if (currentClient.is_blocked) {
-            setBlockedClient(true);
+            setSubmitError("عميل محظور");
             return;
         }
         if (formFunction === "edit" && defaultValues?.is_expired) {
-            setSubmitError(true);
+            setSubmitError("غير مسموح بالتعديل (اشتراك منتهى)");
             return;
         }
 
@@ -267,17 +266,46 @@ const SubscriptionAddForm = ({
 
         data["total_price"] = discount ? discountedPrice : currentplan?.price;
 
-        defaultFormSubmission({
-            url: postURL,
-            data: data,
-            formFunction: formFunction,
-            setPost: setPost,
-            showToast: showToast,
-            message: { add: "تم إضافة الاشتراك", edit: "تم تعديل الاشتراك" },
-            reset: reset,
-            callBack: callBack,
-            setError: setError,
-        });
+        const requestMethod = formFunction == "add" ? axios.post : axios.patch;
+        setPost(true);
+        requestMethod(postURL, data)
+            .then((response) => {
+                showToast(
+                    formFunction === "add"
+                        ? "تم إضافة الاشتراك"
+                        : "تم تعديل الاشتراك"
+                );
+                reset();
+                if (callBack) callBack();
+            })
+            .catch((error) => {
+                if (
+                    error.response?.status == 400 &&
+                    error.response?.data?.subscription_exists
+                ) {
+                    setSubmitError(error.response.data.subscription_exists[0]);
+                } else if (
+                    error.response?.status == 400 &&
+                    error.response?.data
+                ) {
+                    const serverErrors = error.response.data;
+                    for (let field in serverErrors) {
+                        const message =
+                            serverErrors[field][0].search("exists") == -1
+                                ? "قيمة غير صالحة"
+                                : "القيمة موجودة سابقا";
+                        setError(field, {
+                            type: "server",
+                            message: message,
+                        });
+                    }
+                } else {
+                    showToast("خطأ فى تنفيذ العملية", true);
+                }
+            })
+            .finally(() => {
+                setPost(false);
+            });
     };
 
     return (
@@ -766,17 +794,8 @@ const SubscriptionAddForm = ({
                     )}
 
                     {submitError && (
-                        <>
-                            <br />
-
-                            <p className="text-lg text-center text-red-600 py-4">
-                                غير مسموح بالتعديل (اشتراك منتهى)
-                            </p>
-                        </>
-                    )}
-                    {blockedClient && (
-                        <p className="w-full text-base lg:text-lg text-center text-red-600 py-4">
-                            عميل محظور
+                        <p className="w-full text-lg font-bold text-center text-red-600 py-4">
+                            {submitError}
                         </p>
                     )}
 

@@ -80,6 +80,19 @@ class SubscriptionWriteSerializer(serializers.ModelSerializer):
         # fields = '__all__'
         exclude = ["client"]
 
+    def validate(self, attrs):
+        client_id = self.initial_data.get('client')
+        client = Client.objects.get(id=client_id)
+        plan = attrs.get('plan')
+        start_date = attrs.get('start_date')
+        same_subscription = Subscription.objects.filter(client=client,
+                                                        plan=plan,
+                                                        start_date=start_date
+                                                        )
+        if same_subscription.exists():
+            raise serializers.ValidationError({"subscription_exists": "اشتراك موجود مسبقا"})
+        return attrs
+
     def create(self, validated_data):
         # validated_data.pop('client')
         client_id = self.initial_data.get('client')
