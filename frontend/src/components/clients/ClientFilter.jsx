@@ -41,11 +41,12 @@ const ClientFilterForm = ({
     }, [from, to]);
 
     const get_current_clients = (data) => {
+        setPost(true);
+        setLoading(true);
+
         const url = `${endpoints.client_list}from=${
             data ? data.from : from
         }&to=${data ? data.to : to}${pageNumber ? `&page=${pageNumber}` : ""}`;
-        setPost(true);
-        setLoading(true);
 
         fetch_list_data({
             searchURL: url,
@@ -71,7 +72,9 @@ const ClientFilterForm = ({
     };
 
     useEffect(() => {
-        get_current_clients();
+        if (pageNumber) {
+            get_current_clients();
+        }
     }, [pageNumber]);
 
     return (
@@ -171,7 +174,7 @@ const ClientFilter = () => {
     const [loading, setLoading] = useState(false);
     const [fetchError, setFetchError] = useState(null);
     const [data, setData] = useState(null);
-    const [pageNumber, setPageNumber] = useState(1);
+    const [pageNumber, setPageNumber] = useState(null);
 
     //////////////////////////////// permissions ////////////////////////////////
     const { set_page_permissions } = usePermission();

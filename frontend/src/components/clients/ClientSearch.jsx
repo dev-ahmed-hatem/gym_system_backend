@@ -50,6 +50,16 @@ const ClientSearch = () => {
         });
     };
 
+    const get_client_data = (url) => {
+        setLoading(true);
+        fetch_list_data({
+            searchURL: url,
+            setData: setCurrentClient,
+            setFetchError: setFetchError,
+            setLoading: setLoading,
+        });
+    };
+
     useEffect(() => {
         if (permissions.view) {
             get_current_clients();
@@ -523,6 +533,16 @@ const ClientSearch = () => {
                                         <SubscriptionCard
                                             key={sub?.id}
                                             sub={sub}
+                                            callBack={() => {
+                                                get_client_data(
+                                                    currentClient.url
+                                                );
+                                            }}
+                                            deleteCallBack={() => {
+                                                get_client_data(
+                                                    currentClient.url
+                                                );
+                                            }}
                                         />
                                     ))}
                                 </div>

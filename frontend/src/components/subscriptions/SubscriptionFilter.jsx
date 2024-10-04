@@ -7,19 +7,42 @@ import endpoints from "../../config/config";
 import SubscriptionCard from "./SubscriptionCard";
 import { fetch_list_data } from "../../config/actions";
 import { usePermission } from "../../providers/PermissionProvider";
+import TablePagination from "../groups/TablePagination";
 
-const SubscriptionFilterForm = ({ setLoading, setFetchError, setData }) => {
-    //////////////////////////////// permissions ////////////////////////////////
-    const { set_page_permissions } = usePermission();
-    const permissions = set_page_permissions("subscriptions", "subscription");
-    if (!permissions.view) {
-        return (
-            <p className="text-lg text-center text-red-600 py-4">
-                ليس لديك صلاحيات هنا
-            </p>
-        );
-    }
+let from, to;
 
+const get_current_subscriptions = ({
+    data,
+    setLoading,
+    setPost,
+    setFetchError,
+    setData,
+    pageNumber,
+}) => {
+    setLoading(true);
+    if (setPost) setPost(true);
+
+    const url = `${endpoints.subscription_list}from=${
+        data ? data.from : from
+    }&to=${data ? data.to : to}${pageNumber ? `&page=${pageNumber}` : ""}&ordering=-start_date`;
+
+    fetch_list_data({
+        searchURL: url,
+        setData: setData,
+        setFetchError: setFetchError,
+        setLoading: (bool) => {
+            if (setPost) setPost(bool);
+            setLoading(bool);
+        },
+    });
+};
+
+const SubscriptionFilterForm = ({
+    setLoading,
+    setFetchError,
+    setData,
+    pageNumber,
+}) => {
     const [post, setPost] = useState(false);
     const today = new Date().toLocaleDateString("en-CA");
     const {
@@ -30,8 +53,8 @@ const SubscriptionFilterForm = ({ setLoading, setFetchError, setData }) => {
         watch,
         clearErrors,
     } = useForm({ defaultValues: { from: today, to: today } });
-    const from = watch("from");
-    const to = watch("to");
+    from = watch("from");
+    to = watch("to");
 
     useEffect(() => {
         if (to < from) {
@@ -53,20 +76,27 @@ const SubscriptionFilterForm = ({ setLoading, setFetchError, setData }) => {
             return;
         }
 
-        setLoading(true);
-        setPost(true);
-        const url = `${endpoints.subscription_list}from=${data.from}&to=${data.to}&no_pagination=true`;
-
-        fetch_list_data({
-            searchURL: url,
-            setData: setData,
+        get_current_subscriptions({
+            data: data,
+            setLoading: setLoading,
+            setPost: setPost,
             setFetchError: setFetchError,
-            setLoading: (bool) => {
-                setPost(bool);
-                setLoading(bool);
-            },
+            setData: setData,
+            pageNumber: pageNumber,
         });
     };
+
+    useEffect(() => {
+        if (pageNumber) {
+            get_current_subscriptions({
+                setLoading: setLoading,
+                setPost: setPost,
+                setFetchError: setFetchError,
+                setData: setData,
+                pageNumber: pageNumber,
+            });
+        }
+    }, [pageNumber]);
 
     return (
         <div
@@ -162,10 +192,22 @@ const SubscriptionFilterForm = ({ setLoading, setFetchError, setData }) => {
 };
 
 const SubscriptionFilter = () => {
+    //////////////////////////////// permissions ////////////////////////////////
+    const { set_page_permissions } = usePermission();
+    const permissions = set_page_permissions("subscriptions", "subscription");
+    if (!permissions.view) {
+        return (
+            <p className="text-lg text-center text-red-600 py-4">
+                ليس لديك صلاحيات هنا
+            </p>
+        );
+    }
+
     //////////////////////////////// list data ////////////////////////////////
     const [loading, setLoading] = useState(false);
     const [fetchError, setFetchError] = useState(null);
     const [data, setData] = useState(null);
+    const [pageNumber, setPageNumber] = useState(null);
 
     return (
         <>
@@ -174,6 +216,7 @@ const SubscriptionFilter = () => {
                 setLoading={setLoading}
                 setFetchError={setFetchError}
                 setData={setData}
+                pageNumber={pageNumber}
             />
 
             {/* table data */}
@@ -192,26 +235,56 @@ const SubscriptionFilter = () => {
                     ) : (
                         <>
                             <div className="subscriptions flex gap-x-10 gap-y-6 flex-wrap">
-                                {data?.length == 0 ? (
+                                {data?.count == 0 ? (
                                     <p className="w-full text-lg text-center text-gray-800 py-3 font-bold bg-primary-200">
                                         لا توجد بيانات
                                     </p>
                                 ) : (
                                     <>
-                                        {data?.map((sub) => (
+                                        {data?.results.map((sub) => (
                                             <SubscriptionCard
                                                 key={sub.id}
                                                 sub={sub}
+                                                callBack={() => {
+                                                    get_current_subscriptions({
+                                                        setLoading: setLoading,
+                                                        setFetchError:
+                                                            setFetchError,
+                                                        setData: setData,
+                                                        pageNumber: pageNumber,
+                                                    });
+                                                }}
+                                                deleteCallBack={() => {
+                                                    get_current_subscriptions({
+                                                        setLoading: setLoading,
+                                                        setFetchError:
+                                                            setFetchError,
+                                                        setData: setData,
+                                                        pageNumber: pageNumber,
+                                                    });
+                                                }}
                                             />
                                         ))}
                                     </>
                                 )}
                             </div>
 
-                            <div className="flex justify-center text-lg">
-                                العدد : {data?.length}{" "}
-                                {data?.length > 10 ? "اشتراك" : "اشتراكات"}
-                            </div>
+                            {data.total_pages > 1 && (
+                                <TablePagination
+                                    totalPages={data.total_pages}
+                                    currentPage={data.current_page}
+                                    onPageChange={(page) => {
+                                        setPageNumber(page);
+                                    }}
+                                />
+                            )}
+
+                            {data.count > 0 && (
+                                <div className="flex justify-center text-lg">
+                                    العدد : {data?.count}{" "}
+                                    {data?.count > 10 ? "اشتراك" : "اشتراكات"}
+                                </div>
+                            )}
                         </>
                     )}
                 </div>

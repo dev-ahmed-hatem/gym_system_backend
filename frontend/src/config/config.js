@@ -43,6 +43,7 @@ const endpoints = {
 
     // clients routing
     client_list: `${api_base_url}api/clients/client/?`,
+    client_detail: `${api_base_url}api/clients/client/`,
     scanner_code: `${api_base_url}api/clients/scanner-code/?`,
     scanner_mobile: `${api_base_url}api/clients/scanner-mobile/?`,
     attendance: `${api_base_url}api/clients/attendance/?`,

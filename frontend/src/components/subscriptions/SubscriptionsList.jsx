@@ -82,7 +82,16 @@ const SubscriptionsList = ({ category }) => {
                         ) : (
                             <>
                                 {data?.results?.map((sub) => (
-                                    <SubscriptionCard key={sub.id} sub={sub} />
+                                    <SubscriptionCard
+                                        key={sub.id}
+                                        sub={sub}
+                                        callBack={() => {
+                                            get_current_subscriptions();
+                                        }}
+                                        deleteCallBack={() => {
+                                            get_current_subscriptions();
+                                        }}
+                                    />
                                 ))}
                             </>
                         )}

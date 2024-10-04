@@ -15,7 +15,6 @@ import Select from "react-select";
 import style from "../../assets/rect-select-style";
 import Loading from "../groups/Loading";
 import { useToast } from "../../providers/ToastProvider";
-import { defaultFormSubmission } from "../../config/actions";
 import { FaPercent } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
 import ConfirmDelete from "../groups/ConfirmDelete";
@@ -133,7 +132,7 @@ const SubscriptionAddForm = ({
 
     const handleDelete = () => {
         showDrawer(
-            "حذف عميل",
+            "حذف اشتراك",
             MdDelete,
             <>
                 <ConfirmDelete
@@ -142,7 +141,7 @@ const SubscriptionAddForm = ({
                     itemName={defaultValues.id}
                     closeDrawer={closeDrawer}
                     callBack={() => {
-                        deleteCallBack();
+                        if (deleteCallBack) deleteCallBack();
                     }}
                     toastMessage={"تم حذف الاشتراك بنجاح"}
                 />
@@ -363,54 +362,68 @@ const SubscriptionAddForm = ({
                                     </p>
                                 )}
                             </div>
-                            <div className="w-full lg:max-w-md lg:w-[30%]">
-                                <div className="mb-2 block h-[26px]">
-                                    <Label htmlFor="client" value="العميل :" />
-                                    {currentSearch == "clients" && (
-                                        <span className="ms-6">
-                                            <Spinner
-                                                size={"md"}
-                                                color="primary"
-                                            />
-                                        </span>
-                                    )}
-                                </div>
+                            {formFunction == "add" && (
+                                <div className="w-full lg:max-w-md lg:w-[30%]">
+                                    <div className="mb-2 block h-[26px]">
+                                        <Label
+                                            htmlFor="client"
+                                            value="العميل :"
+                                        />
+                                        {currentSearch == "clients" && (
+                                            <span className="ms-6">
+                                                <Spinner
+                                                    size={"md"}
+                                                    color="primary"
+                                                />
+                                            </span>
+                                        )}
+                                    </div>
 
-                                <Controller
-                                    name="client"
-                                    control={control}
-                                    rules={{
-                                        required: "يجب اختيار عميل",
-                                    }}
-                                    render={({ field }) => (
-                                        <>
-                                            <Select
-                                                isClearable
-                                                noOptionsMessage={() =>
-                                                    "لا يوجد نتائج مطابقة"
-                                                }
-                                                placeholder="بحث ..."
-                                                options={dataList.clients || []}
-                                                onInputChange={(value) => {
-                                                    setCurrentSearch("clients");
-                                                    fetchData("clients", value);
-                                                }}
-                                                value={field.value}
-                                                onBlur={() => {
-                                                    trigger("client");
-                                                }}
-                                                {...field}
-                                                styles={style(errors.client)}
-                                            ></Select>
-                                            {errors.client && (
-                                                <p className="error-message">
-                                                    {errors.client.message}
-                                                </p>
-                                            )}
-                                        </>
-                                    )}
-                                />
-                            </div>
+                                    <Controller
+                                        name="client"
+                                        control={control}
+                                        rules={{
+                                            required: "يجب اختيار عميل",
+                                        }}
+                                        render={({ field }) => (
+                                            <>
+                                                <Select
+                                                    isClearable
+                                                    noOptionsMessage={() =>
+                                                        "لا يوجد نتائج مطابقة"
+                                                    }
+                                                    placeholder="بحث ..."
+                                                    options={
+                                                        dataList.clients || []
+                                                    }
+                                                    onInputChange={(value) => {
+                                                        setCurrentSearch(
+                                                            "clients"
+                                                        );
+                                                        fetchData(
+                                                            "clients",
+                                                            value
+                                                        );
+                                                    }}
+                                                    value={field.value}
+                                                    onBlur={() => {
+                                                        trigger("client");
+                                                    }}
+                                                    {...field}
+                                                    styles={style(
+                                                        errors.client
+                                                    )}
+                                                ></Select>
+                                                {errors.client && (
+                                                    <p className="error-message">
+                                                        {errors.client.message}
+                                                    </p>
+                                                )}
+                                            </>
+                                        )}
+                                    />
+                                </div>
+                            )}
                             <div className="w-full lg:max-w-md lg:w-[30%]">
                                 <div className="mb-2 block h-[26px]">
                                     <Label htmlFor="plan" value="الاشتراك :" />
@@ -447,7 +460,7 @@ const SubscriptionAddForm = ({
                                                 onBlur={() => {
                                                     trigger("plan");
                                                 }}
-                                                {...field}
+                                                // {...field}
                                                 styles={style(errors.plan)}
                                                 onChange={(value) => {
                                                     if (value) {

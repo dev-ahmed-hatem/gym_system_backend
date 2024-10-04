@@ -1,8 +1,59 @@
 import React from "react";
+import { usePermission } from "../../providers/PermissionProvider";
+import SubscriptionAdd from "./SubscriptionAdd";
+import SubscriptionFreeze from "./SubscriptionFreeze";
+import { FaTools } from "react-icons/fa";
+import { useDrawer } from "../../providers/DrawerProvider";
 
-const SubscriptionCard = ({ sub }) => {
+const SubscriptionCard = ({ sub, callBack, deleteCallBack }) => {
+    //////////////////////////////// permissions ////////////////////////////////
+    const { set_page_permissions } = usePermission();
+    const permissions = set_page_permissions("subscriptions", "subscription");
+
+    //////////////////////////////// providers ////////////////////////////////
+    const { showDrawer, closeDrawer } = useDrawer();
+
+    const handleClick = () => {
+        if (permissions.change || permissions.delete) {
+            showDrawer(
+                "تعديل اشتراك",
+                FaTools,
+                <>
+                    <SubscriptionAdd
+                        defaultValues={sub}
+                        postURL={sub?.url}
+                        callBack={() => {
+                            if (callBack) callBack();
+                            closeDrawer();
+                        }}
+                        deleteCallBack={() => {
+                            if (deleteCallBack) deleteCallBack();
+                        }}
+                    />
+
+                    {/* freeze options */}
+                    {permissions.change && !sub?.is_expired && (
+                        <SubscriptionFreeze
+                            sub={sub}
+                            callBack={() => {
+                                if (callBack) callBack();
+                                closeDrawer();
+                            }}
+                        />
+                    )}
+                </>
+            );
+        }
+    };
+
     return (
-        <div className="border-2 flex flex-col gap-y-3 border-primary rounded-lg w-full lg:max-w-lg lg:min-w-96 p-4 relative">
+        <div
+            className={`border-2 flex flex-col gap-y-3 border-primary rounded-lg w-full lg:max-w-lg lg:min-w-96 p-4 relative ${
+                (permissions.change || permissions.delete) &&
+                "hover:shadow-xl cursor-pointer"
+            }`}
+            onClick={handleClick}
+        >
             <p className="text-primary-900 font-bold">{sub?.plan?.name}</p>
             <p>
                 كود الاشتراك:{" "}

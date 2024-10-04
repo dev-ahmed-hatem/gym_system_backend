@@ -73,8 +73,8 @@ const Main = () => {
                 </div>
             ) : (
                 <ToastProvider>
-                    <DrawerProvider>
-                        <PermissionProvider>
+                    <PermissionProvider>
+                        <DrawerProvider>
                             <Navbar
                                 menuState={menuOpen}
                                 setMenuState={setMenuOpen}
@@ -86,8 +86,8 @@ const Main = () => {
                             />
                             {isHome ? <Home /> : <Outlet />}
                             <QuickAccess />
-                        </PermissionProvider>
-                    </DrawerProvider>
+                        </DrawerProvider>
+                    </PermissionProvider>
                 </ToastProvider>
             )}
         </>
