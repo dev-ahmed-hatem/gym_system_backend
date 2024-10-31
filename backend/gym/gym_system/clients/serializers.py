@@ -57,6 +57,12 @@ class ClientWriteSerializer(serializers.ModelSerializer):
         model = Client
         fields = '__all__'
 
+    def validate_phone(self, value):
+        # Check if a client with this phone number already exists
+        if Client.objects.filter(phone=value).exists():
+            raise serializers.ValidationError("A client with this phone number already exists.")
+        return value
+
     def create(self, validated_data):
         subscription_plan = validated_data.pop('subscription_plan', None)
         trainer = validated_data.pop('trainer', None)
