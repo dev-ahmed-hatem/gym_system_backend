@@ -33,3 +33,14 @@ def add_clients():
                                   phone=client['phone'],
                                   birth_date=datetime.strptime(client["birth_date"], "%Y-%m-%d").date())
             print(f"Client {client['id']} created!")
+
+
+def mobiles():
+    count = 0
+    for client in Client.objects.all():
+        phone = client.phone
+        duplicates = Client.objects.filter(phone=phone).count()
+        if duplicates > 1:
+            print(phone, client.id, duplicates)
+            count += 1
+    print(count)

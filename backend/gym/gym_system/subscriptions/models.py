@@ -53,6 +53,9 @@ class Subscription(models.Model):
     invitations_used = models.IntegerField(default=0, null=True, blank=True)
     transaction = models.ForeignKey("financials.Transaction", on_delete=models.SET_NULL, blank=True, null=True, )
 
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True,)
+
     def save(self, *args, **kwargs):
         if self.plan.is_duration:
             self.end_date = self.start_date + timedelta(days=self.plan.days)

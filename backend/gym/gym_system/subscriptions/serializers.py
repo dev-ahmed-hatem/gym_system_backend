@@ -57,6 +57,8 @@ class SubscriptionReadSerializer(serializers.ModelSerializer):
     client_name = serializers.SerializerMethodField()
     client_id = serializers.SerializerMethodField()
     is_expired = serializers.SerializerMethodField()
+    added_by = serializers.SerializerMethodField()
+    created_at = serializers.SerializerMethodField()
 
     class Meta:
         model = Subscription
@@ -70,6 +72,13 @@ class SubscriptionReadSerializer(serializers.ModelSerializer):
 
     def get_client_id(self, obj):
         return obj.client.id
+
+    def get_added_by(self, obj):
+        if obj.added_by:
+            return obj.added_by.name
+
+    def get_created_at(self, obj):
+        return f"{obj.created_at.astimezone(settings.CAIRO_TZ):%Y-%m-%d - %H:%M:%S}"
 
 
 class SubscriptionWriteSerializer(serializers.ModelSerializer):
@@ -97,7 +106,8 @@ class SubscriptionWriteSerializer(serializers.ModelSerializer):
         # validated_data.pop('client')
         client_id = self.initial_data.get('client')
         client = Client.objects.get(id=client_id)
-        subscription = Subscription.objects.create(**validated_data, client=client)
+        user = self.context['request'].user
+        subscription = Subscription.objects.create(**validated_data, client=client, added_by=user)
         total_price = self.initial_data.get('total_price')
 
         # create transaction

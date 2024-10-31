@@ -187,8 +187,8 @@ const Employees = () => {
                                                             )}
                                                         </Table.Cell>
                                                         <Table.Cell>
-                                                            {employee.phone ? (
-                                                                employee.phone
+                                                            {employee.national_id ? (
+                                                                employee.national_id
                                                             ) : (
                                                                 <span className="text-red-600">
                                                                     غير مسجل
@@ -196,10 +196,8 @@ const Employees = () => {
                                                             )}
                                                         </Table.Cell>
                                                         <Table.Cell>
-                                                            {employee.nationality ? (
-                                                                employee
-                                                                    .nationality
-                                                                    .name
+                                                            {employee.phone ? (
+                                                                employee.phone
                                                             ) : (
                                                                 <span className="text-red-600">
                                                                     غير مسجل

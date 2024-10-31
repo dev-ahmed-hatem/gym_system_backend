@@ -269,9 +269,11 @@ const SubscriptionAddForm = ({
         setPost(true);
         requestMethod(postURL, data)
             .then((response) => {
+                const id = response.data.id ?? "";
+
                 showToast(
                     formFunction === "add"
-                        ? "تم إضافة الاشتراك"
+                        ? `تم إضافة الاشتراك (${id})`
                         : "تم تعديل الاشتراك"
                 );
                 reset();
@@ -693,6 +695,29 @@ const SubscriptionAddForm = ({
                                 <h1 className="font-bold text-xl mb-4 lg:mb-8">
                                     التفاصيل :
                                 </h1>
+                                {defaultValues && (
+                                    <>
+                                        <p className="mt-2 ms-10">
+                                            <span className="inline-block text-black font-bold pe-1 min-w-40">
+                                                تمت الإضافة في :{""}
+                                            </span>
+                                            <span className="text-primary font-bold">
+                                                {defaultValues?.created_at ||
+                                                    "غير مسجل"}
+                                            </span>
+                                        </p>
+                                        <p className="mt-2 ms-10">
+                                            <span className="inline-block text-black font-bold pe-1 min-w-40">
+                                                بواسطة :{""}
+                                            </span>
+                                            <span className="text-primary font-bold">
+                                                {defaultValues?.added_by ||
+                                                    "غير مسجل"}
+                                            </span>
+                                        </p>
+                                    </>
+                                )}
+                                <br />
                                 <p className="mt-2 ms-10">
                                     <span className="inline-block text-black font-bold pe-1 min-w-40">
                                         الاشتراك :{""}

@@ -1,16 +1,9 @@
-from clients.serializers import ClientReadSerializer
-from django.db.models import Sum, Q, Count
-from rest_framework import status
-from rest_framework.response import Response
+from django.db.models import Sum, Count
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from clients.models import Client, Attendance
-from subscriptions.models import Subscription
-from financials.models import *
+from clients.models import Attendance
 from financials.serializers import *
-from subscriptions.models import *
 from subscriptions.serializers import *
-from shop.models import Sale, Product
 from shop.serializers import *
 from django.conf import settings
 from datetime import datetime, timedelta
@@ -22,24 +15,24 @@ from calendar import monthrange
 def statistics(request):
     clients = Client.objects.all()
     clients_count = clients.count()
-    recently_clients = clients.filter(created_at__month=settings.CAIRO_TZ.localize(datetime.now()).month).count()
+    recently_clients = clients.filter(created_at__month=datetime.now().astimezone(settings.CAIRO_TZ).month).count()
     active_subscriptions = Subscription.get_active_subscriptions().count()
     recently_expired_subscriptions = Subscription.objects.filter(
-        end_date=settings.CAIRO_TZ.localize(datetime.now() - timedelta(days=1))).count()
-    today_barcode = Attendance.objects.filter(timestamp__day=settings.CAIRO_TZ.localize(datetime.now()).day).count()
+        end_date=(datetime.now() - timedelta(days=1)).astimezone(settings.CAIRO_TZ)).count()
+    today_barcode = Attendance.objects.filter(timestamp__day=datetime.now().astimezone(settings.CAIRO_TZ).day).count()
     sales = Sale.objects.all()
-    today_sales = sales.filter(created_at__day=settings.CAIRO_TZ.localize(datetime.now()).day).count()
+    today_sales = sales.filter(created_at__day=datetime.now().astimezone(settings.CAIRO_TZ).day).count()
     pending_sales = sales.filter(state="pending").count()
     transactions = Transaction.objects.all()
-    today_incomes = transactions.filter(date=settings.CAIRO_TZ.localize(datetime.now()).date(),
+    today_incomes = transactions.filter(date=datetime.now().astimezone(settings.CAIRO_TZ).date(),
                                         category__financial_type="incomes")
-    month_incomes = transactions.filter(date__month=settings.CAIRO_TZ.localize(datetime.now()).month,
-                                        date__year=settings.CAIRO_TZ.localize(datetime.now()).year,
+    month_incomes = transactions.filter(date__month=datetime.now().astimezone(settings.CAIRO_TZ).month,
+                                        date__year=datetime.now().astimezone(settings.CAIRO_TZ).year,
                                         category__financial_type="incomes")
-    today_expenses = transactions.filter(date=settings.CAIRO_TZ.localize(datetime.now()).date(),
+    today_expenses = transactions.filter(date=datetime.now().astimezone(settings.CAIRO_TZ).date(),
                                          category__financial_type="expenses")
-    month_expenses = transactions.filter(date__month=settings.CAIRO_TZ.localize(datetime.now()).month,
-                                         date__year=settings.CAIRO_TZ.localize(datetime.now()).year,
+    month_expenses = transactions.filter(date__month=datetime.now().astimezone(settings.CAIRO_TZ).month,
+                                         date__year=datetime.now().astimezone(settings.CAIRO_TZ).year,
                                          category__financial_type="expenses")
     response_data = {
         'clients_count': clients_count,
@@ -180,7 +173,7 @@ def duration_reports(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def birthdays(request):
-    today = settings.CAIRO_TZ.localize(datetime.now())
+    today = datetime.now().astimezone(settings.CAIRO_TZ)
     clients = Client.objects.filter(birth_date__day=today.day, birth_date__month=today.month)
     clients_serialized = ClientReadSerializer(clients, context={'request': request}, many=True).data
     return Response(clients_serialized, status=status.HTTP_200_OK)
