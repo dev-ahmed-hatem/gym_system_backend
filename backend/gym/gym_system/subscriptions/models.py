@@ -54,14 +54,19 @@ class Subscription(models.Model):
     transaction = models.ForeignKey("financials.Transaction", on_delete=models.SET_NULL, blank=True, null=True, )
 
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True,)
+    added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, )
+
+    def calculate_end_date(self):
+        if self.plan.is_duration:
+            end_date = self.start_date + timedelta(days=self.plan.days)
+        else:
+            end_date = self.start_date + timedelta(days=self.plan.validity)
+        return end_date
 
     def save(self, *args, **kwargs):
-        if self.plan.is_duration:
-            self.end_date = self.start_date + timedelta(days=self.plan.days)
-        else:
-            self.end_date = self.start_date + timedelta(days=self.plan.validity)
-        self.end_date += timedelta(days=self.freeze_days_used)
+        if not self.end_date:
+            self.end_date = self.calculate_end_date()
+
         if self.transaction:
             self.transaction.amount = self.total_price
             self.transaction.save()
@@ -74,23 +79,26 @@ class Subscription(models.Model):
 
     def freeze(self, freeze_date=None):
         if self.plan.freezable and self.freeze_days_used < self.plan.freeze_no:
-            if not freeze_date:
-                freeze_date = now().astimezone(settings.CAIRO_TZ).date()
-            self.freeze_start_date = freeze_date
-            self.is_frozen = True
-            self.save()
+            if not self.freeze_start_date:
+                self.freeze_start_date = freeze_date or now().astimezone(settings.CAIRO_TZ).date()
+                self.is_frozen = True
+                self.save()
 
     def check_freeze(self):
+        print("checking")
         if self.is_frozen:
-            self.freeze_days_used += 1
-            self.save()
-        if self.freeze_days_used > self.plan.freeze_no:
-            self.unfreeze()
+            self.freeze_days_used = (now().astimezone(settings.CAIRO_TZ).date() - self.freeze_start_date).days
+
+            if self.freeze_days_used >= self.plan.freeze_no:
+                self.unfreeze()
+            else:
+                self.save()
 
     def unfreeze(self):
         if self.is_frozen:
             self.is_frozen = False
             self.unfreeze_date = now().astimezone(settings.CAIRO_TZ).date()
+            self.end_date += timedelta(days=self.freeze_days_used)
             self.save()
 
     def is_expired(self):
