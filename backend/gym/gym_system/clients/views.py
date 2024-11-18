@@ -1,6 +1,7 @@
 import pytz
 import os
 from rest_framework import status
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import api_view, action
@@ -219,3 +220,28 @@ def scanner_mobile(request):
 
     except Client.DoesNotExist:
         return Response({'error': 'عميل غير موجود'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ClientLogin(APIView):
+    def post(self, request):
+        id = request.data.get('id')
+        password = request.data.get('password')
+
+        if not id or not password:
+            return Response({"error": "ID and Password must be provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            client = Client.objects.get(id=id)
+
+            if client.password == "unset":
+                if password == client.phone:
+                    return Response({"name": client.name, "id": client.id}, status=status.HTTP_200_OK)
+            else:
+                if client.check_password(password):
+                    return Response({"name": client.name, "id": client.id}, status=status.HTTP_200_OK)
+            return Response({"error": "incorrect password"}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Client.DoesNotExist:
+            return Response({"error": "ID is not found!"}, status=status.HTTP_404_NOT_FOUND)
+
+# {"id": "3536", "password": "01067875647"}

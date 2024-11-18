@@ -8,6 +8,7 @@ from io import BytesIO
 from django.core.files.base import File
 from cryptography.fernet import Fernet
 from subscriptions.models import Subscription
+from django.contrib.auth.hashers import make_password, check_password
 
 
 class Client(models.Model):
@@ -33,6 +34,13 @@ class Client(models.Model):
     qr_code = models.ImageField(upload_to='qr_codes', blank=True, null=True)
     barcode = models.ImageField(upload_to='barcodes', blank=True, null=True)
     is_blocked = models.BooleanField(default=False)
+    password = models.CharField(max_length=255, blank=True, null=True, default="unset")
+
+    def set_password(self, password):
+        self.password = make_password(password)
+
+    def check_password(self, password):
+        return check_password(password, self.password)
 
     class Meta:
         ordering = ['name']
@@ -63,7 +71,7 @@ class Client(models.Model):
                 self.generate_qr_code()
             if not self.barcode:
                 self.generate_barcode()
-                
+
             super(Client, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):

@@ -12,4 +12,5 @@ urlpatterns = [
     path('scanner-code/', scanner_code, name='scanner-code'),
     path('scanner-mobile/', scanner_mobile, name='scanner-mobile'),
     path('next-id/', get_next_client_id, name='next-id'),
+    path('client-login/', ClientLogin.as_view(), name='client-login'),
 ]
