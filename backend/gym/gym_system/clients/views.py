@@ -244,4 +244,28 @@ class ClientLogin(APIView):
         except Client.DoesNotExist:
             return Response({"error": "ID is not found!"}, status=status.HTTP_404_NOT_FOUND)
 
+
 # {"id": "3536", "password": "01067875647"}
+
+
+class ClientLatestSubscriptions(APIView):
+    def post(self, request):
+        current_date = now().astimezone(settings.CAIRO_TZ).date()
+
+        id = request.data.get('id')
+        client = Client.objects.get(id=id)
+
+        active_subscriptions = client.subscriptions.filter(
+            start_date__lte=current_date,
+            end_date__gte=current_date,
+        ).exclude(
+            Q(plan__is_duration=False) & Q(attendance_days__gte=F("plan__classes_no"))
+        )
+
+        if active_subscriptions.count() < 3:
+            needed = 3 - active_subscriptions.count()
+            latest_subscription = client.subscriptions.exclude(id__in=active_subscriptions)
+            active_subscriptions = list(active_subscriptions.order_by("-id")) + list(latest_subscription.order_by("-id"))[:needed]
+
+        return Response(
+            SubscriptionReadSerializer(active_subscriptions, many=True, context={"request": request}).data)
