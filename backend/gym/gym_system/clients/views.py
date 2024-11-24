@@ -79,8 +79,8 @@ class ClientViewSet(ModelViewSet):
             if client.barcode:
                 if os.path.isfile(client.barcode.path):
                     os.remove(client.barcode.path)
-            client.generate_barcode()
-            client.generate_qr_code()
+            # client.generate_barcode()
+            # client.generate_qr_code()
             client.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -243,9 +243,6 @@ class ClientLogin(APIView):
 
         except Client.DoesNotExist:
             return Response({"error": "ID is not found!"}, status=status.HTTP_404_NOT_FOUND)
-
-
-# {"id": "3536", "password": "01067875647"}
 
 
 class ClientLatestSubscriptions(APIView):

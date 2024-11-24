@@ -55,11 +55,18 @@ export const InvitationReceipt = () => {
 
     useEffect(() => {
         if (invitation) {
-            JsBarcode(invRef.current, invitation.code, {
-                format: "CODE128",
-                height: 130,
-                displayValue: true,
-            });
+            try {
+                JsBarcode(invRef.current, invitation.code, {
+                    format: "CODE128",
+                    height: 130,
+                    displayValue: true,
+                });
+            } catch (error) {
+                console.error("Error generating barcode:", error);
+                if (invRef.current) {
+                    invRef.current.alt = "Failed to generate barcode.";
+                }
+            }
         }
     }, [invitation]);
 

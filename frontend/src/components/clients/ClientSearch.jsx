@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Table, Button } from "flowbite-react";
 import Loading from "../groups/Loading";
 import ViewGroup from "../groups/ViewGroup";
@@ -9,6 +9,8 @@ import SubscriptionCard from "../subscriptions/SubscriptionCard";
 import { fetch_list_data } from "../../config/actions";
 import ErrorGroup from "../groups/ErrorGroup";
 import { usePermission } from "../../providers/PermissionProvider";
+import JsBarcode from "jsbarcode";
+import QRCode from "qrcode";
 
 const ClientSearch = () => {
     //////////////////////////////// providers ////////////////////////////////
@@ -36,6 +38,10 @@ const ClientSearch = () => {
     const [pageNumber, setPageNumber] = useState(1);
     const [currentClient, setCurrentClient] = useState(null);
 
+    //////////////////////////////// ID data ////////////////////////////////
+    const barcodeRef = useRef(null);
+    const qrCodeRef = useRef(null);
+
     const get_current_clients = () => {
         const searchURL = `${endpoints.client_list}${
             searchParam ? `&client=${searchParam}` : ""
@@ -60,6 +66,42 @@ const ClientSearch = () => {
         });
     };
 
+    const generate_qr_bar_codes = () => {
+        if (currentClient?.id) {
+            try {
+                if (barcodeRef.current) {
+                    // Generate Barcode
+                    JsBarcode(barcodeRef.current, currentClient.id, {
+                        format: "CODE128",
+                        height: 130,
+                        displayValue: true,
+                    });
+                }
+            } catch (error) {
+                console.error("Error generating barcode:", error);
+                if (barcodeRef.current) {
+                    barcodeRef.current.alt = "Failed to generate barcode.";
+                }
+            }
+
+            try {
+                if (qrCodeRef.current) {
+                    // Generate QR Code
+                    QRCode.toCanvas(qrCodeRef.current, String(currentClient.id), {
+                        width: 130,
+                        margin: 2,
+                        errorCorrectionLevel: "H",
+                    });
+                }
+            } catch (error) {
+                console.error("Error generating QR code:", error);
+                if (qrCodeRef.current) {
+                    qrCodeRef.current.alt = "Failed to generate barcode.";
+                }
+            }
+        }
+    };
+
     useEffect(() => {
         if (permissions.view) {
             get_current_clients();
@@ -67,6 +109,7 @@ const ClientSearch = () => {
     }, [searchParam, pageNumber]);
 
     useEffect(() => {
+        generate_qr_bar_codes();
         const clientData = document.getElementById("client-data");
         if (clientData) {
             clientData.scrollIntoView({ behavior: "smooth" });
@@ -220,16 +263,11 @@ const ClientSearch = () => {
                                     </Table.Cell>
                                     <Table.Cell>
                                         <span>
-                                            {currentClient?.barcode ? (
-                                                <img
-                                                    src={currentClient.barcode}
-                                                    // className="w-72"
-                                                />
-                                            ) : (
-                                                <span className="text-secondary">
-                                                    لا توجد صورة حالية
-                                                </span>
-                                            )}
+                                            <img
+                                                ref={barcodeRef}
+                                                // src={currentClient.barcode}
+                                                // className="w-72"
+                                            />
                                         </span>
                                     </Table.Cell>
                                 </Table.Row>
@@ -240,16 +278,11 @@ const ClientSearch = () => {
                                     </Table.Cell>
                                     <Table.Cell>
                                         <span>
-                                            {currentClient?.qr_code ? (
-                                                <img
-                                                    src={currentClient.qr_code}
-                                                    className="w-64"
-                                                />
-                                            ) : (
-                                                <span className="text-secondary">
-                                                    لا توجد صورة حالية
-                                                </span>
-                                            )}
+                                            <canvas
+                                                ref={qrCodeRef}
+                                                // src={currentClient.qr_code}
+                                                className="w-64"
+                                            />
                                         </span>
                                     </Table.Cell>
                                 </Table.Row>

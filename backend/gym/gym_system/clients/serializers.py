@@ -68,10 +68,11 @@ class ClientWriteSerializer(serializers.ModelSerializer):
         trainer = validated_data.pop('trainer', None)
         start_date = validated_data.pop('start_date', None)
         client = super().create(validated_data)
-        if not client.qr_code:
-            client.generate_qr_code()
-        if not client.barcode:
-            client.generate_barcode()
+
+        # if not client.qr_code:
+        #     client.generate_qr_code()
+        # if not client.barcode:
+        #     client.generate_barcode()
 
         trainer = Employee.objects.get(pk=trainer) if trainer else None
         if subscription_plan:

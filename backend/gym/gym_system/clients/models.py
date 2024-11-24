@@ -35,6 +35,8 @@ class Client(models.Model):
     barcode = models.ImageField(upload_to='barcodes', blank=True, null=True)
     is_blocked = models.BooleanField(default=False)
     password = models.CharField(max_length=255, blank=True, null=True, default="unset")
+    weight = models.FloatField(blank=True, null=True)
+    height = models.FloatField(blank=True, null=True)
 
     def set_password(self, password):
         self.password = make_password(password)
@@ -68,9 +70,11 @@ class Client(models.Model):
 
         if initial_save:
             if not self.qr_code:
-                self.generate_qr_code()
+                self.qr_code = self.id
+                # self.generate_qr_code()
             if not self.barcode:
-                self.generate_barcode()
+                self.barcode = self.id
+                # self.generate_barcode()
 
             super(Client, self).save(*args, **kwargs)
 
@@ -116,11 +120,13 @@ class Client(models.Model):
         encrypted_data = fernet.encrypt(str(self.id).encode())
         return encrypted_data.decode()
 
-    @property
-    def decrypt_id(self):
-        fernet = Fernet(settings.FERNET_KEY.encode())
-        decrypted_data = fernet.decrypt(self.encrypt_id.encode())
-        return decrypted_data.decode()
+    def check_id(self, encrypted_id):
+        try:
+            fernet = Fernet(settings.FERNET_KEY.encode())
+            decrypted_data = fernet.decrypt(str(encrypted_id))
+            return self.id == str(decrypted_data.decode())
+        except:
+            return False
 
 
 class Attendance(models.Model):
