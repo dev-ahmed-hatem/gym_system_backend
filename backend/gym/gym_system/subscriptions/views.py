@@ -40,8 +40,13 @@ class SubscriptionViewSet(ModelViewSet):
     def get_queryset(self):
         # return a subscription with code param
         sub_code = self.request.query_params.get('code', None)
+        client_id = self.request.query_params.get('client_id', None)
+
         if sub_code is not None:
             return Subscription.objects.filter(pk=sub_code)
+
+        if client_id is not None:
+            return Subscription.objects.filter(client__id=client_id).order_by('-id')
 
         queryset = super().get_queryset()
         from_date = self.request.query_params.get('from', None)

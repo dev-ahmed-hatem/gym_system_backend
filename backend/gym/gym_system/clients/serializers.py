@@ -143,3 +143,12 @@ class AttendanceWriteSerializer(serializers.ModelSerializer):
             subscription.attendance_days += 1
         subscription.save()
         return attendance
+
+
+class ClientMobileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = [
+            "id", "name", "national_id", "gander", "birth_date", "age", "phone", "phone2", "email", "address", "photo",
+            "created_at", "is_blocked", "weight", "height"
+        ]

@@ -235,10 +235,12 @@ class ClientLogin(APIView):
 
             if client.password == "unset":
                 if password == client.phone:
-                    return Response({"name": client.name, "id": client.id}, status=status.HTTP_200_OK)
+                    return Response(ClientMobileSerializer(client, context={"request": request}).data,
+                                    status=status.HTTP_200_OK)
             else:
                 if client.check_password(password):
-                    return Response({"name": client.name, "id": client.id}, status=status.HTTP_200_OK)
+                    return Response(ClientMobileSerializer(client, context={"request": request}).data,
+                                    status=status.HTTP_200_OK)
             return Response({"error": "incorrect password"}, status=status.HTTP_400_BAD_REQUEST)
 
         except Client.DoesNotExist:
@@ -262,7 +264,8 @@ class ClientLatestSubscriptions(APIView):
         if active_subscriptions.count() < 3:
             needed = 3 - active_subscriptions.count()
             latest_subscription = client.subscriptions.exclude(id__in=active_subscriptions)
-            active_subscriptions = list(active_subscriptions.order_by("-id")) + list(latest_subscription.order_by("-id"))[:needed]
+            active_subscriptions = list(active_subscriptions.order_by("-id")) + list(
+                latest_subscription.order_by("-id"))[:needed]
 
         return Response(
             SubscriptionReadSerializer(active_subscriptions, many=True, context={"request": request}).data)
