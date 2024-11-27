@@ -269,3 +269,14 @@ class ClientLatestSubscriptions(APIView):
 
         return Response(
             SubscriptionReadSerializer(active_subscriptions, many=True, context={"request": request}).data)
+
+
+class GetClientData(APIView):
+    def post(self, request):
+        id = request.data.get('id')
+        try:
+            client = Client.objects.get(id=id)
+            return Response(ClientMobileSerializer(client, context={"request": request}).data,
+                            status=status.HTTP_200_OK)
+        except Client.DoesNotExist:
+            return Response({"error": "ID is not found!"}, status=status.HTTP_404_NOT_FOUND)
