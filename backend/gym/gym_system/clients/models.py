@@ -24,7 +24,7 @@ class Client(models.Model):
     gander = models.CharField(max_length=6, choices=GENDER_CHOICES, default='male')
     birth_date = models.DateField(blank=True, null=True)
     age = models.PositiveIntegerField(blank=True, null=True, default=0)
-    phone = models.CharField(max_length=15)
+    phone = models.CharField(max_length=15, unique=True)
     phone2 = models.CharField(max_length=15, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
