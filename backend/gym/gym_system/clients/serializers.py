@@ -57,12 +57,6 @@ class ClientWriteSerializer(serializers.ModelSerializer):
         model = Client
         fields = '__all__'
 
-    # def validate_phone(self, value):
-    #     # Check if a client with this phone number already exists
-    #     if Client.objects.filter(phone=value).exists():
-    #         raise serializers.ValidationError("A client with this phone number already exists.")
-    #     return value
-
     def create(self, validated_data):
         subscription_plan = validated_data.pop('subscription_plan', None)
         trainer = validated_data.pop('trainer', None)
@@ -100,6 +94,13 @@ class ClientWriteSerializer(serializers.ModelSerializer):
         client.save()
 
         return client
+
+    def update(self, instance, validated_data):
+        photo = validated_data.get('photo', None)
+        if photo and instance.photo:
+            instance.photo.delete()
+
+        return super().update(instance, validated_data)
 
 
 class AttendanceReadSerializer(serializers.ModelSerializer):
@@ -149,6 +150,6 @@ class ClientMobileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
         fields = [
-            "id", "name", "national_id", "gander", "birth_date", "age", "phone", "phone2", "email", "address", "photo",
-            "created_at", "is_blocked", "weight", "height"
+            "custom_pk", "id", "name", "national_id", "gander", "birth_date", "age", "phone", "phone2", "email",
+            "address", "photo", "created_at", "is_blocked", "weight", "height"
         ]

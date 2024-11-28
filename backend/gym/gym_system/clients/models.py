@@ -20,7 +20,7 @@ class Client(models.Model):
 
     id = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=100)
-    national_id = models.CharField(max_length=20, blank=True, null=True)
+    national_id = models.CharField(max_length=14, blank=True, null=True)
     gander = models.CharField(max_length=6, choices=GENDER_CHOICES, default='male')
     birth_date = models.DateField(blank=True, null=True)
     age = models.PositiveIntegerField(blank=True, null=True, default=0)
@@ -29,6 +29,7 @@ class Client(models.Model):
     email = models.EmailField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     photo = models.ImageField(upload_to='photos/', blank=True, null=True)
+    requested_photo = models.ImageField(upload_to='requested/', blank=True, null=True)
     added_by = models.ForeignKey('users.User', on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     qr_code = models.ImageField(upload_to='qr_codes', blank=True, null=True)
@@ -51,7 +52,7 @@ class Client(models.Model):
         return self.name
 
     def calculate_age(self):
-        if self.birth_date and self.age is None:
+        if self.birth_date:
             today = datetime.now().astimezone(settings.CAIRO_TZ).date()
             age = today.year - self.birth_date.year
 
