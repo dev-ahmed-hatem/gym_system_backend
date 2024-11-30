@@ -57,6 +57,11 @@ class ClientWriteSerializer(serializers.ModelSerializer):
         model = Client
         fields = '__all__'
 
+    def validate_phone2(self, value):
+        if Client.objects.filter(phone2=value).exists():
+            raise serializers.ValidationError(f"Phone number {value} already exists")
+        return value
+
     def create(self, validated_data):
         subscription_plan = validated_data.pop('subscription_plan', None)
         trainer = validated_data.pop('trainer', None)
@@ -151,5 +156,28 @@ class ClientMobileSerializer(serializers.ModelSerializer):
         model = Client
         fields = [
             "custom_pk", "id", "name", "national_id", "gander", "birth_date", "age", "phone", "phone2", "email",
-            "address", "photo", "created_at", "is_blocked", "weight", "height"
+            "address", "photo", "requested_photo", "created_at", "is_blocked", "weight", "height"
         ]
+
+
+class ClientPasswordSerializer(serializers.ModelSerializer):
+    current_password = serializers.CharField(write_only=True, required=True)
+    new_password = serializers.CharField(write_only=True, required=True)
+    confirm_password = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = Client
+        fields = ["current_password", "new_password", "confirm_password"]
+
+    def validate_current_password(self, value):
+        client = Client.objects.get(id=self.context.get('id'))
+        if not client.check_password(value):
+            raise serializers.ValidationError("Incorrect password")
+        return value
+
+    def validate(self, attrs):
+        new_password = attrs.get('new_password')
+        confirm_password = attrs.get('confirm_password')
+        if new_password != confirm_password:
+            raise serializers.ValidationError({"confirm_password": ["Password doesn't match"]})
+        return attrs

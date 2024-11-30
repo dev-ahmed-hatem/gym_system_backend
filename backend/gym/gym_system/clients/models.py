@@ -43,6 +43,8 @@ class Client(models.Model):
         self.password = make_password(password)
 
     def check_password(self, password):
+        if self.password == "unset":
+            return password == self.phone
         return check_password(password, self.password)
 
     class Meta:

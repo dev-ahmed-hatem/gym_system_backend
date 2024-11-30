@@ -15,5 +15,6 @@ urlpatterns = [
     path('client-login/', ClientLogin.as_view(), name='client-login'),
     path('client-data/', GetClientData.as_view(), name='client-data'),
     path('client-latest-subscriptions/', ClientLatestSubscriptions.as_view(), name='client-latest-subscriptions'),
+    path('change-client-password/', ChangeClientPassword.as_view(), name='change-client-password'),
 
 ]

@@ -232,15 +232,9 @@ class ClientLogin(APIView):
 
         try:
             client = Client.objects.get(id=id)
-
-            if client.password == "unset":
-                if password == client.phone:
-                    return Response(ClientMobileSerializer(client, context={"request": request}).data,
-                                    status=status.HTTP_200_OK)
-            else:
-                if client.check_password(password):
-                    return Response(ClientMobileSerializer(client, context={"request": request}).data,
-                                    status=status.HTTP_200_OK)
+            if client.check_password(password):
+                return Response(ClientMobileSerializer(client, context={"request": request}).data,
+                                status=status.HTTP_200_OK)
             return Response({"error": "incorrect password"}, status=status.HTTP_400_BAD_REQUEST)
 
         except Client.DoesNotExist:
@@ -278,5 +272,20 @@ class GetClientData(APIView):
             client = Client.objects.get(id=id)
             return Response(ClientMobileSerializer(client, context={"request": request}).data,
                             status=status.HTTP_200_OK)
+        except Client.DoesNotExist:
+            return Response({"error": "ID is not found!"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ChangeClientPassword(APIView):
+    def post(self, request):
+        id = request.data.get('id')
+        try:
+            client = Client.objects.get(id=id)
+            serializer = ClientPasswordSerializer(data=request.data, context={"request": request, "id": id})
+
+            if serializer.is_valid(raise_exception=True):
+                client.set_password(serializer.validated_data['new_password'])
+                client.save()
+                return Response({}, status.HTTP_200_OK)
         except Client.DoesNotExist:
             return Response({"error": "ID is not found!"}, status=status.HTTP_404_NOT_FOUND)
