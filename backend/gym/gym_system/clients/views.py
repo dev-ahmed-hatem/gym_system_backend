@@ -258,8 +258,8 @@ class ClientLatestSubscriptions(APIView):
         if active_subscriptions.count() < 3:
             needed = 3 - active_subscriptions.count()
             latest_subscription = client.subscriptions.exclude(id__in=active_subscriptions)
-            active_subscriptions = list(active_subscriptions.order_by("-id")) + list(
-                latest_subscription.order_by("-id"))[:needed]
+            active_subscriptions = list(active_subscriptions.order_by("-start_date")) + list(
+                latest_subscription.order_by("-start_date"))[:needed]
 
         return Response(
             SubscriptionReadSerializer(active_subscriptions, many=True, context={"request": request}).data)
