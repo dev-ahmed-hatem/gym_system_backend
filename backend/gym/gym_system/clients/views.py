@@ -1,6 +1,6 @@
 import pytz
 import os
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -289,3 +289,20 @@ class ChangeClientPassword(APIView):
                 return Response({}, status.HTTP_200_OK)
         except Client.DoesNotExist:
             return Response({"error": "ID is not found!"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class DeleteRequestedPhoto(APIView):
+    def post(self, request):
+        id = request.data.get('id')
+        try:
+            client = Client.objects.get(id=id)
+            client.delete_requested_photo()
+            return Response({}, status=status.HTTP_200_OK)
+        except Client.DoesNotExist:
+            return Response({"error": "ID is not found!"}, status=status.HTTP_404_NOT_FOUND)
+
+
+# News ViewSets
+class NewsViewSet(viewsets.ModelViewSet):
+    serializer_class = NewsSerializer
+    queryset = New.objects.all()

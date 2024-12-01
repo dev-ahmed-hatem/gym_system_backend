@@ -6,6 +6,7 @@ from .views import *
 router = DefaultRouter()
 router.register('client', ClientViewSet, basename='client')
 router.register("attendance", AttendanceViewSet, basename="attendance")
+router.register("new", NewsViewSet, basename="new")
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -16,5 +17,6 @@ urlpatterns = [
     path('client-data/', GetClientData.as_view(), name='client-data'),
     path('client-latest-subscriptions/', ClientLatestSubscriptions.as_view(), name='client-latest-subscriptions'),
     path('change-client-password/', ChangeClientPassword.as_view(), name='change-client-password'),
+    path('delete-requested-photo/', DeleteRequestedPhoto.as_view(), name='delete-requested-photo'),
 
 ]

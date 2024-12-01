@@ -102,8 +102,15 @@ class ClientWriteSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         photo = validated_data.get('photo', None)
+        requested_photo = validated_data.get('requested_photo', None)
         if photo and instance.photo:
             instance.photo.delete()
+
+        if requested_photo and instance.requested_photo:
+            instance.requested_photo.delete()
+            instance.requested_photo = requested_photo
+            instance.save()
+            return instance
 
         return super().update(instance, validated_data)
 
@@ -181,3 +188,15 @@ class ClientPasswordSerializer(serializers.ModelSerializer):
         if new_password != confirm_password:
             raise serializers.ValidationError({"confirm_password": ["Password doesn't match"]})
         return attrs
+
+
+# News serializer
+class NewsSerializer(serializers.ModelSerializer):
+    created_at = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = New
+        fields = '__all__'
+
+    def get_created_at(self, obj):
+        return obj.created_at.astimezone(settings.CAIRO_TZ).date()

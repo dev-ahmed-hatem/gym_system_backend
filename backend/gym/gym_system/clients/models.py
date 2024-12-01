@@ -82,15 +82,23 @@ class Client(models.Model):
             super(Client, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        if self.qr_code:
-            if os.path.isfile(self.qr_code.path):
-                os.remove(self.qr_code.path)
-        if self.barcode:
-            if os.path.isfile(self.barcode.path):
-                os.remove(self.barcode.path)
+        # if self.qr_code:
+        #     if os.path.isfile(self.qr_code.path):
+        #         os.remove(self.qr_code.path)
+        # if self.barcode:
+        #     if os.path.isfile(self.barcode.path):
+        #         os.remove(self.barcode.path)
         if self.photo:
             self.photo.delete(save=False)
+        if self.requested_photo:
+            self.requested_photo.delete(save=False)
         super().delete(*args, **kwargs)
+
+    def delete_requested_photo(self):
+        if self.requested_photo:
+            self.requested_photo.delete()
+            self.requested_photo = None
+            self.save()
 
     def generate_qr_code(self):
         qr = qrcode.QRCode(
@@ -138,3 +146,16 @@ class Attendance(models.Model):
     invitation_code = models.CharField(max_length=100, blank=True, null=True)
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+
+class New(models.Model):
+    title = models.CharField(max_length=100, blank=True, null=True)
+    content = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    picture = models.ImageField(upload_to='news/', blank=True, null=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.title
