@@ -46,7 +46,7 @@ class SubscriptionViewSet(ModelViewSet):
             return Subscription.objects.filter(pk=sub_code)
 
         if client_id is not None:
-            return Subscription.objects.filter(client__id=client_id).order_by('-id')
+            return Subscription.objects.filter(client__id=client_id).order_by('-start_date')
 
         queryset = super().get_queryset()
         from_date = self.request.query_params.get('from', None)
