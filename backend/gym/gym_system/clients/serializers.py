@@ -108,9 +108,6 @@ class ClientWriteSerializer(serializers.ModelSerializer):
 
         if requested_photo and instance.requested_photo:
             instance.requested_photo.delete()
-            instance.requested_photo = requested_photo
-            instance.save()
-            return instance
 
         return super().update(instance, validated_data)
 
