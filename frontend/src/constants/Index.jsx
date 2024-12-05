@@ -22,6 +22,7 @@ import {
     MdAssignment,
     MdOutlineTimerOff,
     MdInventory,
+    MdNewspaper,
 } from "react-icons/md";
 import { FaShop } from "react-icons/fa6";
 import { RiShoppingBag3Fill } from "react-icons/ri";
@@ -70,6 +71,7 @@ import { AiFillMoneyCollect } from "react-icons/ai";
 import AdvanceCollect from "../components/financials/advance-collect/AdvanceCollect";
 import Invitations from "../components/barcode/invitations/Invitations";
 import { FcInvite } from "react-icons/fc";
+import News from "../components/settings/news/News";
 
 export const routes = [
     {
@@ -187,6 +189,16 @@ export const routes = [
             },
             {
                 id: 6,
+                title: "الأخبار",
+                name: "news",
+                url: "/settings/news",
+                icon: <MdNewspaper />,
+                element: <News />,
+                app_label: "clients",
+                model_name: "new",
+            },
+            {
+                id: 7,
                 title: "البنود المالية",
                 name: "expenses-items",
                 url: "/settings/expenses",
@@ -371,9 +383,7 @@ export const routes = [
                 name: "invitations",
                 url: "/barcode/invitations",
                 icon: <FcInvite />,
-                element: (
-                    <Invitations />
-                ),
+                element: <Invitations />,
             },
         ],
     },

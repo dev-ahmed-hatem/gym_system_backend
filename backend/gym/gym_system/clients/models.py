@@ -6,6 +6,7 @@ from django.conf import settings
 from barcode import get_barcode_class, writer
 from io import BytesIO
 from django.core.files.base import File
+from django.utils import timezone
 from cryptography.fernet import Fernet
 from subscriptions.models import Subscription
 from django.contrib.auth.hashers import make_password, check_password
@@ -154,10 +155,14 @@ class Attendance(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
 
+def get_today():
+    return datetime.now(settings.CAIRO_TZ).today()
+
+
 class New(models.Model):
     title = models.CharField(max_length=100, blank=True, null=True)
     content = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField(default=get_today)
     picture = models.ImageField(upload_to='news/', blank=True, null=True)
 
     class Meta:

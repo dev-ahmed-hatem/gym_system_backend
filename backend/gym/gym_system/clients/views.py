@@ -1,14 +1,13 @@
 import pytz
-import os
 from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import api_view, action
-from cryptography.fernet import Fernet
-from django.conf import settings
+# from cryptography.fernet import Fernet
+# from django.conf import settings
 from django.db.models import Q, F
-from subscriptions.models import Invitation
+# from subscriptions.models import Invitation
 
 from .serializers import *
 from subscriptions.serializers import SubscriptionReadSerializer, InvitationSerializer
@@ -305,4 +304,10 @@ class DeleteRequestedPhoto(APIView):
 # News ViewSets
 class NewsViewSet(viewsets.ModelViewSet):
     serializer_class = NewsSerializer
-    queryset = New.objects.all()
+
+    def get_queryset(self):
+        queryset = New.objects.all()
+        search = self.request.query_params.get('search')
+        if search:
+            queryset = queryset.filter(title__icontains=search)
+        return queryset

@@ -6,20 +6,20 @@ import TableGroup from "../../groups/TableGroup";
 import { MdEdit, MdDelete } from "react-icons/md";
 import TablePagination from "../../groups/TablePagination";
 import endpoints from "../../../config/config";
-import OffersForm from "./OffersForm";
+import NewsForm from "./NewsForm";
 import { fetch_list_data } from "../../../config/actions";
 import ConfirmDelete from "../../groups/ConfirmDelete";
 import ErrorGroup from "../../groups/ErrorGroup";
 import { usePermission } from "../../../providers/PermissionProvider";
 import { useDrawer } from "../../../providers/DrawerProvider";
 
-const Offers = () => {
+const News = () => {
     //////////////////////////////// providers ////////////////////////////////
     const { showDrawer, closeDrawer } = useDrawer();
     const { set_page_permissions } = usePermission();
 
     //////////////////////////////// permissions ////////////////////////////////
-    const permissions = set_page_permissions("shop", "offer");
+    const permissions = set_page_permissions("clients", "new");
     if (!permissions.add && !permissions.view) {
         return (
             <p className="text-lg text-center text-red-600 py-4">
@@ -38,41 +38,41 @@ const Offers = () => {
     const handleDrawer = (drawerFunction, item) => {
         if (drawerFunction == "edit") {
             showDrawer(
-                "تعديل عرض",
+                "تعديل خبر",
                 MdEdit,
-                <OffersForm
+                <NewsForm
                     postURL={item.url}
                     defaultValues={item}
                     callBack={() => {
-                        get_current_offers();
+                        get_current_news();
                         closeDrawer();
                     }}
                 />
             );
         } else {
             showDrawer(
-                "حذف عرض",
+                "حذف خبر",
                 MdDelete,
                 <>
                     <ConfirmDelete
                         deleteURL={item.url}
-                        deletePrompt={" هل أنت متأكد تريد حذف العرض"}
-                        itemName={item.name}
+                        deletePrompt={" هل أنت متأكد تريد حذف الخبر"}
+                        itemName={item.title}
                         closeDrawer={closeDrawer}
                         callBack={() => {
                             setSearchParam(null);
                             setPageNumber(null);
-                            get_current_offers();
+                            get_current_news();
                         }}
-                        toastMessage={"تم حذف العرض بنجاح"}
+                        toastMessage={"تم حذف الخبر بنجاح"}
                     />
                 </>
             );
         }
     };
 
-    const get_current_offers = () => {
-        const searchURL = `${endpoints.offer_list}${
+    const get_current_news = () => {
+        const searchURL = `${endpoints.news_list}${
             searchParam ? `&search=${searchParam}` : ""
         }${pageNumber ? `&page=${pageNumber}` : ""}
         `;
@@ -87,7 +87,7 @@ const Offers = () => {
 
     useEffect(() => {
         if (permissions.view) {
-            get_current_offers();
+            get_current_news();
         }
     }, [searchParam, pageNumber]);
 
@@ -95,17 +95,17 @@ const Offers = () => {
         <>
             {/* add form */}
             {permissions.add ? (
-                <OffersForm
-                    postURL={endpoints.offer_list}
-                    callBack={get_current_offers}
+                <NewsForm
+                    postURL={endpoints.news_list}
+                    callBack={get_current_news}
                 />
             ) : (
-                <ErrorGroup title={"إضافة عرض"} message={"ليس لديك صلاحية"} />
+                <ErrorGroup title={"إضافة خبر"} message={"ليس لديك صلاحية"} />
             )}
 
             {/* table data */}
             {permissions.view ? (
-                <ViewGroup title={`العروض الحالية`}>
+                <ViewGroup title={`الأخبار الحالية`}>
                     {loading ? (
                         <Loading />
                     ) : fetchError ? (
@@ -132,34 +132,25 @@ const Offers = () => {
                                     <>
                                         <Table.Head>
                                             <Table.HeadCell>
-                                                نوع العرض
+                                                الاسم
                                             </Table.HeadCell>
                                             <Table.HeadCell>
-                                                العنصر
-                                            </Table.HeadCell>
-                                            <Table.HeadCell>
-                                                نسبة الخصم
-                                            </Table.HeadCell>
-                                            <Table.HeadCell>
-                                                البداية
-                                            </Table.HeadCell>
-                                            <Table.HeadCell>
-                                                النهاية
+                                                تاريخ النشر
                                             </Table.HeadCell>
                                             <Table.HeadCell>
                                                 إجراءات
                                             </Table.HeadCell>
                                         </Table.Head>
                                         <Table.Body>
-                                            {data.results.map((offer) => {
+                                            {data.results.map((new_item) => {
                                                 return (
                                                     <Table.Row
-                                                        key={offer.id}
+                                                        key={new_item.id}
                                                         className="bg-white font-medium text-gray-900"
                                                     >
                                                         <Table.Cell>
-                                                            {offer.offer_type_display ? (
-                                                                offer.offer_type_display
+                                                            {new_item.title ? (
+                                                                new_item.title
                                                             ) : (
                                                                 <span className="text-red-600">
                                                                     غير مسجل
@@ -167,39 +158,8 @@ const Offers = () => {
                                                             )}
                                                         </Table.Cell>
                                                         <Table.Cell>
-                                                            {offer.offer_type ==
-                                                            "product"
-                                                                ? offer.product
-                                                                      .name
-                                                                : offer.plan
-                                                                      .name}
-                                                        </Table.Cell>
-                                                        <Table.Cell>
-                                                            {offer.percentage ? (
-                                                                <>
-                                                                    {
-                                                                        offer.percentage
-                                                                    }{" "}
-                                                                    %
-                                                                </>
-                                                            ) : (
-                                                                <span className="text-red-600">
-                                                                    غير مسجل
-                                                                </span>
-                                                            )}
-                                                        </Table.Cell>
-                                                        <Table.Cell>
-                                                            {offer.start_date ? (
-                                                                offer.start_date
-                                                            ) : (
-                                                                <span className="text-red-600">
-                                                                    غير مسجل
-                                                                </span>
-                                                            )}
-                                                        </Table.Cell>
-                                                        <Table.Cell>
-                                                            {offer.end_date ? (
-                                                                offer.end_date
+                                                            {new_item.created_at ? (
+                                                                new_item.created_at
                                                             ) : (
                                                                 <span className="text-red-600">
                                                                     غير مسجل
@@ -214,7 +174,7 @@ const Offers = () => {
                                                                         onClick={() => {
                                                                             handleDrawer(
                                                                                 "edit",
-                                                                                offer
+                                                                                new_item
                                                                             );
                                                                         }}
                                                                     />
@@ -225,7 +185,7 @@ const Offers = () => {
                                                                         onClick={() => {
                                                                             handleDrawer(
                                                                                 "delete",
-                                                                                offer
+                                                                                new_item
                                                                             );
                                                                         }}
                                                                     />
@@ -262,4 +222,4 @@ const Offers = () => {
     );
 };
 
-export default Offers;
+export default News;

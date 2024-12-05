@@ -191,11 +191,8 @@ class ClientPasswordSerializer(serializers.ModelSerializer):
 
 # News serializer
 class NewsSerializer(serializers.ModelSerializer):
-    created_at = serializers.SerializerMethodField(read_only=True)
+    url = serializers.HyperlinkedIdentityField(view_name='new-detail')
 
     class Meta:
         model = New
         fields = '__all__'
-
-    def get_created_at(self, obj):
-        return obj.created_at.astimezone(settings.CAIRO_TZ).date()
