@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import FormGroup from "../groups/FormGroup";
 import {
     TextInput,
     Label,
     Select as FlowbiteSelect,
     Datepicker,
+    Button,
 } from "flowbite-react";
 import { HiDeviceMobile, HiUser } from "react-icons/hi";
 import { SlCalender } from "react-icons/sl";
@@ -13,7 +14,7 @@ import axios from "../../config/axiosconfig";
 import { useForm, Controller } from "react-hook-form";
 import { MdEmail } from "react-icons/md";
 import endpoints from "../../config/config";
-import { FaAddressCard } from "react-icons/fa";
+import { FaAddressCard, FaCamera } from "react-icons/fa";
 import CustomFileInput from "../groups/CustomFileInput";
 import Select from "react-select";
 import style from "../../assets/rect-select-style";
@@ -22,6 +23,7 @@ import { calculateAge } from "../../utils";
 import { useToast } from "../../providers/ToastProvider";
 import { CiBarcode } from "react-icons/ci";
 import Loading from "../groups/Loading";
+import Webcam from "react-webcam";
 
 const AddClientForm = ({ postURL, defaultValues, callBack }) => {
     const [post, setPost] = useState(false);
@@ -34,6 +36,31 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
     const [fetchError, setFetchError] = useState(false);
     const [nextId, setNextId] = useState(null);
     const { showToast } = useToast();
+
+    // handle camera
+
+    const webcamRef = useRef(null);
+    const [openCam, setOpenCam] = useState(false);
+    const [image, setImage] = useState(null);
+
+    const capturePhoto = () => {
+        const imageSrc = webcamRef.current.getScreenshot();
+        setImage(imageSrc); // Set the captured image
+        setSelectedFile("صورة من الكاميرا");
+        setValue("photo", base64ToFile(imageSrc, `screenshot.jpg`));
+    };
+
+    const base64ToFile = (base64, fileName) => {
+        const arr = base64.split(",");
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], fileName, { type: mime });
+    };
 
     const {
         register,
@@ -157,6 +184,9 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
             reset: reset,
             callBack: () => {
                 if (callBack) callBack();
+                setSelectedFile(null);
+                setImage(null);
+                setOpenCam(false);
                 if (formFunction === "add") get_next_client_id();
             },
             setError: setError,
@@ -566,21 +596,113 @@ const AddClientForm = ({ postURL, defaultValues, callBack }) => {
                         )}
 
                         <div className="w-full lg:max-w-md lg:w-[30%]">
-                            <div className="mb-2 block">
-                                <Label htmlFor="photo" value="الصورة :" />
+                            <div className="mb-2 flex items-center justify-between">
+                                <Label
+                                    htmlFor="photo"
+                                    value="الصورة :"
+                                    className="inline-block"
+                                />
                             </div>
-                            <CustomFileInput
-                                register={register}
-                                setValue={setValue}
-                                name={"photo"}
-                                error={errors.photo ? "صورة غير صالحة" : null}
-                                selectedFile={selectedFile}
-                                setSelectedFile={setSelectedFile}
-                                onBlur={() => {
-                                    trigger("photo");
-                                }}
-                            />
+                            <div>
+                                <CustomFileInput
+                                    register={register}
+                                    setValue={setValue}
+                                    name={"photo"}
+                                    error={
+                                        errors.photo ? "صورة غير صالحة" : null
+                                    }
+                                    selectedFile={selectedFile}
+                                    setSelectedFile={setSelectedFile}
+                                    onBlur={() => {
+                                        trigger("photo");
+                                    }}
+                                />
+
+                                <span
+                                    className="ms-4 mt-2 inline-flex gap-x-3 items-center hover:text-accent cursor-pointer"
+                                    onClick={() => {
+                                        setOpenCam(true);
+                                    }}
+                                >
+                                    <FaCamera className=" size-4" />
+                                    <span>التقاط صورة</span>
+                                </span>
+                            </div>
                         </div>
+
+                        {/* take a photo */}
+                        {openCam && (
+                            <div style={{ textAlign: "center" }}>
+                                {!image ? (
+                                    <>
+                                        <Webcam
+                                            audio={false}
+                                            ref={webcamRef}
+                                            screenshotFormat="image/jpeg"
+                                            width={300}
+                                        />
+                                        <br />
+                                        <div className="flex justify-center gap-x-2">
+                                            <Button
+                                                type="button"
+                                                color={"primary"}
+                                                size={"lg"}
+                                                onClick={capturePhoto}
+                                            >
+                                                التقاط
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                color={"failure"}
+                                                size={"lg"}
+                                                onClick={() => {
+                                                    setImage(null);
+                                                    setSelectedFile(null);
+                                                    setOpenCam(false);
+                                                }}
+                                            >
+                                                إغلاق
+                                            </Button>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <img
+                                            src={image}
+                                            alt="Captured"
+                                            style={{ maxWidth: "300px" }}
+                                        />
+                                        <br />
+                                        <div className="flex justify-center gap-x-2">
+                                            <Button
+                                                type="button"
+                                                color={"primary"}
+                                                size={"lg"}
+                                                onClick={() => {
+                                                    setImage(null);
+                                                    setSelectedFile(null);
+                                                }}
+                                            >
+                                                إعادة
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                color={"failure"}
+                                                size={"lg"}
+                                                onClick={() => {
+                                                    setImage(null);
+                                                    setSelectedFile(null);
+                                                    setOpenCam(false);
+                                                }}
+                                            >
+                                                إغلاق
+                                            </Button>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        )}
+                        {/* end */}
 
                         {formFunction === "edit" && (
                             <div className="w-full lg:max-w-md lg:w-[30%]">

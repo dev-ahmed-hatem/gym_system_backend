@@ -58,6 +58,8 @@ class ClientWriteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_phone2(self, value):
+        if value == "" or value is None:
+            return value
         if Client.objects.filter(phone2=value).exists():
             raise serializers.ValidationError(f"Phone number {value} already exists")
         return value

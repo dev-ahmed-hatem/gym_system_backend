@@ -11,6 +11,12 @@ from subscriptions.models import Subscription
 from django.contrib.auth.hashers import make_password, check_password
 
 
+def client_photo_upload_path(instance, filename):
+    # Define the file name format
+    extension = os.path.splitext(filename)[1]  # Get file extension
+    return f"photos/photo_{instance.id or 'temp'}{extension}"
+
+
 class Client(models.Model):
     GENDER_CHOICES = [
         ('male', 'Male'),
@@ -28,7 +34,7 @@ class Client(models.Model):
     phone2 = models.CharField(max_length=15, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
-    photo = models.ImageField(upload_to='photos/', blank=True, null=True)
+    photo = models.ImageField(upload_to=client_photo_upload_path, blank=True, null=True)
     requested_photo = models.ImageField(upload_to='requested/', blank=True, null=True)
     added_by = models.ForeignKey('users.User', on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
