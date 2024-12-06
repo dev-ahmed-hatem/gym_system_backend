@@ -24,7 +24,7 @@ import {
     MdInventory,
     MdNewspaper,
 } from "react-icons/md";
-import { FaShop } from "react-icons/fa6";
+import { FaCircleUser, FaShop } from "react-icons/fa6";
 import { RiShoppingBag3Fill } from "react-icons/ri";
 import { IoBagCheck } from "react-icons/io5";
 import Managers from "../components/users/managers/Managers";
@@ -72,6 +72,7 @@ import AdvanceCollect from "../components/financials/advance-collect/AdvanceColl
 import Invitations from "../components/barcode/invitations/Invitations";
 import { FcInvite } from "react-icons/fc";
 import News from "../components/settings/news/News";
+import RequestedPhotos from "../components/clients/RequestedPhotos";
 
 export const routes = [
     {
@@ -252,6 +253,15 @@ export const routes = [
                 icon: <FaFilter />,
                 permissions: "unadjustable",
                 element: <ClientFilter />,
+            },
+            {
+                id: 5,
+                title: "طلبات الصور",
+                name: "requsted-photos",
+                url: "/clients/requested-photos",
+                icon: <FaCircleUser />,
+                permissions: "unadjustable",
+                element: <RequestedPhotos />,
             },
         ],
     },

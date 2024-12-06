@@ -5,7 +5,8 @@ from django.db import models
 from django.conf import settings
 from barcode import get_barcode_class, writer
 from io import BytesIO
-from django.core.files.base import File
+from django.core.files.base import File, ContentFile
+from django.core.files.storage import default_storage
 from django.utils import timezone
 from cryptography.fernet import Fernet
 from subscriptions.models import Subscription
@@ -101,6 +102,17 @@ class Client(models.Model):
             self.requested_photo.delete(save=False)
         super().delete(*args, **kwargs)
 
+    def accept_requested_photo(self):
+        if self.photo:
+            self.photo.delete(save=False)
+        if self.requested_photo:
+            new_path = f"photos/{os.path.basename(self.requested_photo.path)}"
+            new_photo = default_storage.save(new_path, ContentFile(self.requested_photo.read()))
+            self.photo = new_photo
+            self.save()
+
+        self.delete_requested_photo()
+
     def delete_requested_photo(self):
         if self.requested_photo:
             self.requested_photo.delete()
@@ -166,7 +178,7 @@ class New(models.Model):
     picture = models.ImageField(upload_to='news/', blank=True, null=True)
 
     class Meta:
-        ordering = ["-created_at"]
+        ordering = ["-created_at", "-id"]
 
     def __str__(self):
         return self.title

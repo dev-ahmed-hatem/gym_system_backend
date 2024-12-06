@@ -28,10 +28,14 @@ class ClientViewSet(ModelViewSet):
         client = self.request.query_params.get('client', None)
         from_date = self.request.query_params.get('from', None)
         to_date = self.request.query_params.get('to', None)
+        requested_photos = self.request.query_params.get('requested_photos', "false")
+
+        if requested_photos.lower() == "true":
+            queryset = queryset.filter(requested_photo__isnull=False).exclude(requested_photo="")
 
         if client is not None:
             if client.isdigit():
-                queryset = Client.objects.filter(id=client)
+                queryset = queryset.filter(id=client)
                 if queryset.exists():
                     return queryset
                 else:
@@ -81,6 +85,16 @@ class ClientViewSet(ModelViewSet):
             # client.generate_barcode()
             # client.generate_qr_code()
             client.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['POST'])
+    def requested_photo(self, request, pk=None):
+        client = self.get_object()
+        action_ = request.data.get('action')
+        if action_ == 'accept':
+            client.accept_requested_photo()
+        else:
+            client.delete_requested_photo()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
