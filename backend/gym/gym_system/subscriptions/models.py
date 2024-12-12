@@ -64,8 +64,7 @@ class Subscription(models.Model):
         return end_date
 
     def save(self, *args, **kwargs):
-        if not self.end_date:
-            self.end_date = self.calculate_end_date()
+        self.end_date = self.calculate_end_date()
 
         if self.transaction:
             self.transaction.amount = self.total_price
