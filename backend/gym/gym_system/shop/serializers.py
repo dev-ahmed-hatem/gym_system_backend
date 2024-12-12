@@ -8,6 +8,8 @@ from .models import *
 from clients.serializers import ClientReadSerializer
 from django.conf import settings
 
+from django.db.models import Q
+
 
 class ProductCategorySerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='product-category-detail', lookup_field='pk')
@@ -38,7 +40,26 @@ class ProductWriteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class SaleItemReadSeializer(serializers.ModelSerializer):
+class ProductMobileSerializer(serializers.ModelSerializer):
+    discount = serializers.SerializerMethodField()
+    category = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = '__all__'
+
+    def get_discount(self, obj):
+        today = datetime.today().astimezone(settings.CAIRO_TZ)
+        offer = Offer.objects.filter(Q(product=obj) & Q(start_date__lte=today) & Q(end_date__gte=today))
+        if offer.exists():
+            return offer.first().percentage
+        return None
+
+    def get_category(self, obj):
+        return obj.category.name
+
+
+class SaleItemReadSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='sale-item-detail')
     total_price = serializers.SerializerMethodField()
     product = ProductReadSerializer(read_only=True)
@@ -63,7 +84,7 @@ class SaleSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='sale-detail')
     total_quantity = serializers.SerializerMethodField()
     customer = ClientReadSerializer(read_only=True)
-    items = SaleItemReadSeializer(many=True, read_only=True)
+    items = SaleItemReadSerializer(many=True, read_only=True)
     date = serializers.SerializerMethodField()
     state = serializers.SerializerMethodField()
     confirm_date = serializers.SerializerMethodField()

@@ -1,3 +1,4 @@
+from django.db.models.functions import Lower
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -36,6 +37,21 @@ class ProductViewSet(ModelViewSet):
         search = self.request.query_params.get('search', None)
         if search:
             queryset = queryset.filter(name__icontains=search)
+        return queryset
+
+
+class ProductMobileViewSet(ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductMobileSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.query_params.get('search', None)
+        category = self.request.query_params.get('category', None)
+        if search:
+            queryset = queryset.filter(name__icontains=search)
+        if category and category != "all":
+            queryset = queryset.annotate(category_name=Lower("category__name")).filter(category_name=category)
         return queryset
 
 
@@ -94,7 +110,7 @@ class SaleItemViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
             return SaleItemWriteSerializer
-        return SaleItemReadSeializer
+        return SaleItemReadSerializer
 
 
 @api_view(['POST'])

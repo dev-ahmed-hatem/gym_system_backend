@@ -53,9 +53,9 @@ const ProductsForm = ({ postURL, defaultValues, callBack }) => {
     const onSubmit = (data) => {
         setPost(true);
 
-        // check whether photo is a valid
-        if (!(data["photo"] instanceof File)) {
-            delete data["photo"];
+        // check whether image is a valid
+        if (!(data["image"] instanceof File)) {
+            delete data["image"];
         }
 
         data = {
@@ -130,11 +130,12 @@ const ProductsForm = ({ postURL, defaultValues, callBack }) => {
                             {...register("cost_price", {
                                 required: "هذا الحقل مطلوب",
                                 pattern: {
-                                    value: /^[1-9]\d*$/,
-                                    message: "أدخل رقم صحيح موجب",
+                                    value: /^[0-9]+(\.[0-9]+)?$/,
+                                    message: "أدخل رقم صحيح",
                                 },
                             })}
                             min={0}
+                            step={0.1}
                             onBlur={() => trigger("cost_price")}
                         />
                         {errors.cost_price && (
@@ -156,11 +157,12 @@ const ProductsForm = ({ postURL, defaultValues, callBack }) => {
                             {...register("sell_price", {
                                 required: "هذا الحقل مطلوب",
                                 pattern: {
-                                    value: /^[1-9]\d*$/,
-                                    message: "أدخل رقم صحيح موجب",
+                                    value: /^[0-9]+(\.[0-9]+)?$/,
+                                    message: "أدخل رقم صحيح",
                                 },
                             })}
                             min={0}
+                            step={0.1}
                             onBlur={() => trigger("sell_price")}
                         />
                         {errors.sell_price && (
