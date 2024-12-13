@@ -58,13 +58,14 @@ class Subscription(models.Model):
 
     def calculate_end_date(self):
         if self.plan.is_duration:
-            end_date = self.start_date + timedelta(days=self.plan.days)
+            end_date = self.start_date + timedelta(days=self.plan.days) + timedelta(days=self.freeze_days_used)
         else:
-            end_date = self.start_date + timedelta(days=self.plan.validity)
+            end_date = self.start_date + timedelta(days=self.plan.validity) + timedelta(days=self.freeze_days_used)
         return end_date
 
     def save(self, *args, **kwargs):
-        self.end_date = self.calculate_end_date()
+        if not self.end_date:
+            self.end_date = self.calculate_end_date()
 
         if self.transaction:
             self.transaction.amount = self.total_price
@@ -97,7 +98,7 @@ class Subscription(models.Model):
         if self.is_frozen:
             self.is_frozen = False
             self.unfreeze_date = now().astimezone(settings.CAIRO_TZ).date()
-            self.end_date += timedelta(days=self.freeze_days_used)
+            self.end_date = self.calculate_end_date()
             self.save()
 
     def is_expired(self):
