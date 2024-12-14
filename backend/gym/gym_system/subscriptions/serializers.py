@@ -9,6 +9,8 @@ from django.utils.timezone import now
 from django.conf import settings
 from .models import *
 from cryptography.fernet import Fernet
+from datetime import datetime
+from shop.models import Offer
 
 
 class SubscriptionPlanSerializer(serializers.ModelSerializer):
@@ -16,6 +18,7 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
     sub_type = serializers.SerializerMethodField()
     duration_display = serializers.SerializerMethodField()
     num_subscriptions = serializers.SerializerMethodField()
+    discount = serializers.SerializerMethodField()
 
     class Meta:
         model = SubscriptionPlan
@@ -33,6 +36,13 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
     def get_num_subscriptions(self, obj):
         if hasattr(obj, 'num_subscriptions'):
             return obj.num_subscriptions
+        return None
+
+    def get_discount(self, obj):
+        today = datetime.today().astimezone(settings.CAIRO_TZ)
+        offer = Offer.objects.filter(Q(plan=obj) & Q(start_date__lte=today) & Q(end_date__gte=today))
+        if offer.exists():
+            return offer.first().percentage
         return None
 
     def validate(self, attrs):

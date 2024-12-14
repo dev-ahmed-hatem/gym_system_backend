@@ -1,11 +1,9 @@
 from rest_framework import serializers
-from rest_framework.response import Response
 from subscriptions.serializers import SubscriptionPlanSerializer
 from subscriptions.models import SubscriptionPlan
 from django.utils.timezone import datetime
 
 from .models import *
-from clients.serializers import ClientReadSerializer
 from django.conf import settings
 
 from django.db.models import Q
@@ -49,11 +47,7 @@ class ProductMobileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_discount(self, obj):
-        today = datetime.today().astimezone(settings.CAIRO_TZ)
-        offer = Offer.objects.filter(Q(product=obj) & Q(start_date__lte=today) & Q(end_date__gte=today))
-        if offer.exists():
-            return offer.first().percentage
-        return None
+        return obj.has_discount()
 
     def get_category(self, obj):
         return obj.category.name
@@ -62,7 +56,7 @@ class ProductMobileSerializer(serializers.ModelSerializer):
 class SaleItemReadSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='sale-item-detail')
     total_price = serializers.SerializerMethodField()
-    product = ProductReadSerializer(read_only=True)
+    product = ProductMobileSerializer(read_only=True)
 
     class Meta:
         model = SaleItem
@@ -83,11 +77,12 @@ class SaleItemWriteSerializer(serializers.ModelSerializer):
 class SaleSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='sale-detail')
     total_quantity = serializers.SerializerMethodField()
-    customer = ClientReadSerializer(read_only=True)
+    # customer = ClientReadSerializer(read_only=True)
     items = SaleItemReadSerializer(many=True, read_only=True)
     date = serializers.SerializerMethodField()
     state = serializers.SerializerMethodField()
     confirm_date = serializers.SerializerMethodField()
+    client_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Sale
@@ -117,6 +112,11 @@ class SaleSerializer(serializers.ModelSerializer):
 
         sale.save()
         return sale
+
+    def get_client_id(self, obj):
+        if obj.customer:
+            return obj.customer.id
+        return None
 
 
 class OfferReadSerializer(serializers.ModelSerializer):

@@ -13,4 +13,5 @@ router.register('offer', OfferViewSet, basename='offer')
 urlpatterns = [
     path('', include(router.urls)),
     path('add-stock/', add_stock, name='add-stock'),
+    path('make-order/', ClientMakeOrder.as_view(), name='make-order'),
 ]

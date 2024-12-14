@@ -13,7 +13,7 @@ const CustomFileInput = forwardRef(
         const handleFileChange = (event) => {
             const file = event.target.files[0];
 
-            const supportedFileTypes = ["image/jpg", "image/jpeg", "image/png"];
+            const supportedFileTypes = ["image/jpg", "image/jpeg", "image/png", "image/webp"];
             if (file) {
                 if (supportedFileTypes.includes(file.type)) {
                     setFileError(null);
@@ -31,7 +31,7 @@ const CustomFileInput = forwardRef(
             event.preventDefault();
             const file = event.dataTransfer.files[0];
 
-            const supportedFileTypes = ["image/jpg", "image/jpeg", "image/png"];
+            const supportedFileTypes = ["image/jpg", "image/jpeg", "image/png", "image/webp"];
             if (file) {
                 if (supportedFileTypes.includes(file.type)) {
                     setFileError(null);
@@ -101,7 +101,7 @@ const CustomFileInput = forwardRef(
                         className="hidden"
                         {...register(name)}
                         onChange={handleFileChange}
-                        accept=".jpg,.jpeg,.png"
+                        accept=".jpg,.jpeg,.png,.webp"
                     />
                 </label>
             </div>

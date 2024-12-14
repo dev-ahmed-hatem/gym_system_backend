@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
 from .serializers import *
 from .models import *
 from rest_framework.decorators import api_view, permission_classes, action
@@ -63,6 +64,10 @@ class SaleViewSet(ModelViewSet):
         queryset = super().get_queryset()
         search = self.request.query_params.get('search', None)
         date = self.request.query_params.get('date', None)
+        client_id = self.request.query_params.get('client_id', None)
+
+        if client_id:
+            return queryset.filter(customer__id=client_id).order_by("-created_at", "-id")
 
         if search:
             queryset = queryset.filter(id__icontains=search)
@@ -141,3 +146,41 @@ class OfferViewSet(ModelViewSet):
         if self.action in ['create', 'update', 'partial_update']:
             return OfferWriteSerializer
         return OfferReadSerializer
+
+
+class ClientMakeOrder(APIView):
+    def post(self, request):
+        items = request.data['items']
+        client_id = request.data['client_id']
+
+        # check client before creating order
+        try:
+            client = Client.objects.get(id=client_id)
+            sale = Sale.objects.create(customer=client)
+        except Client.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        order_list = []
+        for item in items:
+            try:
+                product = Product.objects.get(pk=item['product_id'])
+                amount = item['amount']
+                new_item = SaleItem.objects.create(sale=sale, product=product, amount=amount)
+                if product.has_discount() is not None:
+                    new_item.price = product.sell_price - (product.sell_price * product.has_discount() / 100)
+                    new_item.save()
+
+                order_list.append(new_item)
+            except Product.DoesNotExist:
+                pass
+
+        # raise error when products are no more available
+        if len(order_list) == 0:
+            sale.delete()
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+        sale.items.set(order_list)
+        sale.total_price = sum(item.total_price for item in order_list)
+        sale.after_discount = sale.total_price
+        sale.save()
+        return Response(status=status.HTTP_200_OK)

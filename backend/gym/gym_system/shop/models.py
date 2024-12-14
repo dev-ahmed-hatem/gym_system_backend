@@ -1,9 +1,11 @@
 from django.db import models
 from clients.models import Client
+from django.db.models import Q
 from django.utils.timezone import now
 from django.conf import settings
 from financials.models import FinancialItem, Transaction
 from subscriptions.models import SubscriptionPlan
+from datetime import datetime
 
 
 class ProductCategory(models.Model):
@@ -29,6 +31,13 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    def has_discount(self):
+        today = datetime.today().astimezone(settings.CAIRO_TZ)
+        offer = Offer.objects.filter(Q(product=self) & Q(start_date__lte=today) & Q(end_date__gte=today))
+        if offer.exists():
+            return offer.first().percentage
+        return None
 
 
 class Sale(models.Model):
@@ -74,9 +83,12 @@ class SaleItem(models.Model):
     sale = models.ForeignKey(Sale, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     amount = models.PositiveIntegerField(default=1)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     @property
     def total_price(self):
+        if self.price:
+            return self.price * self.amount
         return self.product.sell_price * self.amount
 
     def __str__(self):

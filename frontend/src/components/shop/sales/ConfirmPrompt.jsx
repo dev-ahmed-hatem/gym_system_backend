@@ -83,7 +83,20 @@ const ConfirmPrompt = ({ sale, state, closeDrawer, callBack }) => {
                                 {item.product.name}
                             </td>
                             <td className="h-8 text-center border-[0.5px] border-black">
-                                {Number.parseInt(item.product.sell_price)}
+                                {item.price ? (
+                                    <span>
+                                        <span className="line-through text-red-600 inline-block mx-2 text-sm">
+                                            {Number.parseInt(
+                                                item.product.sell_price
+                                            )}
+                                        </span>
+                                        <span>
+                                            {Number.parseInt(item.price)}
+                                        </span>
+                                    </span>
+                                ) : (
+                                    Number.parseInt(item.product.sell_price)
+                                )}
                             </td>
                             <td className="h-8 text-center border-[0.5px] border-black">
                                 {Number.parseInt(item.amount)}
@@ -152,7 +165,9 @@ const ConfirmPrompt = ({ sale, state, closeDrawer, callBack }) => {
                         <div className="w-full my-3 font-bold text-secondary">
                             <p>لا يوجد مخزون كاف للمنتجات الآتية : </p>
                             {insufficient.map((product, index) => (
-                                <span key={index} className="ms-5 block">{product}</span>
+                                <span key={index} className="ms-5 block">
+                                    {product}
+                                </span>
                             ))}
                         </div>
                     )}
