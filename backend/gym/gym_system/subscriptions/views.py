@@ -120,7 +120,7 @@ class InvitationViewSet(ModelViewSet):
 
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def subscription_invitations(request):
     subscription_id = request.data.get('sub_id', None)
     if subscription_id:
@@ -181,3 +181,24 @@ def invitation_data(request):
         return Response({**invitation_serialized, "end_date": invitation.subscription.end_date}, status.HTTP_200_OK)
     except Invitation.DoesNotExist:
         return Response({"error": "invalid invitation code"}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(["POST"])
+def create_invitation(request):
+    sub_id = request.data.get('sub_id', None)
+    if not sub_id:
+        return Response({"error": "Subscription ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        subscription = Subscription.objects.get(pk=sub_id)
+        invitations = Invitation.objects.filter(subscription=subscription)
+        valid_invitations = sum(1 for invitation in invitations if invitation.is_valid())
+
+        if valid_invitations >= subscription.plan.invitations:
+            return Response({"error": "Maximum number of available invitations"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        Invitation.objects.create(subscription=subscription)
+        return Response(status=status.HTTP_201_CREATED)
+
+    except Subscription.DoesNotExist:
+        return Response({"error": "invalid subscription id"}, status=status.HTTP_404_NOT_FOUND)
