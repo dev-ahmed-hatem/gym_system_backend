@@ -25,6 +25,7 @@ services:
       dockerfile: ./docker/nginx/Dockerfile
     ports:
       - 8080:80  # Proxy port for the application
+      - 443:443
     volumes:
       - static_volume:/usr/share/nginx/html/static
       - media_volume:/usr/share/nginx/html/media
