@@ -8,6 +8,7 @@ from shop.serializers import *
 from django.conf import settings
 from datetime import datetime, timedelta
 from calendar import monthrange
+from clients.serializers import ClientReadSerializer
 
 
 @api_view(['GET'])
