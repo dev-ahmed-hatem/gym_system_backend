@@ -10,7 +10,7 @@ FERNET_KEY = 'RWqdn6hhVjsKBqvuzDo7Z16uhI-oXElWn1W0nfipo6E='
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['backend.kaffo.co']
 
 # Application definition
 
@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'gym_system.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db/db.sqlite3',
     }
 }
 
@@ -112,10 +112,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 
-STATIC_URL = '/static/'
+STATIC_URL = '/progym/static/'
 STATIC_ROOT = join(BASE_DIR, 'static')
 
-MEDIA_URL = '/media/'
+MEDIA_URL = '/progym/media/'
 MEDIA_ROOT = join(BASE_DIR, 'media')
 
 # Default primary key field type
@@ -153,6 +153,8 @@ SIMPLE_JWT = {
 
 # cors headers settings
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = ['https://backend.kaffo.co']
+CSRF_TRUSTED_ORIGINS = ['https://backend.kaffo.co']
 
 # celery
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
