@@ -7,6 +7,7 @@ from .auth_views import CustomAsyncTokenObtainPairView, CustomAsyncTokenRefreshV
 from users.views import get_authenticated_user
 
 urlpatterns = [
+  path('progym/', include([
     path('admin/', admin.site.urls),
     path('api/gym-data/', include('gym_data.urls')),
     path('api/users/', include('users.urls')),
@@ -20,6 +21,7 @@ urlpatterns = [
     path('token/refresh/', CustomAsyncTokenRefreshView.as_view(), name='token_refresh'),
     path('token/verify/', jwt_views.TokenVerifyView.as_view(), name='token_verify'),
     path('auth/', include('authentication.urls'))
+  ]))
 ]
 
 if settings.DEBUG:

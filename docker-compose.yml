@@ -1,42 +1,47 @@
 #version: "3.7"
 
 services:
-  backend:
+  gym_backend:
     build:
       context: .
       dockerfile: ./docker/backend/Dockerfile
     volumes:
       - static_volume:/app/static
       - media_volume:/app/media
-      - db_backups:/app/db.sqlite3  # SQLite database stored here
+      - db_backup_volume:/app/db:rw  # SQLite database stored here
     environment:
       - DJANGO_SETTINGS_MODULE=gym_system.settings
     expose:
       - 8000
+#    ports:
+#      - 9000:8000
     deploy:
       replicas: 3  # Use swarm for replicas or scale manually
     command: gunicorn --workers=3 --bind=0.0.0.0:8000 gym_system.wsgi:application
 
-  nginx:
-    container_name: nginx
+  gym_nginx:
+    container_name: gym_nginx
     build:
       context: .
       dockerfile: ./docker/nginx/Dockerfile
     ports:
-      - 8080:80  # Proxy port for the application
+      - 80:80  # Proxy port for the application
       - 443:443
     volumes:
       - static_volume:/usr/share/nginx/html/static
       - media_volume:/usr/share/nginx/html/media
+      - ./docker/nginx/certbot/conf:/etc/letsencrypt
+      - ./docker/nginx/certbot/www:/var/www/certbot
     depends_on:
-      - backend
+      - gym_backend
+      - certbot
 
-  backup:
+  gym_backup:
     container_name: db_backup
     image: alpine
     volumes:
-      - db_backups:/app/db.sqlite3  # Access shared SQLite database volume
-    entrypoint: sh -c "while true; do sqlite3 /app/db.sqlite3 '.backup /app/db_backups/backup-$(date +%Y%m%d%H%M%S).sqlite3'; sleep 3600; done"
+      - db_backup_volume:/app/db  # Access shared SQLite database volume
+    entrypoint: sh -c "apk add --no-cache sqlite && mkdir /app/db/db_backup/ && touch /app/db/db_backup/backup.sqlite3 && while true; do sqlite3 /app/db/db.sqlite3 '.backup /app/db/db_backup/backup.sqlite3'; sleep 5; done"
 
   certbot:
     container_name: certbot
@@ -44,9 +49,9 @@ services:
     volumes:
       - ./docker/nginx/certbot/conf:/etc/letsencrypt
       - ./docker/nginx/certbot/www:/var/www/certbot
-    entrypoint: sh -c "certonly --webroot --webroot-path=/var/www/certbot --email ahmedhatemezzathelal@gmail.com --agree-tos --no-eff-email -d backend.kaffo.co && while true; do certbot renew; sleep 12h; done"
+    entrypoint: /bin/sh -c 'trap exit TERM; while :; do sleep 6h & wait $!; certbot renew; done;'
 
 volumes:
   static_volume: {}
   media_volume: {}
-  db_backups: {}  # Persistent volume for SQLite database and backups
+  db_backup_volume: {}  # Persistent volume for SQLite database and backups
