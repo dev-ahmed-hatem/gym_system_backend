@@ -1,7 +1,7 @@
 #version: "3.7"
 
 services:
-  backend:
+  gym_backend:
     build:
       context: .
       dockerfile: ./docker/backend/Dockerfile
@@ -13,9 +13,15 @@ services:
       - DJANGO_SETTINGS_MODULE=gym_system.settings
     expose:
       - 8000
+#    ports:
+#      - 8000:8000
     deploy:
       replicas: 3
     command: gunicorn --workers=3 --bind=0.0.0.0:8000 gym_system.wsgi:application
+    networks:
+      shared_network:
+#        aliases:
+#          - gym_backend_alias
 
   # unhash in dependant run
   # gym_nginx:
@@ -40,7 +46,7 @@ services:
     image: alpine
     volumes:
       - db_backup_volume:/app/db  # Access shared SQLite database volume
-    entrypoint: sh -c "apk add --no-cache sqlite && mkdir /app/db/db_backup/ && touch /app/db/db_backup/backup.sqlite3 && while true; do sqlite3 /app/db/db.sqlite3 '.backup /app/db/db_backup/backup.sqlite3'; sleep 3600; done"
+    entrypoint: sh -c "apk add --no-cache sqlite && mkdir -p /app/db/db_backup/ && touch /app/db/db_backup/backup.sqlite3 && while true; do sqlite3 /app/db/db.sqlite3 '.backup /app/db/db_backup/backup.sqlite3'; sleep 3600; done"
 
   # unhash in dependant run
   # certbot:
@@ -55,3 +61,8 @@ volumes:
   static_volume: {}
   media_volume: {}
   db_backup_volume: {}  # Persistent volume for SQLite database and backups
+
+networks:
+  shared_network:
+    external: true
+
