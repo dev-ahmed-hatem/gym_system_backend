@@ -172,3 +172,7 @@ EMAIL_HOST_PASSWORD = 'kfdq ltvk dxyy etup'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
+
+# procy ssl headers
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
