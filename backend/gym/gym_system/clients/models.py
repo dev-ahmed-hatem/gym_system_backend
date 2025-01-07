@@ -182,3 +182,7 @@ class New(models.Model):
 
     def __str__(self):
         return self.title
+
+    def delete(self, using=None, keep_parents=False):
+        if self.picture:
+            self.picture.delete(save=False)

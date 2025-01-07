@@ -39,6 +39,10 @@ class Product(models.Model):
             return offer.first().percentage
         return None
 
+    def delete(self, using=None, keep_parents=False):
+        if self.image:
+            self.image.delete(save=False)
+
 
 class Sale(models.Model):
     STATE_CHOICES = (
