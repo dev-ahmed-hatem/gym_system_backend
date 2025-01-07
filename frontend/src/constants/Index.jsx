@@ -13,6 +13,7 @@ import {
     FaUserTie,
     FaTools,
     FaRegStopCircle,
+    FaMobile,
 } from "react-icons/fa";
 import {
     MdSupervisorAccount,
@@ -73,6 +74,7 @@ import Invitations from "../components/barcode/invitations/Invitations";
 import { FcInvite } from "react-icons/fc";
 import News from "../components/settings/news/News";
 import RequestedPhotos from "../components/clients/RequestedPhotos";
+import MobileApp from "../components/clients/MobileApp";
 
 export const routes = [
     {
@@ -263,6 +265,15 @@ export const routes = [
                 permissions: "unadjustable",
                 element: <RequestedPhotos />,
             },
+            // {
+            //     id: 6,
+            //     title: "تطبيق الموبايل",
+            //     name: "mobile-app",
+            //     url: "/clients/mobile-app",
+            //     icon: <FaMobile />,
+            //     permissions: "unadjustable",
+            //     element: <MobileApp />,
+            // },
         ],
     },
     {
