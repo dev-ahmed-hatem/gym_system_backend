@@ -84,6 +84,7 @@ const SubscriptionAddForm = ({
 }) => {
     //////////////////////////////// permissions ////////////////////////////////
     const { set_page_permissions } = usePermission();
+    const user = JSON.parse(localStorage.getItem("auth_user"));
     const permissions = set_page_permissions("subscriptions", "subscription");
 
     const [loading, setLoading] = useState(true);
@@ -170,7 +171,7 @@ const SubscriptionAddForm = ({
                 endpoint = endpoints.employee_list;
                 break;
             case "plans":
-                endpoint = `${endpoints.subscription_plan_list}sub_type=${subType}&`;
+                endpoint = `${endpoints.subscription_plan_list}sub_type=${subType}&active=true&`;
                 break;
         }
         const options = [];
@@ -637,57 +638,60 @@ const SubscriptionAddForm = ({
                                     )}
                                 />
                             </div>
-                            <div className="w-full">
-                                <div>
-                                    <label>
-                                        <Checkbox
-                                            color={"yellow"}
-                                            type="checkbox"
-                                            className="me-4"
-                                            checked={discount}
-                                            onChange={() =>
-                                                setDiscount(!discount)
-                                            }
-                                        />
-                                        الخصم
-                                    </label>
-                                </div>
-                                {discount && (
-                                    <>
-                                        <div className="mb-6">
-                                            <label>
-                                                نسبة الخصم :
-                                                <TextInput
-                                                    id="discount"
-                                                    type="number"
-                                                    className="inline-block mx-3"
-                                                    rightIcon={FaPercent}
-                                                    placeholder="الخصم"
-                                                    color={"primary"}
-                                                    value={discountPercent}
-                                                    onChange={(e) =>
-                                                        setDiscountPercent(
-                                                            parseFloat(
-                                                                e.target.value
-                                                            ) || 0
-                                                        )
-                                                    }
-                                                    min={0}
-                                                    max={100}
-                                                />
-                                            </label>
-                                        </div>
+                            {user.is_superuser === true && (
+                                <div className="w-full">
+                                    <div>
+                                        <label>
+                                            <Checkbox
+                                                color={"yellow"}
+                                                type="checkbox"
+                                                className="me-4"
+                                                checked={discount}
+                                                onChange={() =>
+                                                    setDiscount(!discount)
+                                                }
+                                            />
+                                            الخصم
+                                        </label>
+                                    </div>
+                                    {discount && (
+                                        <>
+                                            <div className="mb-6">
+                                                <label>
+                                                    نسبة الخصم :
+                                                    <TextInput
+                                                        id="discount"
+                                                        type="number"
+                                                        className="inline-block mx-3"
+                                                        rightIcon={FaPercent}
+                                                        placeholder="الخصم"
+                                                        color={"primary"}
+                                                        value={discountPercent}
+                                                        onChange={(e) =>
+                                                            setDiscountPercent(
+                                                                parseFloat(
+                                                                    e.target
+                                                                        .value
+                                                                ) || 0
+                                                            )
+                                                        }
+                                                        min={0}
+                                                        max={100}
+                                                    />
+                                                </label>
+                                            </div>
 
-                                        <div>
-                                            <label>
-                                                الصافى :{" "}
-                                                {discountedPrice.toFixed(2)}{" "}
-                                                جنيه
-                                            </label>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
+                                            <div>
+                                                <label>
+                                                    الصافى :{" "}
+                                                    {discountedPrice.toFixed(2)}{" "}
+                                                    جنيه
+                                                </label>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            )}
 
                             {/* totals */}
                             <div className="w-full h-px my-3 bg-gray-200 border-0"></div>

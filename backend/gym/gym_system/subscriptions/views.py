@@ -21,10 +21,13 @@ class SubscriptionPlanViewSet(ModelViewSet):
         queryset = super().get_queryset()
         search = self.request.query_params.get('search', None)
         sub_type = self.request.query_params.get('sub_type', None)
+        active_ = self.request.query_params.get('active', None)
         if sub_type:
             queryset = queryset.filter(subscription_type=sub_type)
         if search:
             queryset = queryset.filter(name__icontains=search)
+        if active_ == "true":
+            queryset = queryset.filter(active=True)
 
         return queryset
 

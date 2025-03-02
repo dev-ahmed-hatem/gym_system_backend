@@ -24,6 +24,7 @@ class SubscriptionPlan(models.Model):
     validity = models.IntegerField(default=30, null=True)
     is_duration = models.BooleanField(default=True)
     classes_no = models.IntegerField(default=8, blank=True, null=True)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name

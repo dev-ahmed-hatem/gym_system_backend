@@ -227,12 +227,12 @@ const Subscriptions = () => {
                                                                 )}
                                                             </Table.Cell>
                                                             <Table.Cell>
-                                                                {subscription.for_students ? (
-                                                                    <span>
+                                                                {subscription.active ? (
+                                                                    <span className="font-bold text-green-500">
                                                                         نعم
                                                                     </span>
                                                                 ) : (
-                                                                    <span>
+                                                                    <span className="font-bold text-yellow-500">
                                                                         لا
                                                                     </span>
                                                                 )}

@@ -10,7 +10,7 @@ FERNET_KEY = 'RWqdn6hhVjsKBqvuzDo7Z16uhI-oXElWn1W0nfipo6E='
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['backend.kaffo.co']
+ALLOWED_HOSTS = ['backend.kaffo.co', "*"]
 
 # Application definition
 

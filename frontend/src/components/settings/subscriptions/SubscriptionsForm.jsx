@@ -39,6 +39,9 @@ const SubscriptionPlanForm = ({ postURL, defaultValues, callBack }) => {
     const [isFreezable, setIsFreezable] = useState(
         formFunction === "edit" ? defaultValues?.freezable : true
     );
+    const [active, setActive] = useState(
+        formFunction === "edit" ? defaultValues?.active : true
+    );
 
     const onSubmit = (data) => {
         if (isFreezable && data.freeze_no == "") {
@@ -57,6 +60,7 @@ const SubscriptionPlanForm = ({ postURL, defaultValues, callBack }) => {
             freezable: isFreezable,
             freeze_no: Number(data.freeze_no),
             subscription_type: data.subscription_type,
+            active: active,
         };
 
         defaultFormSubmission({
@@ -325,6 +329,19 @@ const SubscriptionPlanForm = ({ postURL, defaultValues, callBack }) => {
                         {errors.description.message}
                     </p>
                 )}
+            </div>
+            <div className="w-full flex items-center lg:max-w-md lg:w-[30%] min-h-[70px] lg:pt-5">
+                <div className="mb-2 me-10 hidden">
+                    <Label htmlFor="active" value="اشتراك طلاب :" />
+                </div>
+                <ToggleSwitch
+                    id="active"
+                    checked={active}
+                    onChange={setActive}
+                    label="نشط"
+                    sizing={"lg"}
+                    color={"primary"}
+                />
             </div>
         </FormGroup>
     );
