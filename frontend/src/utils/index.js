@@ -25,7 +25,7 @@ export const transformValues = (defaultValue) => {
 export const calculateAge = ({ birth, setAge }) => {
     const date = new Date(birth);
     const today = new Date();
-    let employeeAge = today.getFullYear() - date.getFullYear();
+    let age = today.getFullYear() - date.getFullYear();
 
     // Check if the birthday has occurred this year
     const monthDifference = today.getMonth() - date.getMonth();
@@ -33,8 +33,9 @@ export const calculateAge = ({ birth, setAge }) => {
 
     // Adjust age if the birthday has not occurred yet this year
     if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
-        employeeAge--;
+        age--;
     }
 
-    setAge(employeeAge);
+    if (setAge) setAge(age)
+    else return age;
 };

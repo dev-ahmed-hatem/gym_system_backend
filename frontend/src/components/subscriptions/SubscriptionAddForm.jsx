@@ -21,6 +21,7 @@ import ConfirmDelete from "../groups/ConfirmDelete";
 import { useDrawer } from "../../providers/DrawerProvider";
 import { MdDelete } from "react-icons/md";
 import { usePermission } from "../../providers/PermissionProvider";
+import { calculateAge } from "../../utils";
 
 const transformValues = (defaultValues) => {
     if (defaultValues) {
@@ -214,6 +215,7 @@ const SubscriptionAddForm = ({
                     }
                     if (key == "clients") {
                         option.is_blocked = instance.is_blocked;
+                        option.birth_date = instance.birth_date;
                     }
                     options.push({
                         value: instance.id,
@@ -736,6 +738,22 @@ const SubscriptionAddForm = ({
                                     </span>
                                     <span className="text-primary font-bold">
                                         {currentClient?.label || "لا يوجد"}
+                                    </span>
+                                </p>
+                                <p className="mt-2 ms-10">
+                                    <span className="inline-block text-black font-bold pe-1 min-w-40">
+                                        تاريخ الميلاد :
+                                    </span>
+                                    <span className="text-primary font-bold">
+                                        {currentClient?.birth_date || "لا يوجد"}
+                                    </span>
+                                </p>
+                                <p className="mt-2 ms-10">
+                                    <span className="inline-block text-black font-bold pe-1 min-w-40">
+                                        العمر :
+                                    </span>
+                                    <span className="text-primary font-bold">
+                                        {currentClient?.birth_date? calculateAge({birth: currentClient?.birth_date}) : "لا يوجد"}
                                     </span>
                                 </p>
                                 <p className="mt-2 ms-10">
