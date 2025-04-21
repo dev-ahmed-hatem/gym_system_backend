@@ -167,8 +167,8 @@ CELERY_TIMEZONE = 'Africa/Cairo'
 # email config
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'ahmedhatemezzathelal221100@gmail.com'
-EMAIL_HOST_PASSWORD = 'kkys zjnd wamm blku'
+EMAIL_HOST_USER = 'shebin.progym@gmail.com'
+EMAIL_HOST_PASSWORD = 'rlix xlcu ozny pbiw'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
