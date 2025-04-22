@@ -158,11 +158,11 @@ const Moderators = () => {
                                                         className="bg-white font-medium text-gray-900"
                                                     >
                                                         <Table.Cell>
-                                                            {moderator.employee
-                                                                .name ? (
+                                                            {moderator.user
+                                                                ?.name ? (
                                                                 moderator
-                                                                    .employee
-                                                                    .name
+                                                                    ?.user
+                                                                    ?.name
                                                             ) : (
                                                                 <span className="text-red-600">
                                                                     غير مسجل
@@ -191,7 +191,7 @@ const Moderators = () => {
                                                         </Table.Cell>
                                                         <Table.Cell>
                                                             {moderator.employee
-                                                                .national_id ? (
+                                                                ?.national_id ? (
                                                                 moderator
                                                                     .employee
                                                                     .national_id
@@ -203,7 +203,7 @@ const Moderators = () => {
                                                         </Table.Cell>
                                                         <Table.Cell>
                                                             {moderator.employee
-                                                                .phone ? (
+                                                                ?.phone ? (
                                                                 moderator
                                                                     .employee
                                                                     .phone
