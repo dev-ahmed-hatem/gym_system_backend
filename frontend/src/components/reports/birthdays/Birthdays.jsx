@@ -2,20 +2,20 @@ import React, { useState, useEffect } from "react";
 import endpoints from "../../../config/config";
 import Loading from "../../groups/Loading";
 import BirthdayCard from "./BirthdayCard";
-import { usePermission } from "../../../providers/PermissionProvider";
+// import { usePermission } from "../../../providers/PermissionProvider";
 import { fetch_list_data } from "../../../config/actions";
 
 const Birthdays = () => {
     //////////////////////////////// permissions ////////////////////////////////
-    const { set_page_permissions } = usePermission();
-    const permissions = set_page_permissions("reports", "report");
-    if (!permissions.view) {
-        return (
-            <p className="text-lg text-center text-red-600 py-4">
-                ليس لديك صلاحيات هنا
-            </p>
-        );
-    }
+    // const { set_page_permissions } = usePermission();
+    // const permissions = set_page_permissions("reports", "report");
+    // if (!permissions.view) {
+    //     return (
+    //         <p className="text-lg text-center text-red-600 py-4">
+    //             ليس لديك صلاحيات هنا
+    //         </p>
+    //     );
+    // }
 
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -33,9 +33,9 @@ const Birthdays = () => {
     };
 
     useEffect(() => {
-        if (permissions.view) {
+        // if (permissions.view) {
             get_current_birthdays();
-        }
+        // }
     }, []);
 
     return (
