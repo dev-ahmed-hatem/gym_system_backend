@@ -10,7 +10,7 @@ FERNET_KEY = 'RWqdn6hhVjsKBqvuzDo7Z16uhI-oXElWn1W0nfipo6E='
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['backend.kaffo.co', "*"]
+ALLOWED_HOSTS = ['backend.pro-gym.in', "progym.pythonanywhere.com"]
 
 # Application definition
 
@@ -173,6 +173,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
-# procy ssl headers
+# proxy ssl headers
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True

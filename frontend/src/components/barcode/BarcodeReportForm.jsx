@@ -2,11 +2,9 @@ import React, { useState, useEffect } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import { Label, Button, Datepicker, TextInput } from "flowbite-react";
 import { useForm, Controller } from "react-hook-form";
-import endpoints from "../../config/config";
-import { fetch_list_data } from "../../config/actions";
 import { HiUser } from "react-icons/hi";
 
-const BarcodeReportForm = ({ setLoading, setFetchError, setData, client }) => {
+const BarcodeReportForm = ({ setFormData, client, action }) => {
     const [post, setPost] = useState(false);
     const today = new Date().toLocaleDateString("en-CA");
     const {
@@ -31,6 +29,7 @@ const BarcodeReportForm = ({ setLoading, setFetchError, setData, client }) => {
         } else {
             clearErrors();
         }
+        setFormData({from: from, to: to});
     }, [from, to]);
 
     const onSubmit = (data) => {
@@ -41,23 +40,9 @@ const BarcodeReportForm = ({ setLoading, setFetchError, setData, client }) => {
             });
             return;
         }
-
-        const url = `${endpoints.attendance}from=${data.from}&to=${data.to}${
-            data.client ? `&client=${data.client}` : ""
-        }&no_pagination=true`;
-
-        setPost(true);
-        setLoading(true);
-
-        fetch_list_data({
-            searchURL: url,
-            setData: setData,
-            setFetchError: setFetchError,
-            setLoading: () => {
-                setPost(false);
-                setLoading(false);
-            },
-        });
+        
+        setFormData(data);
+        action({data: data, setPost: setPost});
     };
 
     return (

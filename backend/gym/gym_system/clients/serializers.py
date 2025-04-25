@@ -129,15 +129,28 @@ class AttendanceReadSerializer(serializers.ModelSerializer):
 
 
 class AttendanceWriteSerializer(serializers.ModelSerializer):
+    unique_number = serializers.CharField(write_only=True, required=False)
+
     class Meta:
         model = Attendance
-        # fields = '__all__'
         exclude = ["client"]
+
+    def validate_unique_number(self, data):
+        invited = Attendance.objects.filter(unique_number=data).first()
+        if invited:
+            raise serializers.ValidationError(
+                {"unique_number": "attendance with this unique number already exists.", "guest": invited.guest})
+        else:
+            return data
 
     def create(self, validated_data):
         guest_name = self.initial_data.get("guest_name")
         subscription = validated_data.get('subscription', None)
+        unique_number = validated_data.get('unique_number', None)
+
         if guest_name:
+            if not unique_number:
+                raise serializers.ValidationError({"unique_number": "unique_number is required"})
             attendance = Attendance.objects.create(**validated_data, guest=guest_name)
             inv_id = self.initial_data.get("invitation")
             if inv_id:
@@ -147,8 +160,8 @@ class AttendanceWriteSerializer(serializers.ModelSerializer):
                 subscription.invitations_used += 1
                 invitation.save()
                 attendance.save()
+
         else:
-            # validated_data.pop('client', None)
             client_id = self.initial_data.get('client')
             client = Client.objects.get(id=client_id)
             attendance = Attendance.objects.create(**validated_data, client=client)

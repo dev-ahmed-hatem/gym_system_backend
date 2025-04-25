@@ -239,6 +239,9 @@ class ClientLogin(APIView):
     def post(self, request):
         id = request.data.get('id')
         password = request.data.get('password')
+        print(request.data)
+        print(id)
+        print(password)
 
         if not id or not password:
             return Response({"error": "ID and Password must be provided"}, status=status.HTTP_400_BAD_REQUEST)

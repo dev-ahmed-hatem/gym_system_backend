@@ -10,30 +10,32 @@ from datetime import datetime, timedelta
 from calendar import monthrange
 from clients.serializers import ClientReadSerializer
 
+cairo_now = datetime.now().astimezone(settings.CAIRO_TZ)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def statistics(request):
     clients = Client.objects.all()
     clients_count = clients.count()
-    recently_clients = clients.filter(created_at__month=datetime.now().astimezone(settings.CAIRO_TZ).month).count()
+    recently_clients = clients.filter(created_at__month=cairo_now.month).count()
     active_subscriptions = Subscription.get_active_subscriptions().count()
     recently_expired_subscriptions = Subscription.objects.filter(
         end_date=(datetime.now() - timedelta(days=1)).astimezone(settings.CAIRO_TZ)).count()
-    today_barcode = Attendance.objects.filter(timestamp__day=datetime.now().astimezone(settings.CAIRO_TZ).day).count()
+    today_barcode = Attendance.objects.filter(timestamp__date=cairo_now.date()).count()
     sales = Sale.objects.all()
-    today_sales = sales.filter(created_at__day=datetime.now().astimezone(settings.CAIRO_TZ).day).count()
+    today_sales = sales.filter(created_at__day=cairo_now.day).count()
     pending_sales = sales.filter(state="pending").count()
     transactions = Transaction.objects.all()
-    today_incomes = transactions.filter(date=datetime.now().astimezone(settings.CAIRO_TZ).date(),
+    today_incomes = transactions.filter(date=cairo_now.date(),
                                         category__financial_type="incomes")
-    month_incomes = transactions.filter(date__month=datetime.now().astimezone(settings.CAIRO_TZ).month,
-                                        date__year=datetime.now().astimezone(settings.CAIRO_TZ).year,
+    month_incomes = transactions.filter(date__month=cairo_now.month,
+                                        date__year=cairo_now.year,
                                         category__financial_type="incomes")
-    today_expenses = transactions.filter(date=datetime.now().astimezone(settings.CAIRO_TZ).date(),
+    today_expenses = transactions.filter(date=cairo_now.date(),
                                          category__financial_type="expenses")
-    month_expenses = transactions.filter(date__month=datetime.now().astimezone(settings.CAIRO_TZ).month,
-                                         date__year=datetime.now().astimezone(settings.CAIRO_TZ).year,
+    month_expenses = transactions.filter(date__month=cairo_now.month,
+                                         date__year=cairo_now.year,
                                          category__financial_type="expenses")
     response_data = {
         'clients_count': clients_count,
@@ -174,7 +176,7 @@ def duration_reports(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def birthdays(request):
-    today = datetime.now().astimezone(settings.CAIRO_TZ)
+    today = cairo_now
     clients = Client.objects.filter(birth_date__day=today.day, birth_date__month=today.month)
     clients_serialized = ClientReadSerializer(clients, context={'request': request}, many=True).data
     return Response(clients_serialized, status=status.HTTP_200_OK)

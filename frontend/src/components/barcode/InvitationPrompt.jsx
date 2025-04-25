@@ -16,6 +16,7 @@ const InvitationPrompt = ({ invitation, subscription, callBack }) => {
         handleSubmit,
         formState: { errors },
         trigger,
+        setError
     } = useForm();
 
     const submit = (data) => {
@@ -23,6 +24,7 @@ const InvitationPrompt = ({ invitation, subscription, callBack }) => {
         data = {
             invitation: invitation.id,
             guest_name: data.name,
+            unique_number: data.unique_number,
             subscription: subscription.id,
         };
 
@@ -30,14 +32,22 @@ const InvitationPrompt = ({ invitation, subscription, callBack }) => {
             .post(endpoints.attendance, data)
             .then((response) => {
                 showToast("تم تسجيل الحضور");
+                if (callBack) callBack();
             })
             .catch((error) => {
                 console.log(error);
-                showToast("خطأ فى تنفيذ العملية", true);
+                if (error.response?.status == 400 && error.response?.data?.unique_number) {
+                    const unique_number = error.response.data.unique_number;
+                        setError("unique_number", {
+                            type: "server",
+                            message: `لقد تمت دعوة العميل ${unique_number.guest} من قبل`,
+                        });
+                } else{
+                    showToast("خطأ فى تنفيذ العملية", true);
+                }
             })
             .finally(() => {
                 setPost(false);
-                if (callBack) callBack();
             });
     };
 
@@ -77,27 +87,53 @@ const InvitationPrompt = ({ invitation, subscription, callBack }) => {
             ) : (
                 <>
                     <form onSubmit={handleSubmit(submit)}>
-                        <div className="w-full lg:max-w-md lg:w-[30%]">
-                            <div className="mb-2 block">
-                                <Label htmlFor="name" value="اسم المدعو :" />
-                            </div>
-                            <TextInput
-                                id="name"
-                                type="text"
-                                rightIcon={HiUser}
-                                placeholder="اسم المدعو"
-                                color={errors.name ? "failure" : "primary"}
-                                {...register("name", {
-                                    required: "هذا الحقل مطلوب",
-                                })}
-                                onBlur={() => trigger("name")}
-                            />
+                        <div className="w-full flex gap-8 flex-wrap my-4">
 
-                            {errors.name && (
-                                <p className="error-message">
-                                    {errors.name.message}
-                                </p>
-                            )}
+                            <div className="w-full lg:max-w-md lg:w-[30%]">
+                                <div className="mb-2 block">
+                                    <Label htmlFor="name" value="اسم المدعو :" />
+                                </div>
+                                <TextInput
+                                    id="name"
+                                    type="text"
+                                    rightIcon={HiUser}
+                                    placeholder="اسم المدعو"
+                                    color={errors.name ? "failure" : "primary"}
+                                    {...register("name", {
+                                        required: "هذا الحقل مطلوب",
+                                    })}
+                                    onBlur={() => trigger("name")}
+                                    />
+
+                                {errors.name && (
+                                    <p className="error-message">
+                                        {errors.name.message}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="w-full lg:max-w-md lg:w-[30%]">
+                                <div className="mb-2 block">
+                                    <Label htmlFor="unique_number" value="رقم الموبايل :" />
+                                </div>
+                                <TextInput
+                                    id="unique_number"
+                                    type="text"
+                                    rightIcon={HiUser}
+                                    placeholder="رقم الموبايل"
+                                    color={errors.unique_number ? "failure" : "primary"}
+                                    {...register("unique_number", {
+                                        required: "هذا الحقل مطلوب",
+                                    })}
+                                    onBlur={() => trigger("unique_number")}
+                                    />
+
+                                {errors.unique_number && (
+                                    <p className="error-message">
+                                        {errors.unique_number.message}
+                                    </p>
+                                )}
+                            </div>
                         </div>
                         <div className="flex flex-wrap max-h-12 min-w-full justify-center mt-3">
                             <Button

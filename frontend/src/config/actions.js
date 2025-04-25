@@ -31,7 +31,6 @@ export const defaultFormSubmission = ({
             if (callBack) callBack();
         })
         .catch((error) => {
-            console.log(error);
             if (error.response?.status == 400 && error.response?.data) {
                 const serverErrors = error.response.data;
                 for (let field in serverErrors) {

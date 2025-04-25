@@ -195,8 +195,9 @@ def create_invitation(request):
         subscription = Subscription.objects.get(pk=sub_id)
         invitations = Invitation.objects.filter(subscription=subscription)
         valid_invitations = sum(1 for invitation in invitations if invitation.is_valid())
+        used_invitations = sum(1 for invitation in invitations if invitation.is_used)
 
-        if valid_invitations >= subscription.plan.invitations:
+        if valid_invitations >= subscription.plan.invitations or used_invitations >= subscription.plan.invitations:
             return Response({"error": "Maximum number of available invitations"},
                             status=status.HTTP_400_BAD_REQUEST)
 

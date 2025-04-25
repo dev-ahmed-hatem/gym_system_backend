@@ -18,28 +18,30 @@ services:
     deploy:
       replicas: 3
     command: gunicorn --workers=3 --bind=0.0.0.0:8000 gym_system.wsgi:application
-    networks:
+    networks:  # nginx and backend should be on the same network
       shared_network:
 #        aliases:
 #          - gym_backend_alias
 
   # unhash in dependant run
-  # gym_nginx:
-  #   container_name: gym_nginx
-  #   build:
-  #     context: .
-  #     dockerfile: ./docker/nginx/Dockerfile
-  #   ports:
-  #     - 80:80  # Proxy port for the application
-  #     - 443:443
-  #   volumes:
-  #     - static_volume:/usr/share/nginx/html/static
-  #     - media_volume:/usr/share/nginx/html/media
-  #     - ./docker/nginx/certbot/conf:/etc/letsencrypt
-  #     - ./docker/nginx/certbot/www:/var/www/certbot
-  #   depends_on:
-  #     - gym_backend
-  #     - certbot
+  gym_nginx:
+    container_name: gym_nginx
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+    ports:
+      - 80:80  # Proxy port for the application
+      - 443:443
+    volumes:
+      - static_volume:/usr/share/nginx/html/static
+      - media_volume:/usr/share/nginx/html/media
+      - ./docker/nginx/certbot/conf:/etc/letsencrypt
+      - ./docker/nginx/certbot/www:/var/www/certbot
+    depends_on:
+      - gym_backend
+      - certbot
+    networks:
+      shared_network:
 
   gym_backup:
     container_name: db_backup
@@ -49,13 +51,13 @@ services:
     entrypoint: sh -c "apk add --no-cache sqlite && mkdir -p /app/db/db_backup/ && touch /app/db/db_backup/backup.sqlite3 && while true; do sqlite3 /app/db/db.sqlite3 '.backup /app/db/db_backup/backup.sqlite3'; sleep 3600; done"
 
   # unhash in dependant run
-  # certbot:
-  #   container_name: certbot
-  #   image: certbot/certbot
-  #   volumes:
-  #     - ./docker/nginx/certbot/conf:/etc/letsencrypt
-  #     - ./docker/nginx/certbot/www:/var/www/certbot
-  #   entrypoint: /bin/sh -c 'trap exit TERM; while :; do sleep 6h & wait $!; certbot renew; done;'
+  certbot:
+    container_name: certbot
+    image: certbot/certbot
+    volumes:
+      - ./docker/nginx/certbot/conf:/etc/letsencrypt
+      - ./docker/nginx/certbot/www:/var/www/certbot
+    entrypoint: /bin/sh -c 'trap exit TERM; while :; do sleep 6h & wait $!; certbot renew; done;'
 
 volumes:
   static_volume: {}
@@ -65,4 +67,3 @@ volumes:
 networks:
   shared_network:
     external: true
-

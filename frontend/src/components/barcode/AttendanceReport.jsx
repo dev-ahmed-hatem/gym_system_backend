@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Table } from "flowbite-react";
 import Loading from "../groups/Loading";
 import ViewGroup from "../groups/ViewGroup";
@@ -8,6 +8,10 @@ import ErrorGroup from "../groups/ErrorGroup";
 import { MdDelete } from "react-icons/md";
 import ConfirmDelete from "../groups/ConfirmDelete";
 import { useDrawer } from "../../providers/DrawerProvider";
+import TablePagination from "../groups/TablePagination";
+import TableGroup from "../groups/TableGroup";
+import endpoints from "../../config/config";
+import { fetch_list_data } from "../../config/actions";
 
 const BarcodeReport = ({ client }) => {
     //////////////////////////////// permissions ////////////////////////////////
@@ -21,16 +25,53 @@ const BarcodeReport = ({ client }) => {
     const [loading, setLoading] = useState(false);
     const [fetchError, setFetchError] = useState(null);
     const [data, setData] = useState(null);
+    const [searchParam, setSearchParam] = useState(null);
+    const [pageNumber, setPageNumber] = useState(1);
+
     const { showDrawer, closeDrawer } = useDrawer();
+
+    const [formData, setFormData] = useState(null);
+
+    const get_attendance_report = ({data=null, setPost=null}) => {        
+        if(formData === null) return;
+
+        const from = data != null? data.from : formData.from;
+        const to = data != null? data.to : formData.to;
+        const clientId = data != null? data.client : formData.client;
+        
+        const url = `${endpoints.attendance}from=${from}&to=${to}${
+            client ? `&client=${clientId}` : ""
+        }${searchParam ? `&search=${searchParam}` : ""
+        }${pageNumber ? `&page=${pageNumber}` : ""}
+        `;
+        
+        if (setPost) setPost(true);
+        setLoading(true);
+
+        fetch_list_data({
+            searchURL: url,
+            setData: setData,
+            setFetchError: setFetchError,
+            setLoading: () => {
+                if (setPost) setPost(false);
+                setLoading(false);
+            },
+        });
+    }
+
+    useEffect(() => {
+        if (permissions.view) {
+            get_attendance_report({});
+        }
+    }, [searchParam, pageNumber]);
 
     return (
         <>
             {/* search form */}
             <BarcodeReportForm
-                setLoading={setLoading}
-                setFetchError={setFetchError}
-                setData={setData}
+                setFormData={setFormData}
                 client={client}
+                action={get_attendance_report}
             />
 
             {/* table data */}
@@ -44,9 +85,14 @@ const BarcodeReport = ({ client }) => {
                         </p>
                     ) : (
                         <>
-                            <div className="table-wrapper w-full overflow-x-auto">
-                                <Table striped className="font-bold text-right">
-                                    {data.length == 0 ? (
+                            <TableGroup
+                                onChange={(event) => {
+                                    setPageNumber(null);
+                                    setSearchParam(event.target.value);
+                                }}
+                                searchField={false}
+                            >
+                                    {data.count == 0 ? (
                                         <Table.Body>
                                             <Table.Row className="text-lg text-center text-gray-800 py-3 font-bold bg-red-500">
                                                 <Table.Cell>
@@ -79,7 +125,7 @@ const BarcodeReport = ({ client }) => {
                                                 )}
                                             </Table.Head>
                                             <Table.Body className="text-center">
-                                                {data.map((attendance) => {
+                                                {data.results.map((attendance) => {
                                                     return (
                                                         <Table.Row
                                                             key={attendance.id}
@@ -181,12 +227,21 @@ const BarcodeReport = ({ client }) => {
                                             </Table.Body>
                                         </>
                                     )}
-                                </Table>
-                            </div>
+                            </TableGroup>
+
+                            {data.total_pages > 1 && (
+                                <TablePagination
+                                    totalPages={data.total_pages}
+                                    currentPage={data.current_page}
+                                    onPageChange={(page) => {
+                                        setPageNumber(page);
+                                    }}
+                                />
+                            )}
 
                             <div className="flex justify-center text-lg">
-                                العدد : {data?.length}{" "}
-                                {data?.length > 10 ? "تسجيل" : "تسجيلات"}
+                                العدد : {data?.count}{" "}
+                                {data?.count > 10 ? "تسجيل" : "تسجيلات"}
                             </div>
                         </>
                     )}
