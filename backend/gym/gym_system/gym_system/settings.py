@@ -10,7 +10,7 @@ FERNET_KEY = 'RWqdn6hhVjsKBqvuzDo7Z16uhI-oXElWn1W0nfipo6E='
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['backend.pro-gym.in', "progym.pythonanywhere.com"]
+ALLOWED_HOSTS = ['backend.pro-gym.in', "dashboard.pro-gym.in", "pro-gym.in", "progym.pythonanywhere.com", ]
 
 # Application definition
 
