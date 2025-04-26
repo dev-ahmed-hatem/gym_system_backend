@@ -87,3 +87,6 @@ Thumbs.db
 # celery files
 celerybeat*
 *.rdb
+
+# certbot
+docker/nginx/certbot/
