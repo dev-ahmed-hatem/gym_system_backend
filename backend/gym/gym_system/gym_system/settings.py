@@ -153,7 +153,7 @@ SIMPLE_JWT = {
 
 # cors headers settings
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = ['https://backend.kaffo.co']
+CORS_ALLOWED_ORIGINS = ["https://kaffo-gym.vercel.app", ]
 CSRF_TRUSTED_ORIGINS = ['https://backend.kaffo.co']
 
 # celery
