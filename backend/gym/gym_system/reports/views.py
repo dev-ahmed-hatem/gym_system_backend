@@ -10,12 +10,11 @@ from datetime import datetime, timedelta
 from calendar import monthrange
 from clients.serializers import ClientReadSerializer
 
-cairo_now = datetime.now().astimezone(settings.CAIRO_TZ)
-
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def statistics(request):
+    cairo_now = datetime.now().astimezone(settings.CAIRO_TZ)
     clients = Client.objects.all()
     clients_count = clients.count()
     recently_clients = clients.filter(created_at__month=cairo_now.month).count()
@@ -176,7 +175,7 @@ def duration_reports(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def birthdays(request):
-    today = cairo_now
+    today = datetime.now().astimezone(settings.CAIRO_TZ)
     clients = Client.objects.filter(birth_date__day=today.day, birth_date__month=today.month)
     clients_serialized = ClientReadSerializer(clients, context={'request': request}, many=True).data
     return Response(clients_serialized, status=status.HTTP_200_OK)
