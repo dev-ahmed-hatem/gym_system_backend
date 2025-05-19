@@ -13,15 +13,13 @@ services:
       - DJANGO_SETTINGS_MODULE=gym_system.settings
     expose:
       - 8000
-#    ports:
-#      - 8000:8000
     deploy:
       replicas: 3
     command: gunicorn --workers=3 --bind=0.0.0.0:8000 gym_system.wsgi:application
     networks:  # nginx and backend should be on the same network
       shared_network:
-#        aliases:
-#          - gym_backend_alias
+    #     aliases:
+    #       - gym_backend_alias
 
   # unhash in dependant run
   gym_nginx:

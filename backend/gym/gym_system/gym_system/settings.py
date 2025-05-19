@@ -10,7 +10,7 @@ FERNET_KEY = 'RWqdn6hhVjsKBqvuzDo7Z16uhI-oXElWn1W0nfipo6E='
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['backend.pro-gym.in', "dashboard.pro-gym.in", "pro-gym.in", "progym.pythonanywhere.com", "*"]
+ALLOWED_HOSTS = ["backend.progym-shebin.com", "progym.pythonanywhere.com", "46.202.134.222"]
 
 # Application definition
 
@@ -153,7 +153,7 @@ SIMPLE_JWT = {
 
 # cors headers settings
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = ["https://kaffo-gym.vercel.app", ]
+CORS_ALLOWED_ORIGINS = ['https://backend.kaffo.co']
 CSRF_TRUSTED_ORIGINS = ['https://backend.kaffo.co']
 
 # celery
